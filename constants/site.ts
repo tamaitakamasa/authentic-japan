@@ -5,7 +5,7 @@ export const SITE_URL = 'https://transformativetour.pages.dev/';
 export const SITE_TITLE = 'AUTHENTIC JAPAN';
 export const SITE_DESCRIPTION = 'A Gathering of Passionate Navigators Providing Transformative Travel in Japan';
 
-export const LOCALES = ['en', 'ja'] as const;
+export const LOCALES = ['en', 'ja', 'fr'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE = 'ja' as Locale;
 
