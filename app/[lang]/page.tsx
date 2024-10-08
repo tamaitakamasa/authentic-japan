@@ -4,7 +4,7 @@ import { Button } from '@/components/Button';
 import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
 import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
 import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
-// import VideoPlayer from '@/components/VideoPlayer';
+import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
@@ -62,7 +62,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 									<Image src={siteOptions.home_about_mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
 								</figure>
 							)}
-							{/* {siteOptions.home_about_video && <VideoPlayer videoUrl={siteOptions.home_about_video} />} */}
+							{siteOptions.home_about_video && <VideoPlayer videoUrl={siteOptions.home_about_video} />}
 						</div>
 						<div className="p-home-video__content c-container">
 							<h2 className="p-home-video__title c-heading">
@@ -92,9 +92,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 							<span className="c-total__count">{activities.length}</span>
 						</div>
 					</div>
-					<div className="p-home-tours__tours c-tours">
-						{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}
-						</div>
+					<div className="p-home-tours__tours c-tours">{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}</div>
 					<div className="p-home-tours__button">
 						<Button href="/tour" label="VIEW ALL TOURS" />
 					</div>
