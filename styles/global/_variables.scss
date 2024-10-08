@@ -1,0 +1,86 @@
+// global/_variables.scss
+
+// ブレイクポイント指定（Tailwind CSSに合わせる）
+// 参考：https://tailwindcss.com/docs/breakpoints
+$breakpoints: (
+	'xs': 320px,
+	'sm': 640px,
+	'md': 768px,
+	'lg': 1024px,
+	'xl': 1280px,
+	'2xl': 1400px // この値だけカスタマイズ
+	// '2xl': 1536px
+) !default;
+
+// コンテナ幅、ブリード幅指定
+// 参考：https://www.tak-dcxi.com/article/scroll-bar-related-etcetera/
+
+// スクロールバーを引いたブラウザの幅
+$screen-width: calc(100vi - var(--scrollbar-width, 0));
+// $container-width: min($screen-width - 10vi, map-get($breakpoints, 'xl'));
+$container-width: min($screen-width - 10vi, 1180px);
+
+// $container-width: min(100%, map-get($breakpoints, 'xl'));
+$bleed-width: calc(($screen-width - $container-width) / 2);
+// $bleed-width: calc((100vi - var(--scrollbar-width, 0) - $container-width) / 2);
+$base-gutter: 10vi;
+$base-spacing: 10vi;
+
+// フォントファミリー指定
+$font-noto-sans: 'Noto Sans JP', sans-serif;
+$font-noto-serif: 'Noto Serif JP', serif;
+$font-garamond: "EB Garamond", serif;
+$font-montserrat: "Montserrat", sans-serif;
+
+// ベースフォント指定
+$font-base: $font-noto-serif;
+
+// フォントサイズ指定（Tailwind CSSに合わせる）
+// 参考：https://tailwindcss.com/docs/font-size
+$font-sizes: (
+	'xs': 0.75rem,
+	'sm': 0.875rem,
+	'md': 1rem,
+	'lg': 1.125rem,
+	'xl': 1.25rem,
+	'2xl': 1.5rem,
+	'3xl': 1.875rem,
+	'4xl': 2.25rem,
+	'5xl': 3rem,
+	'6xl': 3.75rem,
+	'7xl': 4.5rem,
+	'8xl': 6rem,
+	'9xl': 8rem
+);
+$font-size-xs: map-get($font-sizes, 'xs'); /* 12px */
+$font-size-sm: map-get($font-sizes, 'sm'); /* 14px */
+$font-size-md: map-get($font-sizes, 'md'); /* 16px */
+$font-size-lg: map-get($font-sizes, 'lg'); /* 18px */
+$font-size-xl: map-get($font-sizes, 'xl'); /* 20px */
+$font-size-2xl: map-get($font-sizes, '2xl'); /* 24px */
+$font-size-3xl: map-get($font-sizes, '3xl'); /* 30px */
+$font-size-4xl: map-get($font-sizes, '4xl'); /* 36px */
+$font-size-5xl: map-get($font-sizes, '5xl'); /* 48px */
+$font-size-6xl: map-get($font-sizes, '6xl'); /* 60px */
+$font-size-7xl: map-get($font-sizes, '7xl'); /* 72px */
+$font-size-8xl: map-get($font-sizes, '8xl'); /* 96px */
+$font-size-9xl: map-get($font-sizes, '9xl'); /* 128px */
+
+// カラーパレット指定
+$palette-gray: #949495;
+$palette-dark-gray: #1c1c1c;
+$palette-light-gray: #faf6f3;
+
+$palette-dark-blue: #0F2350;
+$palette-dark-red: #B7282E;
+$palette-orage: #e94709;
+$palette-light-brown: #f3eee8;
+
+// カラー指定
+$color-main: $palette-dark-blue;
+$color-accent: $palette-dark-red;
+// $color-sub: #a08534;
+$color-text: #333631;
+
+// テキストシャドウ指定
+$text-shadow: 0px 0px 16px rgba(0, 0, 0, 0.6);

@@ -1,0 +1,9 @@
+// layout/_l-body.scss
+
+@use '../global/' as g;
+
+.l-body {
+	$this: &;
+
+	background-color: #F3F3F3;
+}

@@ -1,0 +1,170 @@
+// global/_mixin.scss
+@use "variables" as var;
+@use "function" as func;
+
+// ブレイクポイント管理
+// 使い方：@include mq(sm) { ... }
+@mixin mq($breakpoint) {
+  @if map-has-key(var.$breakpoints, $breakpoint) {
+    $breakpoint-value: map-get(var.$breakpoints, $breakpoint);
+    @media (max-width: $breakpoint-value) {
+      @content;
+    }
+  } @else {
+    @warn "未定義のブレイクポイント: #{$breakpoint}";
+  }
+}
+
+// レイヤー管理（z-index）
+// 使い方：@include z-index(logo);
+@mixin z-index($key) {
+  $layer: (
+    logo: 20,
+    trigger: 20,
+    nav: 10,
+    default: 1
+  );
+  z-index: map-get($layer, $key);
+}
+
+// フォントサイズ計算（キー指定）
+// 参考：https://min-max-calculator.9elements.com/
+// 使い方：@include calc-font-size("md", "sm");
+// max-font-size: 最大のフォントサイズ（キー指定）
+// min-font-size: 最小のフォントサイズ（キー指定）
+// max-breakpoint: 最大のブレイクポイント（キー指定）デフォルト値：lg
+// min-breakpoint: 最小のブレイクポイント（キー指定）デフォルト値：sm
+@mixin font-clamp($max-font-size-key, $min-font-size-key, $max-breakpoint: "xl", $min-breakpoint: "sm") {
+  // フォントサイズの値をマップから取得
+  $max-font-size: func.strip-unit(map-get(var.$font-sizes, $max-font-size-key));
+  $min-font-size: func.strip-unit(map-get(var.$font-sizes, $min-font-size-key));
+
+  // ブレイクポイントの値をマップから取得して数値に変換
+  $min-viewport: func.strip-unit(map-get(var.$breakpoints, $min-breakpoint));
+  $max-viewport: func.strip-unit(map-get(var.$breakpoints, $max-breakpoint));
+
+  // ビューポート幅に基づくフォントサイズの比率を計算
+  $font-size-range: $max-font-size - $min-font-size;
+  $viewport-range: $max-viewport - $min-viewport;
+  $font-size-ratio: calc($font-size-range / $viewport-range);
+
+  // 相対フォントサイズの計算
+  $relative-font-size-rem: $max-font-size - calc($max-viewport * $font-size-ratio);
+  $relative-font-size-vw: $font-size-ratio * 100vw * 16;
+
+  // フォントサイズの適用
+  font-size: clamp(#{$min-font-size}rem, #{$relative-font-size-rem}rem + $relative-font-size-vw, #{$max-font-size}rem);
+}
+
+// フォントサイズ計算（px指定）
+// 参考：https://min-max-calculator.9elements.com/
+// 使い方：@include calc-font-size-px(20, 16);
+// max-font-size: 最大のフォントサイズ（px指定）
+// min-font-size: 最小のフォントサイズ（px指定）
+// max-breakpoint: 最大のブレイクポイント（キー指定）デフォルト値：lg
+// min-breakpoint: 最小のブレイクポイント（キー指定）デフォルト値：sm
+@mixin font-clamp-px($max-font-size, $min-font-size, $max-breakpoint: "xl", $min-breakpoint: "sm") {
+  // ブレイクポイントの値をマップから取得して数値に変換
+  $min-viewport: func.strip-unit(map-get(var.$breakpoints, $min-breakpoint));
+  $max-viewport: func.strip-unit(map-get(var.$breakpoints, $max-breakpoint));
+
+  // フォントサイズをrem単位に変換
+  $max-font-size-rem: calc($max-font-size / 16);
+  $min-font-size-rem: calc($min-font-size / 16);
+
+  // ビューポート幅に基づくフォントサイズの比率を計算
+  $font-size-range: $max-font-size - $min-font-size;
+  $viewport-range: $max-viewport - $min-viewport;
+  $font-size-ratio: calc($font-size-range / $viewport-range);
+
+  // 相対フォントサイズの計算
+  $relative-font-size-rem: $max-font-size-rem - calc($max-viewport * $font-size-ratio / 16);
+  $relative-font-size-vw: $font-size-ratio * 100;
+
+  // フォントサイズの適用
+  font-size: clamp(#{$min-font-size-rem}rem, #{$relative-font-size-rem}rem + #{$relative-font-size-vw}vw, #{$max-font-size-rem}rem);
+}
+
+// 可変プロパティ計算
+// 使い方：@include clamp(padding-top, 150, 20);
+// $prop: プロパティ名（padding-topなど）
+// $max: 最大のプロパティ値（px指定）
+// $min: 最小のプロパティ値（px指定）
+// $max-breakpoint: 最大のブレイクポイント（キー指定）デフォルト値：lg
+// $min-breakpoint: 最小のブレイクポイント（キー指定）デフォルト値：sm
+@mixin clamp($prop, $max, $min, $max-breakpoint: "xl", $min-breakpoint: "sm") {
+  // 値をrem単位に変換
+  $max-size-rem: calc($max / 16);
+  $min-size-rem: calc($min / 16);
+
+  // ブレイクポイントの値をマップから取得
+  $min-viewport: func.strip-unit(map-get(var.$breakpoints, $min-breakpoint));
+  $max-viewport: func.strip-unit(map-get(var.$breakpoints, $max-breakpoint));
+
+  // ビューポート幅に基づくプロパティの比率を計算
+  $prop-range: $max - $min;
+  $viewport-range: $max-viewport - $min-viewport;
+  $prop-ratio: calc($prop-range / $viewport-range);
+  // @debug $max-viewport * $font-size-ratio;
+
+  // 相対プロパティ値の計算
+  $relative-prop-rem: $max-size-rem - calc($max-viewport * $prop-ratio / 16);
+  $relative-prop-vw: $prop-ratio * 100;
+
+  // clamp関数の適用
+  #{$prop}: clamp(#{$min-size-rem}rem, #{$relative-prop-rem}rem + #{$relative-prop-vw}vw, #{$max-size-rem}rem);
+}
+
+// px指定版
+@mixin clamp-px($prop, $max, $min, $max-breakpoint: "xl", $min-breakpoint: "sm") {
+  // ブレイクポイントの値をマップから取得
+  $min-viewport: func.strip-unit(map-get(var.$breakpoints, $min-breakpoint));
+  $max-viewport: func.strip-unit(map-get(var.$breakpoints, $max-breakpoint));
+
+  // ビューポート幅に基づくプロパティの比率を計算
+  $prop-range: $max - $min;
+  $viewport-range: $max-viewport - $min-viewport;
+  $prop-ratio: calc($prop-range / $viewport-range);
+  // @debug $max-viewport * $font-size-ratio;
+
+  // 相対プロパティ値の計算
+  $relative-prop-px: $max - calc($max-viewport * $prop-ratio);
+  $relative-prop-vw: $prop-ratio * 100;
+
+  // clamp関数の適用
+  #{$prop}: clamp(#{$min}px, #{$relative-prop-px}px + #{$relative-prop-vw}vw, #{$max}px);
+}
+
+
+/**
+ * 指定されたプロパティの値が、ブラウザのビューポート幅に応じて可変し、
+ * 特定の最小ブレイクポイントで最小値を取るように設定するSCSS mixin。
+ *
+ * @param {String} $prop - 可変にするCSSプロパティ名。
+ * @param {Number} $base-value - ブラウザのビューポート幅が基準ブレイクポイント以上のときのプロパティ値。
+ * @param {Number} $min-value - 最小ブレイクポイントでの最小プロパティ値。
+ * @param {String} $base-breakpoint - 基準となるブレイクポイントのキー。
+ * @param {String} $min-breakpoint - 最小値が適用される最小ブレイクポイントのキー。
+ */
+ @mixin max($prop, $base-value, $min-value, $base-breakpoint: "xl", $min-breakpoint: "sm") {
+  // 値をrem単位に変換
+  $base-size-rem: calc($base-value / 16);
+  $min-size-rem: calc($min-value / 16);
+
+  // ブレイクポイントの値をマップから取得
+  $min-viewport: func.strip-unit(map-get(var.$breakpoints, $min-breakpoint));
+  $base-viewport: func.strip-unit(map-get(var.$breakpoints, $base-breakpoint));
+
+  // ビューポート幅に基づくプロパティの比率を計算
+  $prop-range: $base-value - $min-value;
+  $viewport-range: $base-viewport - $min-viewport;
+  $prop-ratio: calc($prop-range / $viewport-range);
+  // @debug $max-viewport * $font-size-ratio;
+
+  // 相対プロパティ値の計算
+  $relative-prop-rem: $base-size-rem - calc($base-viewport * $prop-ratio / 16);
+  $relative-prop-vw: $prop-ratio * 100;
+
+  // clamp関数の適用
+  #{$prop}: max(#{$min-size-rem}rem, #{$relative-prop-rem}rem + #{$relative-prop-vw}vw);
+}

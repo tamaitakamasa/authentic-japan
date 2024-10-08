@@ -1,0 +1,82 @@
+// layout/_l-footer.scss
+
+@use '../global/' as g;
+
+.l-footer {
+	$this: &;
+
+	@include g.clamp(padding-top, 120, 80);
+	@include g.clamp(padding-bottom, 120, 80);
+	padding-inline: g.$base-gutter;
+	background-color: g.$color-main;
+
+	& * {
+		font-family: g.$font-montserrat;
+		color: #ffffff;
+	}
+
+	&__navi {
+		& > ul {
+			display: flex;
+			justify-content: space-between;
+			gap: 20px;
+
+			& > li {
+				& > a {
+					font-weight: 700;
+					letter-spacing: 0.15em;
+					font-size: g.$font-size-sm;
+				}
+
+				& > ul {
+					display: grid;
+					grid-template-columns: repeat(3, auto);
+					gap: 12px;
+					margin-top: 20px;
+
+					& > li {
+						& > a {
+							font-weight: 500;
+							letter-spacing: 0.15em;
+							font-family: g.$font-noto-sans;
+							font-size: g.$font-size-xs;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&__navi-sub {
+		@include g.clamp(margin-top, 60, 40);
+		@include g.clamp(padding-top, 60, 40);
+		@include g.clamp(padding-bottom, 60, 40);
+		border-top: 1px solid rgba($color: #ffffff, $alpha: 0.5);
+		border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.5);
+
+
+		& > ul {
+			display: flex;
+			justify-content: space-between;
+
+			& > li {
+				& > a {
+					font-weight: 700;
+					letter-spacing: 0.15em;
+					font-size: g.$font-size-sm;
+				}
+			}
+		}
+	}
+
+	&__copyright {
+		& > p {
+			@include g.clamp(margin-top, 60, 40);
+			font-family: g.$font-garamond;
+			font-size: g.$font-size-xs;
+			font-weight: 700;
+			text-align: center;
+			// opacity: 0.6;
+		}
+	}
+}

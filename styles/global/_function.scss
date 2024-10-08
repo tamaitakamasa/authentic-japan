@@ -1,0 +1,8 @@
+// global/_mixin.scss
+@use "sass:math";
+@use "variables" as var;
+
+// 文字列から数値を抽出する
+@function strip-unit($value) {
+  @return math.div($value, $value * 0 + 1);
+}

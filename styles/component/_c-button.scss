@@ -1,0 +1,88 @@
+// component/_c-button.scss
+
+@use '../global' as g;
+
+.c-button {
+	$this: &;
+
+	position: relative;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	transition: all 0.3s;
+
+	@media (any-hover: hover) {
+		&:hover {
+			opacity: 0.55;
+		}
+	}
+
+	&__label {
+		font-family: g.$font-montserrat;
+		@include g.font-clamp('sm', 'xs');
+		font-weight: 700;
+		color: g.$color-text;
+		line-height: 1;
+
+		@at-root #{$this}--light & {
+			color: #ffffff;
+		}
+	}
+
+	&__link {
+		color: g.$color-text;
+
+		@at-root #{$this}--light & {
+			color: #ffffff;
+			text-shadow: g.$text-shadow;
+		}
+
+		&::after {
+			content: '';
+			display: block;
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			// background-color: rgba($color: #000000, $alpha: 0.8)
+		}
+	}
+
+	&__circle {
+		// position: relative;
+		// z-index: 1;
+		display: grid;
+		place-items: center;
+		aspect-ratio: 1 / 1;
+		width: 88px;
+		border: 1px solid g.$color-text;
+		border-radius: calc(infinity * 1px);
+
+		@at-root #{$this}--light & {
+			border-color: #ffffff;
+		}
+	}
+
+	&__icon {
+		aspect-ratio: 1 / 1;
+		width: 20px;
+		height: auto;
+		mask-image: url('/icon-arrow.svg');
+		mask-size: contain;
+		mask-repeat: no-repeat;
+		mask-position: center;
+		background-color: g.$color-text;
+		transition: all 0.3s;
+
+		@at-root #{$this}--light & {
+			background-color: #ffffff;
+		}
+
+		@media (any-hover: hover) {
+			@at-root #{$this}:hover & {
+				transform: rotate(360deg);
+				// transform: translateX(4px);
+			}
+		}
+	}
+}

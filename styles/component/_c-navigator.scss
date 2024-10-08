@@ -1,0 +1,131 @@
+// component/_c-navigator.scss
+
+@use '../global' as g;
+
+.c-navigator {
+	$this: &;
+
+	&__header {
+		position: relative;
+		aspect-ratio: 3 / 4;
+		width: 100%;
+		overflow: hidden;
+		// height: auto;
+	}
+
+	&__link {
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			width: 0;
+			background: rgba(255, 2550, 255, 0.1);
+			transition: all 0.3s ease-in-out;
+		}
+		@media (any-hover: hover) {
+			&:hover {
+				opacity: 1;
+				#{$this}__image {
+					transform: scale(1.04);
+				}
+				&::after {
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	&__description {
+		position: absolute;
+		z-index: 1;
+		bottom: 0;
+		@include g.clamp(padding, 32, 24);
+		@include g.font-clamp('2xl', 'xl');
+		font-weight: 500;
+		color: #ffffff;
+		background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+	}
+
+	&__image {
+		position: absolute;
+		inset: 0;
+		transition: all 0.3s ease-in-out;
+		transform: scale(1);
+
+		// &:hover {
+		// 	transform: scale(1.04);
+		// }
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.2);
+		}
+	}
+
+	&__body {
+		@include g.clamp(padding, 32, 24);
+	}
+
+	&__region {
+		display: flex;
+		align-items: center;
+
+		& > i {
+			width: 20px;
+			background-color: g.$color-accent;
+		}
+
+		& > span {
+			font-family: g.$font-noto-sans;
+			@include g.font-clamp('md', 'sm');
+			font-weight: 700;
+			color: g.$color-accent;
+			letter-spacing: 0.15em;
+		}
+	}
+
+	&__name {
+		margin-top: 8px;
+		@include g.font-clamp('xl', 'sm');
+		font-weight: 500;
+		letter-spacing: 0.15em;
+	}
+
+	&__title {
+		margin-top: 4px;
+		font-family: g.$font-noto-sans;
+		@include g.font-clamp('sm', 'xs');
+		font-weight: 700;
+		color: g.$palette-gray;
+	}
+
+	&__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 12px;
+	}
+
+	&__tag {
+		font-family: g.$font-noto-sans;
+		font-size: g.$font-size-sm;
+		font-weight: 700;
+		color: g.$palette-gray;
+	}
+
+	// &__summary {
+	// 	--limit: 3;
+
+	// 	display: -webkit-box;
+	// 	block-size: min(100%, calc(1lh * var(--limit)));
+	// 	overflow: clip;
+	// 	@include g.clamp(margin-top, 20, 12);
+	// 	text-overflow: ellipsis;
+	// 	-webkit-box-orient: block-axis;
+	// 	-webkit-line-clamp: var(--limit);
+	// 	line-clamp: var(--limit);
+	// 	@include g.font-clamp('sm', 'xs');
+	// }
+}

@@ -1,0 +1,196 @@
+// project/_p-sample.scss
+
+@use '../global/' as g;
+
+.p-sample {
+	$this: &;
+
+	@include g.clamp(padding-top, 200, 100);
+	@include g.clamp(padding-bottom, 200, 100);
+
+	&__section {
+		@include g.clamp(margin-top, 200, 100);
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+	}
+
+	&__title {
+		font-size: g.$font-size-4xl;
+		@include g.clamp(margin-bottom, 60, 30);
+		@include g.clamp(padding-bottom, 60, 30);
+		border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+
+		span {
+			font-size: g.$font-size-md;
+			font-weight: normal;
+		}
+	}
+
+	&__code {
+		margin-top: 40px;
+		margin-bottom: 40px;
+		padding: 40px;
+		background-color: #ffffff;
+
+		p {
+			margin-top: 1em;
+
+			&:first-of-type {
+				margin-top: 0;
+			}
+		}
+
+		code {
+			display: inline-block;
+			padding: 5px 10px;
+			border-radius: 5px;
+			background-color: rgba($color: #000000, $alpha: 0.05);
+		}
+	}
+
+	&__breakpoint {
+		max-width: 100%;
+		margin-top: 1px;
+		padding: 40px;
+		background-color: g.$color-main;
+		color: #ffffff;
+		text-align: center;
+
+		&--xs {
+			width: 320px;
+		}
+		&--sm {
+			width: 640px;
+		}
+		&--md {
+			width: 768px;
+		}
+		&--lg {
+			width: 1024px;
+		}
+		&--xl {
+			width: 1280px;
+		}
+		&--2xl {
+			width: 1536px;
+		}
+	}
+
+	&__mediaquery {
+		padding: 40px;
+		background-color: g.$color-main;
+		color: #ffffff;
+		text-align: center;
+
+		@include g.mq(lg) {
+			background-color: green;
+		}
+		@include g.mq(md) {
+			background-color: blue;
+		}
+		@include g.mq(sm) {
+			background-color: yellow;
+		}
+	}
+
+	&__font {
+		line-height: 1;
+		margin-top: 1em;
+		color: rgba($color: #000000, $alpha: 0.5);
+
+		// フォントサイズ（固定）
+		&--xs {
+			font-size: g.$font-size-xs;
+		}
+		&--sm {
+			font-size: g.$font-size-sm;
+		}
+		&--md {
+			font-size: g.$font-size-md;
+		}
+		&--lg {
+			font-size: g.$font-size-lg;
+		}
+		&--xl {
+			font-size: g.$font-size-xl;
+		}
+		&--2xl {
+			font-size: g.$font-size-2xl;
+		}
+		&--3xl {
+			font-size: g.$font-size-3xl;
+		}
+		&--4xl {
+			font-size: g.$font-size-4xl;
+		}
+		&--5xl {
+			font-size: g.$font-size-5xl;
+		}
+		&--6xl {
+			font-size: g.$font-size-6xl;
+		}
+		&--7xl {
+			font-size: g.$font-size-7xl;
+		}
+		&--8xl {
+			font-size: g.$font-size-8xl;
+		}
+		&--9xl {
+			font-size: g.$font-size-9xl;
+		}
+
+		// フォントサイズ（可変）
+		&--md-xs {
+			@include g.font-clamp('md', 'xs');
+			// @include g.clamp(font-size, 16, 12);
+		}
+		&--xl-md {
+			@include g.font-clamp('xl', 'md');
+			// @include g.clamp(font-size, 20, 16);
+		}
+		&--2xl-xs {
+			@include g.font-clamp('2xl', 'xs');
+			// @include g.clamp(font-size, 24, 12);
+		}
+		&--2xl-xs-xl-lg {
+			@include g.font-clamp('2xl', 'xs', 'xl', 'lg');
+			// @include g.clamp(font-size, 24, 12, "xl", "lg");
+		}
+		&--2xl-xs-lg-md {
+			@include g.font-clamp('2xl', 'xs', 'lg', 'md');
+			// @include g.clamp(font-size, 24, 12, "lg", "md");
+		}
+	}
+
+	&__props-width {
+		@include g.clamp(width, 1000, 500);
+		max-width: 100%;
+		padding: 40px;
+		background-color: g.$color-main;
+		color: #ffffff;
+		text-align: center;
+
+		span {
+			font-size: g.$font-size-sm;
+			color: rgba($color: #ffffff, $alpha: 0.8);
+		}
+
+		&--xl-lg {
+			@include g.clamp(width, 1000, 500, 'xl', 'lg');
+		}
+		&--lg-md {
+			@include g.clamp(width, 1000, 500, 'lg', 'md');
+		}
+	}
+	&__props-padding {
+		width: auto;
+		@include g.clamp(margin-top, 60, 30);
+		@include g.clamp(padding-top, 100, 50);
+		@include g.clamp(padding-bottom, 200, 50);
+		background-color: g.$color-main;
+		color: #ffffff;
+		text-align: center;
+	}
+}

@@ -1,0 +1,225 @@
+// project/_p-home-regions.scss
+
+@use '../global/' as g;
+
+.p-home-regions {
+	$this: &;
+
+	@include g.clamp(padding-top, 180, 120);
+	@include g.clamp(padding-bottom, 180, 120);
+	background-color: g.$color-main;
+	border-image-source: linear-gradient(g.$color-main, g.$color-main);
+	border-image-slice: fill 0;
+	border-image-width: 1;
+	border-image-outset: 0 100vi;
+
+	&__header {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 72px;
+		align-items: center;
+		color: #ffffff;
+	}
+
+	&__title {
+		// color: #ffffff;
+	}
+
+	&__description {
+		@include g.font-clamp('md', 'sm');
+		font-weight: 700;
+		line-height: 3;
+	}
+
+	&__items {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 40px;
+		@include g.clamp(margin-top, 80, 60);
+	}
+
+	&__slider {
+		@include g.clamp(margin-top, 80, 60);
+	}
+
+	&-slider {
+		&__navi {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			@include g.clamp(gap, 80, 60);
+
+			&-items {
+				display: flex;
+				gap: 16px;
+			}
+
+			&-item {
+				display: flex;
+				align-items: center;
+				background: none;
+				border: none;
+				color: #ffffff;
+				opacity: 0.2;
+
+				&.is-active {
+					opacity: 1;
+				}
+
+				& > i {
+					display: block;
+					aspect-ratio: 1 / 1;
+					width: 20px;
+					height: auto;
+					background-image: url('/icon-pin_light.svg');
+					background-repeat: no-repeat;
+					background-position: center;
+					background-size: contain;
+				}
+
+				& > span {
+					font-family: g.$font-noto-sans;
+					font-weight: 700;
+					line-height: 1;
+					letter-spacing: 0.15em;
+				}
+			}
+		}
+
+		&__content {
+			// @include g.clamp(margin-top, 80, 60);
+			margin-top: 120px;
+		}
+
+		&__slider {
+			overflow: visible !important;
+			padding-top: 60px !important;
+			padding-bottom: 60px !important;
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				top: -60px;
+				// bottom: -60px;
+				left: calc(g.$bleed-width * 1);
+				right: calc(g.$bleed-width * -1);
+				display: block;
+				background-color: rgba($color: #ffffff, $alpha: 0.04);
+			}
+
+			.swiper-pagination-progressbar {
+				height: 2px !important;
+				background-color: rgba($color: #ffffff, $alpha: 0.3) !important;
+			}
+			.swiper-pagination-progressbar-fill {
+				background-color: #ffffff !important;
+			}
+		}
+	}
+
+	&-slider-slide {
+		& > div {
+			position: relative;
+			z-index: 1;
+		}
+
+		// &::after {
+		// 	content: '';
+		// 	position: absolute;
+		// 	inset: 0;
+		// 	// top: -90px;
+		// 	// bottom: -60px;
+		// 	left: calc(g.$bleed-width * 1);
+		// 	right: calc(g.$bleed-width * -1);
+		// 	display: block;
+		// 	background-color: rgba($color: #ffffff, $alpha: 0.04);
+		// }
+
+		&__top {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			grid-template-rows: repeat(2, 1fr);
+			grid-column-gap: 0px;
+			grid-row-gap: 0px;
+		}
+
+		&__mv {
+			position: relative;
+			grid-area: 1 / 1 / 3 / 2;
+			aspect-ratio: 16 / 9;
+			width: 100%;
+			height: auto;
+			overflow: hidden;
+
+			& > img {
+				transform: scale(1);
+				@at-root #{$this} .swiper .swiper-slide.swiper-slide-active & {
+					animation: zoomout 6s linear forwards;
+				}
+			}
+
+			@keyframes zoomout {
+				0% {
+					transform: scale(1.1);
+				}
+				100% {
+					transform: scale(1); // 縮小の割合を調整
+				}
+			}
+		}
+
+		&__map {
+			grid-area: 1 / 2 / 2 / 3;
+			display: grid;
+			place-content: center;
+		}
+
+		&__label {
+			grid-area: 2 / 2 / 3 / 3;
+			display: grid;
+			place-content: center;
+
+			& > div {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 12px;
+				i {
+					width: 50px;
+				}
+				span {
+					font-family: g.$font-noto-sans;
+					font-size: 40px;
+					font-weight: 700;
+					line-height: 1;
+					color: #ffffff;
+					letter-spacing: 0.15em;
+				}
+			}
+		}
+
+		&__bottom {
+			// pointer-events: none;
+			display: grid;
+			grid-template-columns: auto 1fr;
+			// align-items: center;
+			margin-left: 12vi;
+			margin-top: 32px;
+		}
+
+		&__description {
+			margin-left: 5vi;
+			padding-left: 5vi;
+			border-left: 1px solid #ffffff;
+			color: #ffffff;
+			font-weight: 500;
+		}
+	}
+
+	&__button {
+		display: flex;
+		justify-content: flex-end;
+		// justify-content: center;
+		@include g.clamp(margin-top, 80, 60);
+	}
+}

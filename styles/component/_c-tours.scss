@@ -1,0 +1,27 @@
+// component/_c-tours.scss
+
+@use '../global/' as g;
+
+.c-tours {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 0;
+	row-gap: 80px;
+	@include g.clamp(margin-top, 80, 60);
+
+	&__tour {
+		display: grid;
+		grid-template-rows: subgrid;
+		grid-row: span 5;
+		gap: 0;
+
+		&:nth-of-type(2n+1) {
+			padding-right: 60px;
+			border-right: 1px solid rgba($color: #000000, $alpha: 0.2);
+		}
+		&:nth-of-type(2n) {
+			padding-left: 60px;
+		}
+	}
+}
+

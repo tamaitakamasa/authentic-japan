@@ -1,0 +1,19 @@
+// component/_c-section.scss
+
+@use '../global/' as g;
+
+.c-section {
+	$this: &;
+
+	@include g.clamp(padding-top, 100, 50);
+	@include g.clamp(padding-bottom, 100, 50);
+
+	&--gray {
+		background-color: #f2f2f2;
+	}
+
+	&__body {
+		@include g.clamp(padding-top, 80, 40);
+		@include g.clamp(padding-bottom, 80, 40);
+	}
+}

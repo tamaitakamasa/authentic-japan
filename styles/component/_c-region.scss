@@ -1,0 +1,61 @@
+// component/_c-region.scss
+
+@use '../global' as g;
+
+.c-region {
+	$this: &;
+
+	&__inner {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		// gap: 20px;
+	}
+
+	&__content {
+		@include g.clamp(padding-top, 80, 60);
+		@include g.clamp(padding-bottom, 80, 60);
+		padding-inline: 4vi;
+		background-color: rgba($color: #ffffff, $alpha: 0.05);
+	}
+
+	&__name {
+		display: flex;
+		align-items: center;
+
+		& > i {
+			width: 68px;
+			// background-color: g.$color-text;
+		}
+		& > span {
+			font-family: g.$font-noto-sans;
+			@include g.font-clamp('4xl', '3xl');
+			font-weight: 500;
+			letter-spacing: 0.15em;
+			color: #ffffff;
+		}
+	}
+
+	&__description {
+		@include g.clamp(margin-top, 60, 40);
+		color: #ffffff;
+
+		& > p {
+			line-height: 2.4;
+		}
+	}
+
+	&__images {
+		margin-top: 4vi;
+		padding-inline: 4vi;
+	}
+
+	&__image {
+		position: relative;
+		aspect-ratio: 1 / 1;
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+
+}

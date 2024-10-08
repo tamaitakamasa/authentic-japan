@@ -1,0 +1,9 @@
+// project/_p-home.scss
+
+@use '../global/' as g;
+
+.p-home {
+	$this: &;
+
+	padding-top: 0;
+}

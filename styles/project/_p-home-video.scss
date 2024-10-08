@@ -1,0 +1,79 @@
+// project/_p-home-video.scss
+
+@use '../global/' as g;
+
+.p-home-video {
+	$this: &;
+
+	background-color: g.$color-main;
+	border-image-source: linear-gradient(g.$color-main, g.$color-main);
+	border-image-slice: fill 0;
+	border-image-width: 1;
+	border-image-outset: 0 100vi;
+	@include g.clamp(padding-bottom, 150, 100);
+
+	&__inner {
+		position: relative;
+		aspect-ratio: 16 / 9;
+		width: 100%;
+		// max-height: 100dvh;
+	}
+
+	&__bg {
+		position: absolute;
+		inset: 0;
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			background-color: rgba($color: #000000, $alpha: 0.25);
+		}
+	}
+
+	&__mv {
+		position: absolute;
+		inset: 0;
+	}
+
+	&__content {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		@include g.clamp(gap, 48, 32);
+		height: 100%;
+
+		& * {
+			color: #ffffff;
+		}
+	}
+
+	&__title {
+		text-align: center;
+		text-wrap: balance;
+		text-shadow: g.$text-shadow;
+	}
+
+	&__description {
+		@include g.font-clamp('md', 'sm');
+		font-weight: 500;
+		line-height: 3;
+		text-align: center;
+		text-wrap: balance;
+		text-shadow: g.$text-shadow;
+	}
+
+	&__footer {
+		// background-color: g.$color-main;
+	}
+
+	&__button2 {
+		@include g.clamp(margin-top, 48, 32);
+		display: flex;
+		justify-content: flex-end;
+	}
+}

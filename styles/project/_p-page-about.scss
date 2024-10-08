@@ -1,0 +1,92 @@
+// project/_p-page-about.scss
+
+@use '../global/' as g;
+
+.p-page-about {
+	$this: &;
+
+	padding-bottom: 0;
+
+	&__description {
+		max-width: 50rem;
+		margin-inline: auto;
+		& > p {
+			line-height: 2.4;
+		}
+		// @include g.clamp(padding-bottom, 120, 80);
+	}
+
+	&__video {
+		@include g.clamp(margin-top, 80, 60);
+		@include g.clamp(margin-bottom, 120, 80);
+		padding-inline: 4vi;
+	}
+
+	&-section {
+		@include g.clamp(margin-top, 12, 8);
+		@include g.clamp(padding-top, 120, 80);
+		@include g.clamp(padding-bottom, 120, 80);
+		background-color: g.$color-main;
+		border-image-source: linear-gradient(g.$color-main, g.$color-main);
+		border-image-slice: fill 0;
+		border-image-width: 1;
+		border-image-outset: 0 100vi;
+
+		&__cols {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		&__col-left {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			@include g.clamp(gap, 48, 36);
+			padding-left: 2vi;
+			padding-right: 4vi;
+		}
+
+		&__number {
+			font-family: g.$font-garamond;
+			font-size: 4.8rem;
+			font-weight: 700;
+			color: #ffffff;
+			line-height: 1;
+		}
+
+		&__title {
+			font-family: g.$font-noto-sans;
+			@include g.font-clamp('md', 'sm');
+			font-weight: 700;
+			color: g.$color-accent;
+		}
+
+		&__description {
+			display: flex;
+			flex-direction: column;
+			gap: 24px;
+			color: #ffffff;
+
+			& > p {
+				line-height: 2.4;
+			}
+		}
+
+		&__col-right {
+			display: grid;
+			place-items: center;
+		}
+
+		&__illust {
+			position: relative;
+			aspect-ratio: 540 / 515;
+			width: 540px;
+		}
+	}
+
+	&__mv {
+		position: relative;
+		aspect-ratio: 16 / 9;
+		width: 100%;
+	}
+}

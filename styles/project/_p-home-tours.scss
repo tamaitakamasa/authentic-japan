@@ -1,0 +1,49 @@
+// project/_p-home-tours.scss
+
+@use '../global/' as g;
+
+.p-home-tours {
+	$this: &;
+
+	@include g.clamp(margin-top, 120, 80);
+
+	&__title {
+		text-align: center;
+	}
+
+	&__total {
+		display: flex;
+		justify-content: center;
+		@include g.clamp(margin-top, 80, 60);
+	}
+
+	&__items {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0;
+		row-gap: 80px;
+		@include g.clamp(margin-top, 80, 60);
+	}
+
+	&__item {
+		display: grid;
+		grid-template-rows: subgrid;
+		grid-row: span 5;
+		gap: 0;
+
+		&:nth-of-type(2n+1) {
+			padding-right: 60px;
+			border-right: 1px solid rgba($color: #000000, $alpha: 0.2);
+		}
+		&:nth-of-type(2n) {
+			padding-left: 60px;
+		}
+	}
+
+	&__button {
+		display: flex;
+		justify-content: flex-end;
+		// justify-content: center;
+		@include g.clamp(margin-top, 120, 80);
+	}
+}

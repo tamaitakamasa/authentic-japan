@@ -1,0 +1,11 @@
+// component/_c-container.scss
+
+@use '../global/' as g;
+
+.c-container {
+	position: relative;
+	// width: min(100% - 2rem, map-get(g.$breakpoints, 'xl'));
+	width: g.$container-width;
+	margin-inline: auto;
+	// padding: 0 2vw;
+}

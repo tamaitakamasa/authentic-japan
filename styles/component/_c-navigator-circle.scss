@@ -1,0 +1,75 @@
+// component/_c-navigator-circle.scss
+
+@use '../global' as g;
+
+.c-navigator-circle {
+	$this: &;
+
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	@include g.clamp(width, 120, 80);
+
+	&.is-active {
+		pointer-events: none;
+	}
+
+
+	&__thumb {
+		position: relative;
+		aspect-ratio: 1 / 1;
+		width: 100%;
+		border-radius: calc(infinity * 1px);
+		overflow: hidden;
+
+		@at-root #{$this}.is-active & {
+			border: 3px solid rgba($color: #ffffff, $alpha: 1);
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: none;
+
+			@at-root #{$this}.is-active & {
+				// background: none;
+				// background: rgba(255, 255,255, 0.4);
+				background: rgba(0, 0,0, 0.4);
+			}
+		}
+	}
+
+	&__name {
+		margin-top: 8px;
+		font-family: g.$font-noto-sans;
+		font-size: g.$font-size-xs;
+		font-weight: 700;
+	}
+
+	&__link::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		transition: all 0.3s;
+	}
+
+	&__region {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+
+		& > i {
+			width: 14px;
+			background-color: g.$color-text;
+		}
+		& > span {
+			font-family: g.$font-noto-sans;
+			font-size: g.$font-size-xs;
+			// font-weight: 700;
+			// color: g.$color-accent;
+			letter-spacing: 0.15em;
+		}
+	}
+}

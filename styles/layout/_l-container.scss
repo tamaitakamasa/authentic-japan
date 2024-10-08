@@ -1,0 +1,10 @@
+// layout/_l-container.scss
+
+@use '../global/' as g;
+
+.l-container {
+	$this: &;
+
+	// overflow: hidden;
+	position: relative;
+}

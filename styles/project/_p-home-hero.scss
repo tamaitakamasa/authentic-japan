@@ -1,0 +1,99 @@
+// project/_p-home-hero.scss
+
+@use '../global/' as g;
+
+.p-home-hero {
+	$this: &;
+
+	&-slider {
+		position: relative;
+		overflow: hidden;
+
+		&__slider {
+			aspect-ratio: 16 / 9;
+			width: 100%;
+			max-height: 100dvh;
+
+			.swiper-pagination-progressbar {
+				top: auto !important;
+				bottom: 0 !important;
+				height: 2px !important;
+				background-color: rgba($color: #ffffff, $alpha: 0.3) !important;
+			}
+			.swiper-pagination-progressbar-fill {
+				background-color: #ffffff !important;
+			}
+		}
+
+		&-slide {
+			&__image {
+				// transition: transform 0.1s;
+				position: relative;
+				width: 100%;
+				height: 100%;
+				transform: scale(1);
+
+				@at-root #{$this} .swiper .swiper-slide.swiper-slide-active & {
+					animation: zoomout 6s linear forwards;
+				}
+
+				@keyframes zoomout {
+					0% {
+						transform: scale(1.1);
+					}
+					100% {
+						transform: scale(1); // 縮小の割合を調整
+					}
+				}
+
+				&::after {
+					position: absolute;
+					inset: 0;
+					content: '';
+					display: block;
+					background-color: rgba($color: #000000, $alpha: 0.1);
+				}
+			}
+
+			&__inner {
+				position: absolute;
+				bottom: 0;
+				z-index: 1;
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+				width: 100%;
+				height: 50%;
+				padding-inline: 8vi;
+				@include g.clamp(padding-bottom, 72, 48);
+				background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+			}
+
+			&__title {
+				max-width: 60vw;
+				color: #ffffff;
+				text-shadow: g.$text-shadow;
+
+				& > h3 {
+					font-family: g.$font-noto-sans;
+					@include g.font-clamp('md', 'sm');
+					font-weight: 500;
+				}
+
+				& > h2 {
+					margin-top: 20px;
+					@include g.font-clamp('5xl', '4xl');
+					font-weight: 500;
+				}
+			}
+
+			&__button {
+				// position: absolute;
+				// right: 0;
+				// bottom: 0;
+			}
+		}
+	}
+
+
+}

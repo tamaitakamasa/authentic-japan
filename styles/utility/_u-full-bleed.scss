@@ -1,0 +1,10 @@
+// project/_u-full-bleed.scss
+
+@use "../global/" as g;
+
+.u-full-bleed {
+  $this: &;
+
+	width: g.$screen-width;
+	margin-inline: calc(-1 * g.$bleed-width);
+}

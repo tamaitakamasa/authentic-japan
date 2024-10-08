@@ -1,0 +1,64 @@
+// layout/_l-header.scss
+
+@use '../global/' as g;
+
+.l-header {
+	$this: &;
+
+	position: relative;
+	height: 168px;
+
+	& * {
+		font-family: g.$font-montserrat;
+	}
+
+	&__title {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 350px;
+		height: 50px;
+		margin-inline: auto;
+	}
+
+	&__inner {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 100%;
+		padding-inline: g.$base-spacing;
+	}
+
+	&__navi {
+		@include g.mq(md) {
+			display: none;
+		}
+
+		& > ul {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			row-gap: 4px;
+			column-gap: 30px;
+
+			& > li > a {
+				display: block;
+				font-weight: 700;
+				font-size: g.$font-size-sm;
+				// font-size: 13px;
+				color: g.$color-main;
+				letter-spacing: 0.1em;
+			}
+		}
+	}
+
+	&__trigger {
+		display: none;
+
+		@include g.mq(md) {
+			position: relative;
+			z-index: 100;
+			display: block;
+		}
+	}
+}

@@ -1,0 +1,29 @@
+// project/_p-home-about.scss
+
+@use '../global/' as g;
+
+.p-home-report {
+	$this: &;
+
+	// background-color: #ffffff;
+
+  &__items {
+		--max-inline-size: 1024px;
+		--column-min-size: 16.5rem;
+		--gap: max(16px, 2.5%);
+
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(var(--column-min-size), 100%), 1fr));
+		gap: var(--gap);
+		max-inline-size: var(--max-inline-size);
+		margin-inline: auto;
+
+    // @include g.mq(lg) {
+    //   grid-template-columns: 1fr 1fr;
+    // }
+
+    // @include g.mq(sm) {
+    //   grid-template-columns: 1fr;
+    // }
+  }
+}

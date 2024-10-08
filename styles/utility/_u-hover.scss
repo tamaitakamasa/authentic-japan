@@ -1,0 +1,16 @@
+// project/_u-hover.scss
+
+@use '../global/' as g;
+
+.u-hover {
+	$this: &;
+
+	transition: all 0.3s;
+	opacity: 1;
+
+	@media (any-hover: hover) {
+		@at-root #{$this}:hover {
+			opacity: 0.75;
+		}
+	}
+}

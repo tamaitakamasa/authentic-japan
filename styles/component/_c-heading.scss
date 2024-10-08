@@ -1,0 +1,15 @@
+// component/_c-heading.scss
+
+@use '../global/' as g;
+
+.c-heading {
+	$this: &;
+
+	font-family: g.$font-garamond;
+	font-weight: 400;
+	@include g.font-clamp('8xl', '6xl');
+
+	&--2 {
+		@include g.font-clamp('6xl', '5xl');
+	}
+}

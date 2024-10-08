@@ -1,0 +1,21 @@
+// component/_c-pin.scss
+
+@use '../global' as g;
+
+.c-pin {
+	$this: &;
+
+	display: block;
+	aspect-ratio: 1 / 1;
+	width: 100%;
+	height: auto;
+	// background-image: url('/icon-pin_light.svg');
+	// background-repeat: no-repeat;
+	// background-position: center;
+	// background-size: contain;
+	mask-image: url('/icon-pin_light.svg');
+	mask-size: contain;
+	mask-repeat: no-repeat;
+	mask-position: center;
+	background-color: #ffffff;
+}

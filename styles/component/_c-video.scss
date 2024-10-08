@@ -1,0 +1,39 @@
+// component/_c-video.scss
+
+@use '../global' as g;
+
+.c-video {
+	$this: &;
+
+	position: relative;
+	aspect-ratio: 16 / 9;
+	width: 100%;
+	overflow: hidden;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		z-index: 1;
+		display: block;
+		width: 100%;
+		height: 60px;
+		background-color: #000000;
+		// background-color: g.$color-main;
+	}
+
+	&::before {
+		top: 0;
+	}
+	&::after {
+		bottom: 0;
+	}
+
+
+	&__player {
+		// pointer-events: none;
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+}

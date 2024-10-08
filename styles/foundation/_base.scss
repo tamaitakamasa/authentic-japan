@@ -1,0 +1,47 @@
+// foundation/_base.scss
+@use '../global/' as g;
+
+:root {
+  --scrollbar-width: 0;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: g.$font-base;
+	color: g.$color-text;
+	line-height: 1.88;
+	letter-spacing: 0.05em;
+	-webkit-text-size-adjust: 100%;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	&:lang(en) {
+		letter-spacing: 0;
+	}
+}
+
+a {
+	color: g.$color-text;
+	text-decoration: none;
+	transition: all 0.2s;
+	opacity: 1;
+
+	// &:hover {
+	// 	opacity: 0.6;
+	// }
+
+	&[href^='tel:'] {
+		pointer-events: none;
+
+		@include g.mq(md) {
+			pointer-events: auto;
+		}
+	}
+}
+
+img {
+	max-width: 100%;
+}

@@ -1,0 +1,45 @@
+// component/_c-filter.scss
+
+@use '../global' as g;
+
+.c-filter {
+	$this: &;
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	& * {
+		font-family: g.$font-noto-sans;
+	}
+
+	&-group {
+		&__label {
+			font-weight: 700;
+			color: g.$color-accent;
+			letter-spacing: 0.1em;
+		}
+
+		&__buttons {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			margin-top: 8px;
+		}
+
+		&__button {
+			cursor: pointer;
+			padding: 4px 12px;
+			border: none;
+			border-radius: 8px;
+			background-color: #ffffff;
+			font-size: g.$font-size-sm;
+			transition: all 0.3s ease;
+
+			&.is-active {
+				background-color: g.$color-text;
+				color: #ffffff;
+			}
+		}
+	}
+}

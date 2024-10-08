@@ -1,0 +1,99 @@
+// project/_p-home-navigators.scss
+
+@use '../global/' as g;
+
+.p-home-navigators {
+	$this: &;
+
+	@include g.clamp(padding-bottom, 120, 80);
+
+	&__copy {
+		@include g.clamp(margin-top, 80, 60);
+		font-family: g.$font-garamond;
+		font-weight: 400;
+		@include g.font-clamp('8xl', '7xl');
+		text-align: center;
+		// text-wrap: balance;
+	}
+
+	&__text {
+		@include g.clamp(margin-top, 80, 60);
+		text-align: center;
+		line-height: 3;
+	}
+
+	&__slider {
+		@include g.clamp(margin-top, 80, 60);
+		overflow: hidden;
+
+		.swiper {
+			overflow: visible !important;
+			width: 33.333vi;
+			// overflow: clip !important;
+		}
+
+
+		// フリーモードでのスムーズなスクロール
+		.swiper-wrapper {
+			// width: 33vw;
+			// width: 400px !important; // スライドの幅を固定
+			transition-timing-function: linear;
+			// overflow: visible !important;
+		}
+
+		.swiper-slide {
+			// width: 400px !important; // スライドの幅を固定
+			// height: auto; // 高さは内容に応じて自動調整
+		}
+	}
+
+	&-slider {
+		&__navi {
+			@include g.clamp(margin-top, 60, 40);
+
+			&-items {
+				display: flex;
+				@include g.clamp(gap, 32, 16);
+				margin-top: 20px;
+			}
+
+			&-item {
+				background: none;
+				border: none;
+
+				// &-thumb {
+				// 	position: relative;
+				// 	aspect-ratio: 1 / 1;
+				// 	@include g.clamp(width, 120, 80);
+				// 	height: auto;
+				// 	border-radius: calc(infinity * 1px);
+				// 	overflow: hidden;
+				// }
+
+				// &-name {
+				// 	margin-top: 4px;
+				// 	font-weight: 700;
+				// 	font-size: g.$font-size-xs;
+				// }
+
+				// &-region {
+				// 	font-family: g.$font-noto-sans;
+				// 	font-size: g.$font-size-xs;
+				// 	letter-spacing: 0.15em;
+
+				// 	& > i {
+				// 		// width: 20px;
+				// 		display: none;
+				// 	}
+				// }
+			}
+		}
+	}
+
+	&__button {
+		display: flex;
+		justify-content: flex-end;
+		// justify-content: center;
+		@include g.clamp(margin-top, 80, 60);
+	}
+}
