@@ -6,7 +6,6 @@ import type { Metadata } from 'next';
 import '@/styles/style.scss';
 import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
 // import Script from 'next/script';
-// import ReactQueryProvider from '@/components/ReactQueryProvider';
 import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';

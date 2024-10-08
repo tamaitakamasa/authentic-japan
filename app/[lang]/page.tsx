@@ -2,22 +2,22 @@
 // import { Suspense } from 'react';
 // import { TourItem } from '@/components/Tour/TourItem';
 import { Button } from '@/components/Button';
-// import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
-// import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
+import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
+import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
 // import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
 // import VideoPlayer from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
 // import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
-import { getFormattedActivities } from '@/lib/utils';
+import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import Image from 'next/image';
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const siteOptions = await getWPSiteOptions(lang);
-	// const guides = await getFormattedGuideData(lang);
+	const guides = await getFormattedGuideData(lang);
 	// const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
 	console.log('activities:', activities);
@@ -26,14 +26,14 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 		<>
 			<div className="l-contents__body p-home">
 				<div className="p-home-hero u-full-bleed">
-					{/* <HomeHeroSlider lang={lang} slides={siteOptions.home_slider} /> */}
+					<HomeHeroSlider lang={lang} slides={siteOptions.home_slider} />
 				</div>
 
 				<div className="p-home-navigators">
 					<h2 className="p-home-navigators__copy">{siteOptions.navigators_title}</h2>
 					<p className="p-home-navigators__text" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
 					<div className="p-home-navigators__slider u-full-bleed">
-						{/* <HomeNavigatorSlider lang={lang} guides={guides} /> */}
+						<HomeNavigatorSlider lang={lang} guides={guides} />
 					</div>
 					<div className="p-home-navigators__button">
 						<Button href="/navigator" label="VIEW ALL NAVIGATORS" />
