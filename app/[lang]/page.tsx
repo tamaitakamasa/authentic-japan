@@ -1,16 +1,15 @@
-// 'use client';
 // import { Suspense } from 'react';
-// import { TourItem } from '@/components/Tour/TourItem';
+import { TourItem } from '@/components/Tour/TourItem';
 import { Button } from '@/components/Button';
 import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
 import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
-// import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
+import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
 // import VideoPlayer from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
-// import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
-import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
+import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
+// import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import Image from 'next/image';
 // import Link from 'next/link';
 
@@ -18,7 +17,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	// const t = useTranslations(lang);
 	const siteOptions = await getWPSiteOptions(lang);
 	const guides = await getFormattedGuideData(lang);
-	// const regions = await getFormattedRegionData(lang);
+	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
 	console.log('activities:', activities);
 
@@ -48,7 +47,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 						<h3 className="p-home-regions__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_regions_description || '' }} />
 					</div>
 					<div className="p-home-regions__slider">
-						{/* <HomeRegionSlider lang={lang} regions={regions} /> */}
+						<HomeRegionSlider lang={lang} regions={regions} />
 					</div>
 					<div className="p-home-regions__button">
 						<Button href="/region" label="VIEW ALL REGIONS" color="light" />
@@ -94,7 +93,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 						</div>
 					</div>
 					<div className="p-home-tours__tours c-tours">
-						{/* {activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>} */}
+						{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}
 						</div>
 					<div className="p-home-tours__button">
 						<Button href="/tour" label="VIEW ALL TOURS" />
