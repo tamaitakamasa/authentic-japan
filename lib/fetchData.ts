@@ -1,4 +1,4 @@
-import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour } from '@/types';
+import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag } from '@/types';
 import { Locale, DEFAULT_LOCALE } from '@/constants/site';
 
 const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
@@ -87,14 +87,14 @@ export async function getWPSiteOptions(lang: Locale = DEFAULT_LOCALE): Promise<W
 	return cachedFetch(`options-${lang}`, () => fetchWithErrorHandling<WPSiteContent>(url));
 }
 
-export async function fetchWPTag(id: number): Promise<unknown> {
+export async function fetchWPTag(id: number): Promise<WPTag> {
 	const url = `${WP_API_BASE_URL}/tags/${id}`;
-	return cachedFetch(`tag-${id}`, () => fetchWithErrorHandling<unknown>(url));
+	return cachedFetch(`tag-${id}`, () => fetchWithErrorHandling<WPTag>(url));
 }
 
-export async function fetchAllWPTags(lang: Locale = DEFAULT_LOCALE): Promise<unknown[]> {
+export async function fetchAllWPTags(lang: Locale = DEFAULT_LOCALE): Promise<WPTag[]> {
 	const url = `${WP_API_BASE_URL}/tags?per_page=100&lang=${encodeURIComponent(lang)}`;
-	return cachedFetch(`all-tags-${lang}`, () => fetchWithErrorHandling<unknown[]>(url));
+	return cachedFetch(`all-tags-${lang}`, () => fetchWithErrorHandling<WPTag[]>(url));
 }
 
 export async function fetchWPGuides(lang: Locale = DEFAULT_LOCALE): Promise<WPGuide[]> {

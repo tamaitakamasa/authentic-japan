@@ -18,6 +18,17 @@ export interface WPLink {
 	href: string;
 }
 
+export interface WPTag {
+  id: number;
+  count: number;
+  description: string;
+  link: string;
+  name: string;
+  slug: string;
+  taxonomy: string;
+  parent: number;
+}
+
 export interface WPImageSizes {
 	thumbnail: string;
 	'thumbnail-width': number;
