@@ -8,8 +8,9 @@ import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
 // import Script from 'next/script';
 // import ReactQueryProvider from '@/components/ReactQueryProvider';
 // import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
+import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
-// import Header from '@/components/Layout/Header';
+
 
 export const metadata: Metadata = {
 	title: SITE_TITLE,
@@ -50,7 +51,7 @@ export default async function RootLayout({ children, params: { lang } }: { child
 		<html lang={lang} className={`${notoSansJP.variable} ${notoSerifJP.variable} ${ebGaramond.variable} ${montserrat.variable}`}>
 			<body className='l-body'>
 				{/* <ScrollBarWidthManager /> */}
-				{/* <Header lang={lang} /> */}
+				<Header lang={lang} />
 				<main className="l-contents">
 					<div className="c-container">{children}</div>
 				</main>
