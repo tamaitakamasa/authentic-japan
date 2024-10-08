@@ -21,6 +21,10 @@
 			justify-content: space-between;
 			gap: 20px;
 
+			@include g.mq(md) {
+				flex-direction: column;
+			}
+
 			& > li {
 				& > a {
 					font-weight: 700;
