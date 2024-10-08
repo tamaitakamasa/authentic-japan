@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Locale } from '@/constants/site';
 // import { useTranslations } from '@/lib/i18n';
 import { getFormattedRegionData } from '@/lib/utils';
-// import { ContentHeader } from '@/components/ContentHeader';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
@@ -13,7 +13,7 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 	// console.log('regions:', regions);
 	return (
 		<>
-			{/* <ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} /> */}
+			<ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} />
 			<div className="l-contents__body p-page-region">
 				<div className="p-page-region__index">
 					<figure className="p-page-region__map">
