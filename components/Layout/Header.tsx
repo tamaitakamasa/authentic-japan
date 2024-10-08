@@ -1,7 +1,7 @@
 import { Locale, NAVI_ITEMS, SITE_TITLE } from '@/constants/site';
 import Link from 'next/link';
 import React from 'react';
-// import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Image from 'next/image';
 
 export default function Header({ lang }: { lang: Locale }) {
@@ -23,7 +23,7 @@ export default function Header({ lang }: { lang: Locale }) {
 					</ul>
 				</div>
 				<div className="l-header__langSwitcher">
-					{/* <LanguageSwitcher currentLang={lang} /> */}
+					<LanguageSwitcher currentLang={lang} />
 				</div>
 			</div>
 		</header>
