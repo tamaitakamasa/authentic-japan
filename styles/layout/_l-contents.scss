@@ -15,6 +15,11 @@
 		display: flex;
 		justify-content: space-between;
 		@include g.clamp(padding-bottom, 80, 60);
+
+		@include g.mq(md) {
+			flex-direction: column;
+			gap: 24px;
+		}
 	}
 
 	&__title {
@@ -22,6 +27,10 @@
 		font-weight: 400;
 		@include g.font-clamp('7xl', '6xl');
 		color: g.$color-main;
+
+		@include g.mq(md) {
+			font-size: g.$font-size-5xl;
+		}
 	}
 
 	&__breadcrumb {

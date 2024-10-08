@@ -8,12 +8,22 @@
 	&__header {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
+
+		@include g.mq(md) {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
 	}
 
 	&__description {
+		@include g.font-clamp('md', 'sm');
 		font-weight: 500;
 		text-align: right;
 		line-height: 3;
+
+		@include g.mq(md) {
+			text-align: left;
+		}
 	}
 
 	&__items {
