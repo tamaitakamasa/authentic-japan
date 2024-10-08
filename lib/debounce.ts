@@ -4,16 +4,16 @@
  * @param delay 遅延時間（ミリ秒）
  * @returns debounceされた関数
  */
-export const debounce = <T extends any[], R>(callback: (...args: T) => R, delay: number = 0): ((...args: T) => void) => {
+export const debounce = <T extends unknown[], R>(callback: (...args: T) => R, delay: number = 0): ((...args: T) => void) => {
 	let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	return (...args: T): void => {
-		if (timeoutId) {
-			clearTimeout(timeoutId);
-		}
+			if (timeoutId) {
+					clearTimeout(timeoutId);
+			}
 
-		timeoutId = setTimeout(() => {
-			callback(...args);
-		}, delay);
+			timeoutId = setTimeout(() => {
+					callback(...args);
+			}, delay);
 	};
 };

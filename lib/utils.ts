@@ -1,6 +1,6 @@
 import { DEFAULT_LOCALE, Locale } from '@/constants/site';
 import { Guide, Activity, Region } from '@/types';
-import { BokunSearchParams, fetchAllWPTags, fetchWPGuides, fetchWPRegions, fetchWPTag, fetchWPTours, postSearchActivities } from './fetchData';
+import { BokunSearchParams, fetchAllWPTags, fetchWPGuides, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
 
 // タグ情報のキャッシュ
 let tagCache: Map<number, { name: string; slug: string }> | null = null;
@@ -85,17 +85,6 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 					  })
 					: [];
 
-				// const tags = await Promise.all(
-				// 	(wpTour?.tags || []).map(async (tagId) => {
-				// 		const tagInfo = await fetchWPTag(tagId);
-				// 		return {
-				// 			id: tagInfo.id,
-				// 			name: tagInfo.name,
-				// 			slug: tagInfo.slug
-				// 		};
-				// 	})
-				// );
-
 				const formattedDuration = formatDuration(item.fields.durationWeeks || 0, item.fields.durationDays || 0, item.fields.durationHours || 0);
 				const totalDays = (item.fields.durationWeeks || 0) * 7 + (item.fields.durationDays || 0);
 				// const fields = item.fields || {};
@@ -128,7 +117,7 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 }
 
 function formatDuration(weeks: number, days: number, hours: number): string {
-	let totalDays = weeks * 7 + days;
+	const totalDays = weeks * 7 + days;
 
 	if (totalDays > 0) {
 		return `${totalDays} Day${totalDays > 1 ? 's' : ''}`;

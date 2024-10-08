@@ -1,4 +1,4 @@
-import { BokunResponseData, Guide, Activity, WPSiteContent, WPLocationData, WPRegion, WPGuide, WPTour } from '@/types';
+import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour } from '@/types';
 import { Locale, DEFAULT_LOCALE } from '@/constants/site';
 
 const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
@@ -34,39 +34,39 @@ async function fetchWithErrorHandling<T>(url: string, options?: RequestInit): Pr
 }
 
 // キャッシュオブジェクト
-const cache: Record<string, any> = {};
+const cache: Record<string, unknown> = {};
 
 // キャッシュ付きfetch関数
 async function cachedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
-  const start = Date.now();
-  let source: 'cache' | 'fetch';
+	const start = Date.now();
+	let source: 'cache' | 'fetch';
 
-  if (process.env.NODE_ENV === 'development') {
-    // 開発環境ではキャッシュを使用しない
-    const data = await fetcher();
-    source = 'fetch';
-    const end = Date.now();
-    const duration = end - start;
-    console.log(`fetched: ${key} (${duration}ms)`);
-    return data;
-  }
+	if (process.env.NODE_ENV === 'development') {
+		// 開発環境ではキャッシュを使用しない
+		const data = await fetcher();
+		source = 'fetch';
+		const end = Date.now();
+		const duration = end - start;
+		console.log(`${source}: ${key} (${duration}ms)`);
+		return data;
+	}
 
-  if (cache[key]) {
-    source = 'cache';
-    const data = cache[key];
-    const end = Date.now();
-    const duration = end - start;
-    console.log(`cached: ${key} (${duration}ms)`);
-    return data;
-  }
+	if (cache[key]) {
+		source = 'cache';
+		const data = cache[key] as T;
+		const end = Date.now();
+		const duration = end - start;
+		console.log(`${source}: ${key} (${duration}ms)`);
+		return data;
+	}
 
-  const data = await fetcher();
-  cache[key] = data;
-  source = 'fetch';
-  const end = Date.now();
-  const duration = end - start;
-  console.log(`fetched: ${key} (${duration}ms)`);
-  return data;
+	const data = await fetcher();
+	cache[key] = data;
+	source = 'fetch';
+	const end = Date.now();
+	const duration = end - start;
+	console.log(`${source}: ${key} (${duration}ms)`);
+	return data;
 }
 
 export async function postSearchActivities(params: BokunSearchParams, lang: Locale = DEFAULT_LOCALE): Promise<BokunResponseData> {
@@ -87,26 +87,14 @@ export async function getWPSiteOptions(lang: Locale = DEFAULT_LOCALE): Promise<W
 	return cachedFetch(`options-${lang}`, () => fetchWithErrorHandling<WPSiteContent>(url));
 }
 
-// export async function getWPLocationData(lang: Locale = DEFAULT_LOCALE): Promise<WPLocationData> {
-// 	const wpSiteOptions = await getWPSiteOptions(lang);
-
-// 	// 型ガードを使用してundefinedでないことを確認
-// 	if (!wpSiteOptions.locations) {
-// 		throw new Error('Location data is missing from WP Site Options');
-// 	}
-
-// 	// locationGroups をそのまま返す
-// 	return { locationGroups: wpSiteOptions.locations };
-// }
-
-export async function fetchWPTag(id: number): Promise<any> {
+export async function fetchWPTag(id: number): Promise<unknown> {
 	const url = `${WP_API_BASE_URL}/tags/${id}`;
-	return cachedFetch(`tag-${id}`, () => fetchWithErrorHandling<any>(url));
+	return cachedFetch(`tag-${id}`, () => fetchWithErrorHandling<unknown>(url));
 }
 
-export async function fetchAllWPTags(lang: Locale = DEFAULT_LOCALE): Promise<any[]> {
-  const url = `${WP_API_BASE_URL}/tags?per_page=100&lang=${encodeURIComponent(lang)}`;
-  return cachedFetch(`all-tags-${lang}`, () => fetchWithErrorHandling<any[]>(url));
+export async function fetchAllWPTags(lang: Locale = DEFAULT_LOCALE): Promise<unknown[]> {
+	const url = `${WP_API_BASE_URL}/tags?per_page=100&lang=${encodeURIComponent(lang)}`;
+	return cachedFetch(`all-tags-${lang}`, () => fetchWithErrorHandling<unknown[]>(url));
 }
 
 export async function fetchWPGuides(lang: Locale = DEFAULT_LOCALE): Promise<WPGuide[]> {
@@ -123,8 +111,6 @@ export async function fetchWPTours(lang: Locale = DEFAULT_LOCALE): Promise<WPTou
 	const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(lang)}&acf_format=standard`;
 	return cachedFetch(`tours-${lang}`, () => fetchWithErrorHandling<WPTour[]>(url));
 }
-
-
 
 // export async function fetchMergedActivities(searchParams: BokunSearchParams, lang: Locale = DEFAULT_LOCALE): Promise<Activity[]> {
 //   try {
