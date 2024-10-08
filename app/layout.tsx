@@ -8,7 +8,7 @@ import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
 import Script from 'next/script';
 // import ReactQueryProvider from '@/components/ReactQueryProvider';
 // import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
-// import Footer from '@/components/Layout/Footer';
+import Footer from '@/components/Layout/Footer';
 // import Header from '@/components/Layout/Header';
 
 export const metadata: Metadata = {
@@ -53,7 +53,7 @@ export default async function RootLayout({ children, params: { lang } }: { child
 				<main className="l-contents">
 					<div className="c-container">{children}</div>
 				</main>
-				{/* <Footer lang={lang} /> */}
+				<Footer lang={lang} />
 				<Script src="https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=f34383c7-3179-43f7-a169-d3058ddf6840" strategy="lazyOnload" />
 			</body>
 		</html>
