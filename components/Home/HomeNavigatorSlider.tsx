@@ -9,12 +9,13 @@ import 'swiper/css/autoplay';
 import 'swiper/css/navigation';
 import { Guide } from '@/types';
 import { Locale } from '@/constants/site';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { NavigatorCard } from '@/components/Navigator/NavigatorCard';
 
 export function HomeNavigatorSlider({ lang, guides }: { lang: Locale; guides: Guide[] }) {
 	const [activeIndex, setActiveIndex] = useState(0);
+	const [spaceBetween, setSpaceBetween] = useState(40);
 	const swiperRef = useRef<SwiperType | null>(null);
 
 	const handleGuideClick = (index: number) => {
@@ -24,11 +25,26 @@ export function HomeNavigatorSlider({ lang, guides }: { lang: Locale; guides: Gu
 		}
 	};
 
+	useEffect(() => {
+		const handleResize = () => {
+			if (window.innerWidth < 768) {
+				setSpaceBetween(20); // スマートフォンサイズの場合
+			} else {
+				setSpaceBetween(40); // それ以外の場合
+			}
+		};
+
+		handleResize(); // 初期化時に一度実行
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
 	return (
 		<div className="p-home-navigators-slider">
 			<Swiper
 				modules={[Autoplay, Navigation]}
-				spaceBetween={40}
+				spaceBetween={spaceBetween}
 				slidesPerView={1}
 				initialSlide={1}
 				autoplay={{

@@ -8,6 +8,11 @@
 	position: relative;
 	height: 168px;
 
+	@include g.mq(md) {
+		height: auto;
+		padding-block: 24px;
+	}
+
 	& * {
 		font-family: g.$font-montserrat;
 	}
@@ -26,6 +31,7 @@
 			top: auto;
 			left: auto;
 			transform: none;
+			width: 240px;
 		}
 	}
 
@@ -35,6 +41,10 @@
 		align-items: center;
 		height: 100%;
 		padding-inline: g.$base-spacing;
+
+		@include g.mq(md) {
+			height: auto;
+		}
 	}
 
 	&__navi {

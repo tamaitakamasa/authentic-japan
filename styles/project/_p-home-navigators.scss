@@ -13,12 +13,18 @@
 		font-weight: 400;
 		@include g.font-clamp('8xl', '7xl');
 		text-align: center;
-		// text-wrap: balance;
+		text-wrap: balance;
+
+		@include g.mq(md) {
+			font-size: g.$font-size-5xl;
+		}
 	}
 
 	&__text {
 		@include g.clamp(margin-top, 80, 60);
+		@include g.font-clamp('md', 'sm');
 		text-align: center;
+		text-wrap: balance;
 		line-height: 3;
 	}
 
@@ -30,6 +36,10 @@
 			overflow: visible !important;
 			width: 33.333vi;
 			// overflow: clip !important;
+
+			@include g.mq(md) {
+				width: 70vi;
+			}
 		}
 
 

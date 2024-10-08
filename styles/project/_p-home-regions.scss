@@ -40,6 +40,10 @@
 
 	&__slider {
 		@include g.clamp(margin-top, 80, 60);
+
+		@include g.mq(md) {
+			display: none;
+		}
 	}
 
 	&-slider {
