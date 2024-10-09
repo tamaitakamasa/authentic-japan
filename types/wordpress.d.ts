@@ -175,10 +175,10 @@ export interface WPGalleryItem {
 	sizes: WPImageSizes;
 }
 
-export interface WPArticleWithDetails extends WPArticle {
-	featured_media_item?: WPMediaItem;
-	category_details: WPCategory[];
-}
+// export interface WPArticleWithDetails extends WPArticle {
+// 	featured_media_item?: WPMediaItem;
+// 	category_details: WPCategory[];
+// }
 
 export interface WPNewsArticle extends WPArticle {
 	acf: {
@@ -216,8 +216,6 @@ export interface WPTour extends WPArticle {
 	acf: {
 		bokun_id: string;
 		guide: number[];
-		// guide: string[];
-		// regions?: string[];
 	};
 }
 

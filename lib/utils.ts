@@ -23,7 +23,6 @@ async function getCategoryCache(lang: Locale): Promise<Map<number, { name: strin
 	return categoryCache;
 }
 
-
 export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Promise<Guide[]> {
 	const [guides, regions, tagCacheResult] = await Promise.all([fetchWPGuides(lang), fetchWPRegions(lang), getTagCache(lang)]);
 
@@ -36,7 +35,7 @@ export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Prom
 				? guide.tags.map((tagId) => {
 						const tagInfo = tagCacheResult.get(tagId);
 						return tagInfo ? { id: tagId, name: tagInfo.name, slug: tagInfo.slug } : { id: tagId, name: '', slug: '' };
-				})
+				  })
 				: [];
 			// const tags = guide.tags ? await Promise.all(guide.tags.map(fetchWPTag)) : [];
 
@@ -130,33 +129,37 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 }
 
 export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promise<News[]> {
-	const [newsArticles, categoryCacheResult] = await Promise.all([fetchNewsArticles(lang), getCategoryCache(lang)]);
+	const [newsArticles, formattedGuides, categoryCacheResult] = await Promise.all([fetchNewsArticles(lang), getFormattedGuideData(lang), getCategoryCache(lang)]);
 
 	const formattedNewsArticles = await Promise.all(
 		newsArticles.map(async (article) => {
 			// console.log('categories:', article.categories);
+			const guideIds = article?.acf.guide || [];
+			const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
 			const categories = article.categories
 				? article.categories.map((categoryId) => {
 						const categoryInfo = categoryCacheResult.get(categoryId);
 						return categoryInfo ? { id: categoryId, name: categoryInfo.name, slug: categoryInfo.slug } : { id: categoryId, name: '', slug: '' };
-				})
+				  })
 				: [];
 
 			return {
-				...article,
-				news_categories: categories.map((category) => ({
+				id: article.id,
+				date: article.date,
+				title: article.title.rendered,
+				content: article.content.rendered,
+				categories: categories.map((category) => ({
 					id: category.id,
 					name: category.name,
 					slug: category.slug
 				})),
+				guides: guides
 			};
 		})
 	);
 
 	return formattedNewsArticles;
 }
-
-
 
 function formatDuration(weeks: number, days: number, hours: number): string {
 	const totalDays = weeks * 7 + days;
@@ -187,7 +190,7 @@ export function filterActivities(activities: Activity[], filters: { guideId: num
 }
 
 export function extractVideoID(url: string): string | null {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+	const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+	const match = url.match(regExp);
+	return match && match[2].length === 11 ? match[2] : null;
 }

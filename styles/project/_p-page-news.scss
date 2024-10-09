@@ -1,0 +1,15 @@
+// project/_p-page-news.scss
+
+@use '../global' as g;
+
+.p-page-news {
+
+	padding-top: 0;
+
+	&__items {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 60px;
+		// @include g.clamp(margin-top, 80, 60);
+	}
+}

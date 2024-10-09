@@ -15,6 +15,7 @@
 		display: flex;
 		justify-content: space-between;
 		@include g.clamp(padding-bottom, 80, 60);
+		border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
 
 		@include g.mq(md) {
 			flex-direction: column;

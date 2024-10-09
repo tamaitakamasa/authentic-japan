@@ -1,4 +1,4 @@
-import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPArticle, WPCategory, } from '@/types';
+import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPCategory, WPNewsArticle, } from '@/types';
 import { Locale, DEFAULT_LOCALE } from '@/constants/site';
 
 const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
@@ -117,9 +117,9 @@ export async function fetchWPTours(lang: Locale = DEFAULT_LOCALE): Promise<WPTou
 	return cachedFetch(`tours-${lang}`, () => fetchWithErrorHandling<WPTour[]>(url));
 }
 
-export async function fetchNewsArticles(lang: Locale = DEFAULT_LOCALE): Promise<WPArticle[]> {
+export async function fetchNewsArticles(lang: Locale = DEFAULT_LOCALE): Promise<WPNewsArticle[]> {
 	const url = `${WP_API_BASE_URL}/posts?lang=${encodeURIComponent(lang)}&acf_format=standard`;
-	return cachedFetch(`news-${lang}`, () => fetchWithErrorHandling<WPGuide[]>(url));
+	return cachedFetch(`news-${lang}`, () => fetchWithErrorHandling<WPNewsArticle[]>(url));
 }
 
 
