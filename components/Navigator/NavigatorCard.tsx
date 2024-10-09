@@ -11,7 +11,7 @@ export function NavigatorCard({ lang, guide }: { lang: Locale; guide: Guide }) {
 	return (
 		<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-card">
 			<figure className="c-navigator-card__image">
-				<Image src={guide.mv?.link ?? '/default-image.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+				<Image src={guide.mv?.sizes['1536x1536'] ?? '/default-image.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
 			</figure>
 			<div className="c-navigator-card__inner">
 				<h3 className="c-navigator-card__copy">
