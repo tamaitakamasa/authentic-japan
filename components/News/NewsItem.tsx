@@ -1,7 +1,8 @@
-import { Locale } from '@/constants/site';
+// import { Locale } from '@/constants/site';
 import { News } from '@/types';
+import NavigatorInfo from '../Navigator/NavigatorInfo';
 
-export default function NewsItem({ lang, article }: { lang: Locale; article: News }) {
+export default function NewsItem({ article }: { article: News }) {
 	// const guide = article.ac
 	return (
 		<div className="c-news">
@@ -23,13 +24,11 @@ export default function NewsItem({ lang, article }: { lang: Locale; article: New
 						<div className="c-news__guides">
 							{article.guides.map((guide) => (
 								<div key={guide.id} className="c-news__guide">
-									{/* <NavigatorInfo lang={lang} guide={guide} /> */}
-									{guide.name}
+									<NavigatorInfo guide={guide} />
 								</div>
 							))}
 						</div>
 					)}
-					<p>{lang}</p>
 				</div>
 			</div>
 		</div>

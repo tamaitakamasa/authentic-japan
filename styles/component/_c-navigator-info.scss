@@ -1,0 +1,35 @@
+// component/_c-navigator-info.scss
+
+@use '../global' as g;
+
+.c-navigator-info {
+	$this: &;
+
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 12px;
+
+	&__photo {
+		position: relative;
+		aspect-ratio: 1 / 1;
+		width: 70px;
+		height: auto;
+		border-radius: calc(infinity * 1px);
+		overflow: hidden;
+	}
+
+	&__name {
+		font-size: g.$font-size-sm;
+		font-weight: 700;
+	}
+
+	&__title {
+		font-family: g.$font-noto-sans;
+		font-size: g.$font-size-sm;
+		font-weight: 700;
+		color: #939393;
+		letter-spacing: 0.15em;
+		line-height: 1;
+	}
+}
