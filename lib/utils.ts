@@ -33,7 +33,9 @@ export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Prom
 				id: guide.id,
 				title: guide.acf.title,
 				name: guide.acf.name,
-				photo: guide.acf.photo?.sizes?.large,
+				mv: guide.acf.mv,
+				photo: guide.acf.photo,
+				copy: guide.acf.copy,
 				description: guide.acf.description,
 				regionIds: guide.acf.region ?? [], // nullish coalescing operator を使用
 				regions: guide.acf.region?.map((id) => regionMap.get(id) || '').filter((name): name is string => name !== '') ?? [],

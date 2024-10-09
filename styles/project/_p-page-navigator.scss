@@ -11,7 +11,7 @@
 		align-items: flex-start;
 	}
 
-	&__image {
+	&__mv {
 		position: relative;
 		aspect-ratio: 3 / 4;
 		width: 100%;
@@ -80,10 +80,17 @@
 		letter-spacing: 0.15em;
 	}
 
-	&__description {
+	&__copy {
 		@include g.clamp(margin-top, 60, 40);
 		@include g.font-clamp('5xl', '4xl');
+		font-weight: 400;
 		line-height: 1.2;
+	}
+
+	&__description {
+		@include g.clamp(margin-top, 60, 40);
+		@include g.font-clamp('md', 'sm');
+		// line-height: 1.2;
 	}
 
 	&__values-title {

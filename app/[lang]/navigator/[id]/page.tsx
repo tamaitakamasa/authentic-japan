@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Locale } from '@/constants/site';
-import { useTranslations } from '@/lib/i18n';
+// import { useTranslations } from '@/lib/i18n';
 import { notFound } from 'next/navigation';
 import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
@@ -15,7 +15,7 @@ import Link from 'next/link';
 // }
 
 export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
-	const t = useTranslations(lang);
+	// const t = useTranslations(lang);
 	const guides = await getFormattedGuideData(lang);
 	const otherGuides = guides.filter((g) => g.id !== parseInt(id));
 	const guide = guides.find((g) => g.id === parseInt(id));
@@ -33,7 +33,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 
 			<div className="l-contents__body p-page-navigator">
 				<div className="p-page-navigator__profile">
-					<figure className="p-page-navigator__image">{guide.photo && <Image src={guide.photo} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
+					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
 					<div className="p-page-navigator__detail">
 						{guide.regions && guide.regions.length > 0 && (
 							<div className="p-page-navigator__region">
@@ -50,9 +50,9 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 								</span>
 							))}
 						</div>
+						<h2 className="p-page-navigator__copy" dangerouslySetInnerHTML={{ __html: guide.copy || '' }} />
 						<div className="p-page-navigator__description" dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
-
-						{guide.values && guide.values.length > 0 && (
+						{/* {guide.values && guide.values.length > 0 && (
 							<>
 								<h2 className="p-page-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
 								<div className="p-page-navigator__values">
@@ -64,7 +64,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 									))}
 								</div>
 							</>
-						)}
+						)} */}
 					</div>
 				</div>
 

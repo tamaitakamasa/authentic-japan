@@ -45,7 +45,7 @@ export function TourItem({ activity, className }: { activity: Activity; classNam
 							<div key={index} className="c-tour__guide">
 								{guide.photo && (
 									<figure className="c-tour__guide-image">
-										<Image src={guide.photo} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
+										<Image src={guide.photo.link} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
 									</figure>
 								)}
 								<div className="c-tour__guide-info">

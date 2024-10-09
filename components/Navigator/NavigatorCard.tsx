@@ -11,11 +11,11 @@ export function NavigatorCard({ lang, guide }: { lang: Locale; guide: Guide }) {
 	return (
 		<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-card">
 			<figure className="c-navigator-card__image">
-				<Image src={guide.photo ?? '/default-image.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+				<Image src={guide.mv?.link ?? '/default-image.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
 			</figure>
 			<div className="c-navigator-card__inner">
-				<h3 className="c-navigator-card__description">
-					<p>{guide.description}</p>
+				<h3 className="c-navigator-card__copy">
+					<p>{guide.copy}</p>
 				</h3>
 				{guide.regions && guide.regions.length > 0 && (
 					<div className="c-navigator-card__region">
@@ -23,8 +23,17 @@ export function NavigatorCard({ lang, guide }: { lang: Locale; guide: Guide }) {
 						<span>{guide.regions.join(', ')}</span>
 					</div>
 				)}
-				<h2 className="c-navigator-card__name">{guide.name}</h2>
-				<h2 className="c-navigator-card__title">{guide.title}</h2>
+				<div className="c-navigator-card__cols">
+					<div className="c-navigator-card__col-left">
+						<div className="c-navigator-card__photo">
+							<Image src={guide.photo?.link ?? '/default-image.jpg'} alt="" fill sizes="20vw" style={{ objectFit: 'cover' }} />
+						</div>
+					</div>
+					<div className="c-navigator-card__col-right">
+						<h2 className="c-navigator-card__name">{guide.name}</h2>
+						<h3 className="c-navigator-card__title">{guide.title}</h3>
+					</div>
+				</div>
 				<div className="c-navigator-card__tags">
 					{guide.tags.map((tag) => (
 						<span key={tag.id} className="c-navigator-card__tag">

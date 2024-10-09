@@ -75,7 +75,7 @@ export function HomeNavigatorSlider({ lang, guides }: { lang: Locale; guides: Gu
 					{guides.map((guide, index) => (
 						<button key={guide.id} className={`p-home-navigators-slider__navi-item c-navigator-circle u-hover ${index === activeIndex ? 'is-active' : ''}`} onClick={() => handleGuideClick(index)}>
 							<figure className="c-navigator-circle__thumb">
-								<Image src={guide.photo ?? '/no-photo.jpg'} alt={guide.name} fill sizes="20vw" style={{ objectFit: 'cover' }} />
+								<Image src={guide.photo?.link ?? '/no-photo.jpg'} alt={guide.name} fill sizes="20vw" style={{ objectFit: 'cover' }} />
 							</figure>
 							<h3 className="c-navigator-circle__name">{guide.name}</h3>
 							{guide.regions && guide.regions.length > 0 && (

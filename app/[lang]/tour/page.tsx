@@ -24,17 +24,6 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
 			<div className="l-contents__body p-page-tours">
 				<ClientFilteredActivities lang={lang} initialActivities={activities} guides={guides} regions={regions} tags={allTags} />
-				{/* <div className="p-activity__items">
-				{activities.length > 0 ? (
-					activities.map((activity) => (
-						<div key={activity.id} className="p-activity__item">
-							<TourItem activity={activity} />
-						</div>
-					))
-				) : (
-					<p>アクティビティが見つかりません。</p>
-				)}
-			</div> */}
 			</div>
 		</>
 	);

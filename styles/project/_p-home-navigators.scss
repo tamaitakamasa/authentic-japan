@@ -34,7 +34,8 @@
 
 		.swiper {
 			overflow: visible !important;
-			width: 33.333vi;
+			width: 35vi;
+			// width: 33.333vi;
 			// overflow: clip !important;
 
 			@include g.mq(md) {

@@ -5,9 +5,11 @@ export interface Guide {
 	wpPostId?: number;
 	title: string;
 	name: string;
-	photo?: string;
+	mv?: WPGalleryItem;
+	photo?: WPGalleryItem;
+	copy?: string;
 	description?: string;
-	career?: string;
+	// career?: string;
 	regionIds?: number[];
 	regions?: string[];
 	tags: {

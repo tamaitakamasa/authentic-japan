@@ -79,10 +79,12 @@ export interface WPGalleryItem {
 
 export interface WPGuide extends WPArticle {
 	acf: {
-		vendor_id: string;
+		// vendor_id: string;
 		title: string;
 		name: string;
+		mv: WPGalleryItem;
 		photo: WPGalleryItem;
+		copy: string;
 		description: string;
 		career: string;
 		region: number[];

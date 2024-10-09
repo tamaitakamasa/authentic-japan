@@ -10,11 +10,11 @@ export function NavigatorItem({ lang, guide }: { lang: Locale; guide: Guide }) {
 		<div className="c-navigator">
 			<div className="c-navigator__header">
 				<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator__link">
-					<h3 className="c-navigator__description">
-						<p>{guide.description}</p>
+					<h3 className="c-navigator__copy">
+						<p>{guide.copy}</p>
 					</h3>
 					<figure className="c-navigator__image">
-						<Image src={guide.photo ?? '/no-photo.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+						<Image src={guide.mv?.link ?? '/no-photo.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
 					</figure>
 				</Link>
 			</div>
