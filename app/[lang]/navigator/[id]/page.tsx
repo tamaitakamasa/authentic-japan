@@ -93,7 +93,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 								<div key={guide.id} className="p-page-navigator-others__item">
 									<div className="c-navigator-circle u-hover">
 										<figure className="c-navigator-circle__thumb">
-											<Image src={guide.photo ?? '/no-photo.jpg'} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
+											<Image src={guide.photo?.link ?? '/no-photo.jpg'} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
 										</figure>
 
 										<h3 className="c-navigator-circle__name">
