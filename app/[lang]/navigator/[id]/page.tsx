@@ -6,6 +6,7 @@ import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { TourItem } from '@/components/Tour/TourItem';
 import Link from 'next/link';
+import { fetchNewsArticles } from '@/lib/fetchData';
 
 // export async function generateStaticParams({ params: { lang } }: { params: { lang: Locale } }) {
 // 	const guides = await extractGuideData(lang);
@@ -20,8 +21,9 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 	const otherGuides = guides.filter((g) => g.id !== parseInt(id));
 	const guide = guides.find((g) => g.id === parseInt(id));
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+	const newsArticles = await fetchNewsArticles(lang);
 	const filteredActivities = guide ? activities.filter((activity) => activity.guideIds?.includes(guide.id)) : [];
-	// console.log(guide);
+	console.log(newsArticles);
 
 	if (!guide) {
 		notFound();

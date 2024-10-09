@@ -8,9 +8,10 @@ import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
-import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
+import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
 // import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import Image from 'next/image';
+import NewsItem from '@/components/News/NewsItem';
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
@@ -19,7 +20,9 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-	console.log('activities:', activities);
+	// const newsArticles = await fetchNewsArticles(lang);
+	const newsArticles = await getFormattedNewsData(lang);
+	// console.log('newsArticles:', newsArticles);
 
 	return (
 		<>
@@ -95,6 +98,26 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					<div className="p-home-tours__tours c-tours">{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}</div>
 					<div className="p-home-tours__button">
 						<Button href="/tour" label="VIEW ALL TOURS" />
+					</div>
+				</div>
+
+				<div className="p-home-news">
+					<div className="p-home-news__title">
+						<h2 className="c-heading">NEWS</h2>
+					</div>
+					<div className="p-home-news__news c-news">
+						{newsArticles.length > 0 ? (
+							newsArticles.slice(0, 4).map((article) => (
+								<div key={article.id} className="c-news__article">
+									<NewsItem lang={lang} article={article} />
+								</div>
+							))
+						) : (
+							<p>ニュースが見つかりません。</p>
+						)}
+					</div>
+					<div className="p-home-news__button">
+						<Button href="/news" label="VIEW ALL NEWS" />
 					</div>
 				</div>
 			</div>

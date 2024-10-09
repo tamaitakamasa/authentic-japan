@@ -1,4 +1,4 @@
-import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag } from '@/types';
+import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPArticle, WPCategory, } from '@/types';
 import { Locale, DEFAULT_LOCALE } from '@/constants/site';
 
 const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
@@ -97,6 +97,11 @@ export async function fetchAllWPTags(lang: Locale = DEFAULT_LOCALE): Promise<WPT
 	return cachedFetch(`all-tags-${lang}`, () => fetchWithErrorHandling<WPTag[]>(url));
 }
 
+export async function fetchAllWPCategories(lang: Locale = DEFAULT_LOCALE): Promise<WPCategory[]> {
+	const url = `${WP_API_BASE_URL}/categories?per_page=100&lang=${encodeURIComponent(lang)}`;
+	return cachedFetch(`all-categories-${lang}`, () => fetchWithErrorHandling<WPCategory[]>(url));
+}
+
 export async function fetchWPGuides(lang: Locale = DEFAULT_LOCALE): Promise<WPGuide[]> {
 	const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
 	return cachedFetch(`guides-${lang}`, () => fetchWithErrorHandling<WPGuide[]>(url));
@@ -112,26 +117,46 @@ export async function fetchWPTours(lang: Locale = DEFAULT_LOCALE): Promise<WPTou
 	return cachedFetch(`tours-${lang}`, () => fetchWithErrorHandling<WPTour[]>(url));
 }
 
-// export async function fetchMergedActivities(searchParams: BokunSearchParams, lang: Locale = DEFAULT_LOCALE): Promise<Activity[]> {
-//   try {
-//     const [activitiesResponse, guides] = await Promise.all([
-//       postSearchActivities(searchParams, lang),
-//       getWPLocationData(lang)
-//     ]);
-// 		// console.log(activitiesResponse);
+export async function fetchNewsArticles(lang: Locale = DEFAULT_LOCALE): Promise<WPArticle[]> {
+	const url = `${WP_API_BASE_URL}/posts?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	return cachedFetch(`news-${lang}`, () => fetchWithErrorHandling<WPGuide[]>(url));
+}
 
-//     return activitiesResponse.items.map(item => ({
-//       id: parseInt(item.id),
-//       title: item.title,
-//       photo: item.keyPhoto?.derived.find(p => p.name === 'large')?.url || item.keyPhoto?.originalUrl,
-//       categories: item.activityCategories,
-//       price: item.price,
-//       location: item.locationCode?.name,
-//     }));
-//   } catch (error) {
-//     // エラー処理
-//     throw error;
-//   }
+
+// export async function fetchPostsWithDetails<T extends WPArticle>(
+//   fetchPostsFn: () => Promise<T[]>,
+// ): Promise<WPArticleWithDetails[]> {
+//   const [posts, categories] = await Promise.all([fetchPostsFn(), fetchWPCategories()]);
+
+//   const postsWithDetails = await Promise.all(
+//     posts.map(async (post) => {
+//       let mediaItem: WPMediaItem | undefined;
+// 			// アイキャッチ画像がある場合はその詳細を取得
+//       if (post.featured_media) {
+//         try {
+//           mediaItem = await fetchWPMediaItem(post.featured_media);
+//         } catch (error) {
+//           console.error(`Failed to fetch media for post ${post.id}:`, error);
+//         }
+//       }
+// 			// カテゴリーの詳細を取得
+//       const categoryDetails = categories.filter(category =>
+//         post.categories.includes(category.id)
+//       );
+
+//       return {
+//         ...post,
+//         featured_media_item: mediaItem,
+//         category_details: categoryDetails
+//       };
+//     }),
+//   );
+
+//   return postsWithDetails;
+// }
+
+// export async function fetchNewsArticlesWithDetails(): Promise<WPArticleWithDetails[]> {
+//   return fetchPostsWithDetails(fetchNewsArticles);
 // }
 
 export type { BokunSearchParams };

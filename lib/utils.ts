@@ -1,9 +1,10 @@
 import { DEFAULT_LOCALE, Locale } from '@/constants/site';
-import { Guide, Activity, Region } from '@/types';
-import { BokunSearchParams, fetchAllWPTags, fetchWPGuides, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
+import { Guide, Activity, Region, News } from '@/types';
+import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
 
-// タグ情報のキャッシュ
+// タグ・カテゴリー情報のキャッシュ
 let tagCache: Map<number, { name: string; slug: string }> | null = null;
+let categoryCache: Map<number, { name: string; slug: string }> | null = null;
 
 async function getTagCache(lang: Locale): Promise<Map<number, { name: string; slug: string }>> {
 	if (!tagCache) {
@@ -12,6 +13,16 @@ async function getTagCache(lang: Locale): Promise<Map<number, { name: string; sl
 	}
 	return tagCache;
 }
+
+async function getCategoryCache(lang: Locale): Promise<Map<number, { name: string; slug: string }>> {
+	if (!categoryCache) {
+		const categories = await fetchAllWPCategories(lang);
+		// console.log('categoryCache:', categories);
+		categoryCache = new Map(categories.map((category) => [category.id, { name: category.name, slug: category.slug }]));
+	}
+	return categoryCache;
+}
+
 
 export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Promise<Guide[]> {
 	const [guides, regions, tagCacheResult] = await Promise.all([fetchWPGuides(lang), fetchWPRegions(lang), getTagCache(lang)]);
@@ -117,6 +128,35 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 		throw error;
 	}
 }
+
+export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promise<News[]> {
+	const [newsArticles, categoryCacheResult] = await Promise.all([fetchNewsArticles(lang), getCategoryCache(lang)]);
+
+	const formattedNewsArticles = await Promise.all(
+		newsArticles.map(async (article) => {
+			// console.log('categories:', article.categories);
+			const categories = article.categories
+				? article.categories.map((categoryId) => {
+						const categoryInfo = categoryCacheResult.get(categoryId);
+						return categoryInfo ? { id: categoryId, name: categoryInfo.name, slug: categoryInfo.slug } : { id: categoryId, name: '', slug: '' };
+				})
+				: [];
+
+			return {
+				...article,
+				news_categories: categories.map((category) => ({
+					id: category.id,
+					name: category.name,
+					slug: category.slug
+				})),
+			};
+		})
+	);
+
+	return formattedNewsArticles;
+}
+
+
 
 function formatDuration(weeks: number, days: number, hours: number): string {
 	const totalDays = weeks * 7 + days;
