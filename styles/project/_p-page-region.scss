@@ -53,7 +53,7 @@
 		padding-right: g.$base-spacing;
 		@include g.clamp(padding-bottom, 120, 80);
 		padding-left: g.$base-spacing;
-		background-color: g.$color-main;
+		// background-color: g.$color-main;
 	}
 
 	&__mv {

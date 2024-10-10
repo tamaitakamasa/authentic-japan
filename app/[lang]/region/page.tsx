@@ -4,6 +4,7 @@ import { Locale } from '@/constants/site';
 import { getFormattedRegionData } from '@/lib/utils';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
+import { Button } from '@/components/Button';
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
@@ -35,34 +36,38 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 					</ul>
 				</div>
 				<div className="p-page-region__items u-full-bleed">
-					{regions && regions.length > 0 ? (
+					{regions.length > 0 &&
 						regions.map((region, index) => (
 							<div key={index} id={`region${region.id}`} className="p-page-region__item">
 								<div className="c-region">
+									<div className="c-region__images">
+										{region.mv && (
+											<figure className="c-region__image">
+												<Image src={region.mv} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+											</figure>
+										)}
+									</div>
 									<div className="c-region__inner">
 										<div className="c-region__content">
 											<h2 className="c-region__name">
-												<i className="c-pin"></i>
 												<span>{region.name}</span>
-												</h2>
+											</h2>
 											<div className="c-region__description">
 												<p>{region.description}</p>
 											</div>
 										</div>
-										<div className="c-region__images">
-											{region.mv && (
-												<figure className="c-region__image">
-													<Image src={region.mv} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
-												</figure>
-											)}
+										<div className="c-region__local">
+											<figure className="c-region__map">
+												<Image src="/region/map.svg" alt="" fill unoptimized />
+											</figure>
+											<div className="c-region__access">
+												<Button href={`/${lang}/tour`} label="ACCESS" />
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						))
-					) : (
-						<div>No regions available</div>
-					)}
+						))}
 				</div>
 				<figure className="p-page-region__mv u-full-bleed">
 					<Image src={regionsPage.mv.sizes['1536x1536']} alt="" fill />
