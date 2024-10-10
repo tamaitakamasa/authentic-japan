@@ -1,6 +1,5 @@
 // component/_index.scss
-@use 'c-tour';
-// @use 'c-badge';
+@use 'c-article';
 @use 'c-button';
 @use 'c-container';
 @use 'c-filter';
@@ -16,6 +15,7 @@
 @use 'c-region';
 @use 'c-section';
 @use 'c-taxonomy';
+@use 'c-tour';
 @use 'c-total';
 @use 'c-tours';
 // @use 'c-vendor';

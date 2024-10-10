@@ -1,0 +1,350 @@
+// component/_c-article.scss
+
+@use '../global' as g;
+
+.c-article {
+	@include g.mq(md) {
+		padding-right: 5vw;
+		padding-left: 5vw;
+	}
+
+	.c-container {
+		max-width: inherit;
+		margin-right: inherit;
+		margin-left: inherit;
+		padding-right: inherit;
+		padding-left: inherit;
+	}
+
+	& > *:first-child {
+		margin-top: 0 !important;
+		padding-top: 0 !important;
+
+		&::before {
+			display: none;
+		}
+	}
+
+	h2 {
+		@include g.font-clamp('3xl', 'xl');
+		letter-spacing: 0.05em;
+		line-height: 1.4;
+	}
+
+	& > h2 {
+		@include g.clamp(margin-top, 90, 45);
+		margin-bottom: 0;
+
+		&:before {
+			content: '';
+			display: block;
+			width: 5rem;
+			height: 1px;
+			@include g.clamp(margin-bottom, 60, 40);
+			// background: g.$color-dark;
+			background: rgba($color: #000000, $alpha: 0.6);
+		}
+	}
+
+	h3 {
+		@include g.font-clamp('xl', 'md');
+		font-weight: 700;
+		line-height: 1.4;
+		letter-spacing: 0.05em;
+	}
+
+	& > h3 {
+		@include g.clamp(margin-top, 60, 30);
+		margin-bottom: 0;
+
+		& + p {
+			@include g.clamp(margin-top, 30, 25);
+		}
+
+		& + ul {
+			@include g.clamp(margin-top, 30, 25);
+		}
+	}
+
+	h4 {
+		position: relative;
+		@include g.clamp(margin-top, 60, 30);
+		margin-bottom: 0;
+		padding-left: 3rem;
+		@include g.font-clamp('md', 'sm');
+		color: g.$color-main;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 14px;
+			left: 0;
+			display: block;
+			width: 2rem;
+			height: 1px;
+			background-color: g.$color-main;
+		}
+
+		& + p {
+			@include g.clamp(margin-top, 30, 25);
+		}
+	}
+
+	p {
+		@include g.font-clamp('md', 'sm');
+	}
+
+	& > p {
+		@include g.clamp(margin-top, 60, 30);
+
+		& + p {
+			@include g.clamp(margin-top, 30, 25);
+		}
+	}
+
+	ul {
+		@include g.clamp(margin-top, 60, 30);
+
+		li {
+			list-style-type: circle;
+			// list-style-position: inside;
+			list-style-position: outside;
+			@include g.clamp(margin-top, 15, 10);
+			margin-left: 1.2em;
+			@include g.font-clamp('md', 'sm');
+
+			&:first-of-type {
+				margin-top: 0;
+			}
+		}
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	a {
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
+	iframe {
+		@include g.clamp(margin-top, 60, 30);
+		max-width: 100%;
+	}
+
+	.wp-block-image {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		figcaption {
+			@include g.clamp(margin-top, 15, 10);
+			@include g.font-clamp('xs', 'xs');
+			font-weight: 700;
+			color: #888787;
+			line-height: 1.4;
+		}
+	}
+
+	.wp-block-image {
+		@include g.clamp(margin-top, 60, 30);
+		margin-right: 0;
+		@include g.clamp(margin-bottom, 60, 30);
+		margin-left: 0;
+	}
+
+	.wp-block-gallery {
+		@include g.clamp(margin-top, 60, 30);
+		@include g.clamp(margin-bottom, 60, 30);
+
+		figure {
+			display: block;
+		}
+
+		figcaption {
+			position: relative;
+			display: block;
+			margin-top: 0;
+			padding: 0;
+			background: none;
+			@include g.font-clamp('xs', 'xs');
+			font-weight: 700;
+			color: #888787;
+			line-height: 1.4;
+		}
+	}
+
+	.wp-block-media-text {
+		@include g.clamp(margin-top, 60, 30);
+		@include g.clamp(margin-bottom, 60, 30);
+	}
+
+	.wp-block-snow-monkey-blocks-panels {
+		@include g.clamp(margin-top, 60, 30);
+		@include g.clamp(margin-bottom, 60, 30);
+
+		.smb-panels__item__content {
+			@include g.font-clamp('xs', 'xs');
+		}
+	}
+
+	.wp-block-embed {
+		@include g.clamp(margin-top, 60, 30);
+
+		figcaption {
+			@include g.clamp(margin-top, 15, 10);
+			@include g.font-clamp('xs', 'xs');
+			font-weight: 700;
+			color: #888787;
+			line-height: 1.4;
+			text-align: center;
+		}
+	}
+
+	.wp-embed-aspect-16-9 {
+		.wp-block-embed__wrapper {
+			position: relative;
+			width: 100%;
+			padding-top: 56%;
+
+			iframe {
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 100% !important;
+				height: 100% !important;
+			}
+		}
+	}
+
+	.wp-block-columns {
+		@include g.clamp(margin-top, 60, 30);
+		@include g.clamp(margin-bottom, 60, 30);
+	}
+
+	.wp-block-column {
+		.wp-block-gallery {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		h3 {
+			@include g.clamp(margin-top, 30, 15);
+
+			&:first-of-type {
+				margin-top: 0;
+			}
+
+			&::after {
+				content: '';
+				display: block;
+				width: 100%;
+				height: 1px;
+				margin-top: 5px;
+				margin-bottom: 10px;
+				background-color: rgba($color: #000000, $alpha: 0.3);
+			}
+		}
+	}
+
+	.wp-block-buttons {
+		display: flex;
+		@include g.clamp(margin-top, 60, 30);
+		@include g.clamp(margin-bottom, 60, 30);
+	}
+	.wp-block-button {
+		background-color: g.$color-main;
+		border-radius: 20px;
+
+		a {
+			@include g.clamp(padding, 20, 15);
+			@include g.font-clamp('md', 'sm');
+			color: #ffffff;
+		}
+	}
+
+	.wp-block-separator {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		@include g.clamp(margin-top, 60, 30);
+		width: 25%;
+		border-top: none;
+		border-color: rgba($color: #000000, $alpha: 0.5);
+	}
+
+	.wp-block-snow-monkey-blocks-media-text {
+		@include g.clamp(margin-top, 40, 20);
+
+		h2,
+		h3 {
+			margin-top: 0 !important;
+		}
+	}
+
+	.wp-block-snow-monkey-blocks-buttons {
+		@include g.clamp(margin-top, 60, 30);
+
+		.smb-btn {
+			@include g.clamp(padding-top, 20, 10);
+			@include g.clamp(padding-bottom, 20, 10);
+			background-color: g.$color-main;
+			@include g.font-clamp('xl', 'sm');
+			font-weight: bold;
+		}
+	}
+
+	.wp-block-snow-monkey-blocks-alert {
+		@include g.clamp(margin-top, 40, 20);
+
+		.smb-alert__title {
+			i {
+				margin-right: 5px;
+			}
+		}
+
+		.smb-alert__body {
+			p {
+				&:first-of-type {
+					margin-top: 0 !important;
+				}
+			}
+		}
+	}
+
+	.wp-block-snow-monkey-blocks-section {
+		.smb-section__lede {
+			@include g.font-clamp('sm', 'xs');
+		}
+		.smb-section__body {
+			// h2 {
+			//   @include g.clamp(margin-top, 40, 20);
+
+			//   & + p {
+			//     @include g.clamp(margin-top, 15, 5);
+			//   }
+			// }
+
+			h3 {
+				@include g.clamp(margin-top, 40, 20);
+
+				& + p {
+					@include g.clamp(margin-top, 15, 5);
+				}
+			}
+
+			// p {
+			//   @include g.clamp(margin-top, 30, 15);
+
+			//   & + p {
+			//     @include g.clamp(margin-top, 15, 5);
+			//   }
+			// }
+		}
+	}
+}

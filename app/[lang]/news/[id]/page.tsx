@@ -1,21 +1,15 @@
-// import Image from 'next/image';
-import { Locale } from '@/constants/site';
-// import { useTranslations } from '@/lib/i18n';
-import { notFound } from 'next/navigation';
-// import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-// import { TourItem } from '@/components/Tour/TourItem';
-// import Link from 'next/link';
-// import { fetchNewsArticles } from '@/lib/fetchData';
-import { getFormattedNewsData } from '@/lib/utils';
 import Image from 'next/image';
+import { Locale } from '@/constants/site';
+import { notFound } from 'next/navigation';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { getFormattedNewsData } from '@/lib/utils';
 import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
+import "@wordpress/block-library/build-style/style.css"
+// import "@wordpress/block-library/build-style/theme.css"
+
 
 export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
-	// const t = useTranslations(lang);
-	// const guides = await getFormattedGuideData(lang);
-	// const otherGuides = guides.filter((g) => g.id !== parseInt(id));
-	// const guide = guides.find((g) => g.id === parseInt(id));
+
 	const newsArticles = await getFormattedNewsData(lang);
 	const article = newsArticles.find((article) => article.id === parseInt(id));
 	console.log(newsArticles);
