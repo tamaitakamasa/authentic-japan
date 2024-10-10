@@ -12,7 +12,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 
 	const newsArticles = await getFormattedNewsData(lang);
 	const article = newsArticles.find((article) => article.id === parseInt(id));
-	console.log(newsArticles);
+	// console.log(newsArticles);
 
 	if (!article) {
 		notFound();
@@ -41,7 +41,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 						<div className="p-single-news__guides">
 							{article.guides.map((guide) => (
 								<div key={guide.id} className="p-single-news__guide">
-									<NavigatorInfo guide={guide} />
+									<NavigatorInfo guide={guide} link lang={lang}  />
 								</div>
 							))}
 						</div>

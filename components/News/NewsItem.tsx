@@ -3,6 +3,7 @@ import { News } from '@/types';
 import NavigatorInfo from '../Navigator/NavigatorInfo';
 import Image from 'next/image';
 import Link from 'next/link';
+// import { Locale } from '@/constants/site';
 
 export default function NewsItem({ article }: { article: News }) {
 	// console.log('featured_media:', article.featured_media);
@@ -30,7 +31,7 @@ export default function NewsItem({ article }: { article: News }) {
 						<div className="c-news__guides">
 							{article.guides.map((guide) => (
 								<div key={guide.id} className="c-news__guide">
-									<NavigatorInfo guide={guide} />
+									<NavigatorInfo guide={guide}/>
 								</div>
 							))}
 						</div>

@@ -70,20 +70,16 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 					</div>
 				</div>
 
+				{filteredActivities.length > 0 && (
 				<div className="p-page-navigator-tours">
 					<div className="p-page-navigator-tours__title">
 						<h2 className="c-heading c-heading--2">TOURS</h2>
 					</div>
 					<div className="p-page-navigator-tours__tours c-tours">
-						{filteredActivities.length > 0 ? (
-							filteredActivities.map((activity) => (
-								<TourItem key={activity.id} activity={activity} className="c-tours__tour" />
-							))
-						) : (
-							<p>アクティビティが見つかりません。</p>
-						)}
-					</div>
+						{filteredActivities.map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />)}
+						</div>
 				</div>
+				)}
 
 				<div className="p-page-navigator-others">
 					<div className="p-page-navigator-others__title">
@@ -99,7 +95,9 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 										</figure>
 
 										<h3 className="c-navigator-circle__name">
-											<Link href={`/${lang}/navigator/${guide.id}`} className='c-navigator-circle__link'>{guide.name}</Link>
+											<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-circle__link">
+												{guide.name}
+											</Link>
 										</h3>
 										{guide.regions && guide.regions.length > 0 && (
 											<div className="c-navigator-circle__region">

@@ -3,6 +3,7 @@ import { Guide } from '@/types';
 import Image from 'next/image';
 // import { useTranslations } from '@/lib/i18n';
 import Link from 'next/link';
+import NavigatorInfo from './NavigatorInfo';
 
 export function NavigatorItem({ lang, guide }: { lang: Locale; guide: Guide }) {
 	// const t = useTranslations(lang);
@@ -25,10 +26,11 @@ export function NavigatorItem({ lang, guide }: { lang: Locale; guide: Guide }) {
 						<span>{guide.regions.join(', ')}</span>
 					</div>
 				)}
-				<h2 className="c-navigator__name">
+				<NavigatorInfo className="c-navigator__info" guide={guide} link lang={lang}  />
+				{/* <h2 className="c-navigator__name">
 					<Link href={`/navigator/${guide.id}`}>{guide.name}</Link>
 				</h2>
-				<h2 className="c-navigator__title">{guide.title}</h2>
+				<h2 className="c-navigator__title">{guide.title}</h2> */}
 				<div className="c-navigator__tags">
 					{guide.tags.map((tag) => (
 						<span key={tag.id} className="c-navigator__tag c-taxonomy">
