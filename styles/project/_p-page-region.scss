@@ -49,7 +49,7 @@
 	&__items {
 		display: flex;
 		flex-direction: column;
-		gap: 60px;
+		@include g.clamp(gap, 120, 80);
 		padding-right: g.$base-spacing;
 		@include g.clamp(padding-bottom, 120, 80);
 		padding-left: g.$base-spacing;

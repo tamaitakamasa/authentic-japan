@@ -84,7 +84,19 @@
 		width: 100%;
 	}
 
-	&__access {
-		// @include g.clamp(margin-top, 48, 32);
+	&__navigators {
+		&-title {
+			@include g.clamp(margin-top, 24, 16);
+			font-family: g.$font-montserrat;
+			@include g.font-clamp('md', 'md');
+			font-weight: 700;
+			color: g.$color-accent;
+			letter-spacing: 0.1em;
+		}
+		&-list {
+			display: flex;
+			gap: 16px;
+			@include g.clamp(margin-top, 24, 16);
+		}
 	}
 }

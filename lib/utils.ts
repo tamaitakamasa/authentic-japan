@@ -174,6 +174,10 @@ export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promi
 	return formattedNewsArticles;
 }
 
+export function getGuidesByRegion(guides: Guide[], regionId: number): Guide[] {
+  return guides.filter(guide => guide.regionIds?.includes(regionId));
+}
+
 function formatDuration(weeks: number, days: number, hours: number): string {
 	const totalDays = weeks * 7 + days;
 
