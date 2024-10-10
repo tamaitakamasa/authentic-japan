@@ -29,6 +29,13 @@
 		padding-left: 4vi;
 	}
 
+	&__copy {
+		@include g.clamp(margin-top, 60, 40);
+		@include g.font-clamp('5xl', '4xl');
+		font-weight: 400;
+		line-height: 1.2;
+	}
+
 	&__region {
 		display: flex;
 		// gap: 4px;
@@ -72,19 +79,11 @@
 		margin-top: 24px;
 	}
 
-	&__tag {
-		font-family: g.$font-noto-sans;
-		font-size: g.$font-size-xs;
-		font-weight: 700;
-		color: g.$palette-gray;
-		letter-spacing: 0.15em;
-	}
-
-	&__copy {
-		@include g.clamp(margin-top, 60, 40);
-		@include g.font-clamp('5xl', '4xl');
-		font-weight: 400;
-		line-height: 1.2;
+	&__sns {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		@include g.clamp(margin-top, 36, 24);
 	}
 
 	&__description {
@@ -93,38 +92,38 @@
 		// line-height: 1.2;
 	}
 
-	&__values-title {
-		@include g.clamp(margin-top, 60, 40);
-		@include g.font-clamp('xl', 'lg');
-		font-weight: 400;
-		// color: g.$color-accent;
-		letter-spacing: 0.15em;
-	}
+	// &__values-title {
+	// 	@include g.clamp(margin-top, 60, 40);
+	// 	@include g.font-clamp('xl', 'lg');
+	// 	font-weight: 400;
+	// 	// color: g.$color-accent;
+	// 	letter-spacing: 0.15em;
+	// }
 
-	&__values {
-		display: flex;
-		flex-direction: column;
-		gap: 32px;
-		@include g.clamp(margin-top, 48, 32);
-	}
+	// &__values {
+	// 	display: flex;
+	// 	flex-direction: column;
+	// 	gap: 32px;
+	// 	@include g.clamp(margin-top, 48, 32);
+	// }
 
-	&__value {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
+	// &__value {
+	// 	display: flex;
+	// 	flex-direction: column;
+	// 	gap: 8px;
 
-		& > h3 {
-			font-family: g.$font-noto-sans;
-			@include g.font-clamp('md', 'sm');
-			font-weight: 700;
-			color: g.$color-accent;
-			letter-spacing: 0.15em;
-		}
+	// 	& > h3 {
+	// 		font-family: g.$font-noto-sans;
+	// 		@include g.font-clamp('md', 'sm');
+	// 		font-weight: 700;
+	// 		color: g.$color-accent;
+	// 		letter-spacing: 0.15em;
+	// 	}
 
-		& > p {
-			line-height: 2.2;
-		}
-	}
+	// 	& > p {
+	// 		line-height: 2.2;
+	// 	}
+	// }
 
 	// p-page-navigator-tours
 	&-tours {
@@ -139,6 +138,26 @@
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);
 			gap: 5vi;
+		}
+	}
+
+	// p-page-navigator-news
+	&-news {
+		@include g.clamp(margin-top, 120, 80);
+
+		&__title {
+			text-align: center;
+		}
+
+		&__items {
+			@include g.clamp(margin-top, 72, 48);
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 5vi;
+		}
+
+		.c-news__guides {
+			display: none;
 		}
 	}
 
