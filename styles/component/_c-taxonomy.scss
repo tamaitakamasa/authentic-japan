@@ -1,0 +1,13 @@
+// component/_c-taxonomy.scss
+
+@use '../global/' as g;
+
+.c-taxonomy {
+	$this: &;
+
+	font-family: g.$font-noto-sans;
+	@include g.font-clamp('sm', 'xs');
+	font-weight: 700;
+	color: g.$palette-gray;
+	letter-spacing: 0.15em;
+}

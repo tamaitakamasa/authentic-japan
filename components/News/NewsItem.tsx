@@ -20,7 +20,7 @@ export default function NewsItem({ article }: { article: News }) {
 					{article.categories && article.categories.length > 0 && (
 						<div className="c-news__categories">
 							{article.categories.map((category) => (
-								<span key={category.id} className="c-news__category">
+								<span key={category.id} className="c-news__category c-taxonomy">
 									{category.name}
 								</span>
 							))}

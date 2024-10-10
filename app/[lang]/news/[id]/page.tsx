@@ -9,6 +9,7 @@ import { ContentHeader } from '@/components/Layout/ContentHeader';
 // import { fetchNewsArticles } from '@/lib/fetchData';
 import { getFormattedNewsData } from '@/lib/utils';
 import Image from 'next/image';
+import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
 
 export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
 	// const t = useTranslations(lang);
@@ -36,7 +37,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 					{article.categories && article.categories.length > 0 && (
 						<div className="p-single-news__categories">
 							{article.categories.map((category) => (
-								<span key={category.id} className="p-single-news__category">
+								<span key={category.id} className="p-single-news__category c-taxonomy">
 									{category.name}
 								</span>
 							))}
@@ -45,9 +46,9 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 					{article.guides && article.guides.length > 0 && (
 						<div className="p-single-news__guides">
 							{article.guides.map((guide) => (
-								<span key={guide.id} className="p-single-news__guide">
-									{guide.name}
-								</span>
+								<div key={guide.id} className="p-single-news__guide">
+									<NavigatorInfo guide={guide} />
+								</div>
 							))}
 						</div>
 					)}

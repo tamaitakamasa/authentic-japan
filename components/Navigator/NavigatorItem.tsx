@@ -31,7 +31,7 @@ export function NavigatorItem({ lang, guide }: { lang: Locale; guide: Guide }) {
 				<h2 className="c-navigator__title">{guide.title}</h2>
 				<div className="c-navigator__tags">
 					{guide.tags.map((tag) => (
-						<span key={tag.id} className="c-navigator__tag">
+						<span key={tag.id} className="c-navigator__tag c-taxonomy">
 							#{tag.name}
 						</span>
 					))}

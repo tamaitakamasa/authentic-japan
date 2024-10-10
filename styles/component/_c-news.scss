@@ -50,6 +50,9 @@
 	}
 
 	&__categories {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
 		@include g.clamp(margin-top, 16, 12);
 	}
 

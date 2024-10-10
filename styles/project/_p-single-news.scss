@@ -5,12 +5,52 @@
 .p-single-news {
 	$this: &;
 
-	// padding-top: 0;
+	&__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		max-width: 50rem;
+		margin-inline: auto;
+	}
+
+	&__date {
+		font-family: g.$font-noto-sans;
+		@include g.font-clamp('sm', 'xs');
+		font-weight: 700;
+		color: g.$palette-gray;
+		letter-spacing: 0.15em;
+	}
+
+	&__title {
+		@include g.clamp(margin-top, 36, 24);
+		@include g.font-clamp('4xl', '3xl');
+		font-weight: 400;
+		letter-spacing: 0.15em;
+	}
+
+	&__categories {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		@include g.clamp(margin-top, 24, 16);
+	}
+
+	&__guides {
+		@include g.clamp(margin-top, 36, 24);
+	}
 
 	&__image {
 		position: relative;
 		// overflow: hidden;
 		aspect-ratio: 16 / 9;
 		width: 100%;
+		@include g.clamp(margin-top, 60, 40);
+	}
+
+	&__content {
+		max-width: 50rem;
+		margin-inline: auto;
+		@include g.clamp(margin-top, 60, 40);
+
 	}
 }
