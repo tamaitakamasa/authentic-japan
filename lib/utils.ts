@@ -65,13 +65,14 @@ export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Prom
 
 export async function getFormattedRegionData(lang: Locale = DEFAULT_LOCALE): Promise<Region[]> {
 	const regions = await fetchWPRegions(lang);
-	// console.log('regions:', regions);
+
 	return regions.map((region) => ({
 		id: region.id,
 		name: region.acf.name,
-		// photo: region.acf.photo,
 		description: region.acf.description,
-		mv: region.acf?.mv?.sizes?.large
+		mv: region.acf?.mv?.sizes?.large,
+		gallery: region.acf.gallery,
+		access: region.acf.access
 	}));
 }
 

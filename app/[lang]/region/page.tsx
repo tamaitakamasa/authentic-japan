@@ -5,6 +5,7 @@ import { getFormattedRegionData } from '@/lib/utils';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
 import { Button } from '@/components/Button';
+import { RegionSlider } from '@/components/Region/RegionSlider';
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
@@ -40,29 +41,27 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 						regions.map((region, index) => (
 							<div key={index} id={`region${region.id}`} className="p-page-region__item">
 								<div className="c-region">
-									<div className="c-region__images">
-										{region.mv && (
-											<figure className="c-region__image">
-												<Image src={region.mv} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
-											</figure>
-										)}
-									</div>
+									{region.gallery && (
+										<div className="c-region__gallery">
+											<RegionSlider images={region.gallery} />
+										</div>
+									)}
 									<div className="c-region__inner">
 										<div className="c-region__content">
-											<h2 className="c-region__name">
-												<span>{region.name}</span>
-											</h2>
+											<h2 className="c-region__name">{region.name}</h2>
 											<div className="c-region__description">
 												<p>{region.description}</p>
 											</div>
 										</div>
-										<div className="c-region__local">
+										<div className="c-region__locale">
 											<figure className="c-region__map">
-												<Image src="/region/map.svg" alt="" fill unoptimized />
+												<Image src="/region/map_sample.svg" alt="" fill unoptimized />
 											</figure>
-											<div className="c-region__access">
-												<Button href={`/${lang}/tour`} label="ACCESS" />
-											</div>
+											{region.access && (
+												<div className="c-region__access">
+													<Button href={`/${lang}/tour`} label="ACCESS" />
+												</div>
+											)}
 										</div>
 									</div>
 								</div>

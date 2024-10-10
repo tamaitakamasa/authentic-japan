@@ -22,6 +22,9 @@
       - region/
         - page.tsx
       - news/
+        - [id]/
+          - page.tsx
+          - not-found.tsx
         - page.tsx
       - layout.tsx
       - navigator/
@@ -39,6 +42,7 @@
   - .next/
   - README.md
   - components/
+    - InstagramFeed.tsx
     - Home/
       - HomeNavigatorSlider.tsx
       - HomeRegionSlider.tsx
@@ -49,6 +53,8 @@
       - ContentHeader.tsx
       - Footer.tsx
       - Header.tsx
+    - Region/
+      - RegionSlider.tsx
     - News/
       - NewsItem.tsx
     - Navigator/
@@ -70,6 +76,7 @@
     - i18n.ts
     - fetchData.ts
     - utils.ts
+    - formatDate.ts
     - youTubePlayer.js
   - tsconfig.json
   - .eslintrc.json
@@ -169,8 +176,6 @@ export interface News {
 ### types/wordpress.d.ts
 
 ```
-import { LocationGroup } from './location';
-
 export interface WPArticle {
 	id: number;
 	date: string;
@@ -380,6 +385,8 @@ export interface WPRegion extends WPArticle {
 		name: string;
 		description: string;
 		mv: WPGalleryItem;
+		gallery: WPGalleryItem[];
+		access: string;
 	};
 }
 
@@ -390,9 +397,9 @@ export interface WPTour extends WPArticle {
 	};
 }
 
-export interface WPLocationData {
-	locationGroups: LocationGroup[];
-}
+// export interface WPLocationData {
+// 	locationGroups: LocationGroup[];
+// }
 
 export interface WPSiteContent {
 	home_slider: {
@@ -459,11 +466,15 @@ export interface Activity {
 ### types/region.ts
 
 ```
+import { WPGalleryItem } from "./wordpress";
+
 export interface Region {
 	id: number;
 	name: string;
 	description: string;
 	mv: string;
+	gallery: WPGalleryItem[];
+	access: string;
 }
 
 ```
@@ -742,6 +753,8 @@ import { Locale } from '@/constants/site';
 import { getFormattedRegionData } from '@/lib/utils';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
+import { Button } from '@/components/Button';
+import { RegionSlider } from '@/components/Region/RegionSlider';
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
@@ -773,34 +786,45 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 					</ul>
 				</div>
 				<div className="p-page-region__items u-full-bleed">
-					{regions && regions.length > 0 ? (
+					{regions.length > 0 &&
 						regions.map((region, index) => (
 							<div key={index} id={`region${region.id}`} className="p-page-region__item">
 								<div className="c-region">
+									{region.gallery && (
+										<div className="c-region__gallery">
+											{region.gallery.map((image, index) => (
+												<figure key={index} className="c-region__image">
+													<Image src={image.sizes['1536x1536']} alt="" fill style={{ objectFit: 'cover' }} />
+												</figure>
+											))}
+										</div>
+									)}
+									<div className="c-region__images">
+										{region.mv && (
+											<figure className="c-region__image">
+												<Image src={region.mv} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+											</figure>
+										)}
+									</div>
 									<div className="c-region__inner">
 										<div className="c-region__content">
-											<h2 className="c-region__name">
-												<i className="c-pin"></i>
-												<span>{region.name}</span>
-												</h2>
+											<h2 className="c-region__name">{region.name}</h2>
 											<div className="c-region__description">
 												<p>{region.description}</p>
 											</div>
 										</div>
-										<div className="c-region__images">
-											{region.mv && (
-												<figure className="c-region__image">
-													<Image src={region.mv} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
-												</figure>
-											)}
+										<div className="c-region__local">
+											<figure className="c-region__map">
+												<Image src="/region/map.svg" alt="" fill unoptimized />
+											</figure>
+											<div className="c-region__access">
+												<Button href={`/${lang}/tour`} label="ACCESS" />
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						))
-					) : (
-						<div>No regions available</div>
-					)}
+						))}
 				</div>
 				<figure className="p-page-region__mv u-full-bleed">
 					<Image src={regionsPage.mv.sizes['1536x1536']} alt="" fill />
@@ -808,6 +832,84 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 			</div>
 		</>
 	);
+}
+
+```
+
+### app/[lang]/news/[id]/page.tsx
+
+```
+import Image from 'next/image';
+import { Locale } from '@/constants/site';
+import { notFound } from 'next/navigation';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { getFormattedNewsData } from '@/lib/utils';
+import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
+import "@wordpress/block-library/build-style/style.css"
+// import "@wordpress/block-library/build-style/theme.css"
+
+
+export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
+
+	const newsArticles = await getFormattedNewsData(lang);
+	const article = newsArticles.find((article) => article.id === parseInt(id));
+	// console.log(newsArticles);
+
+	if (!article) {
+		notFound();
+	}
+
+	return (
+		<>
+			<ContentHeader title="NEWS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NEWS', href: '/news' }, { label: 'NEWS' }]} lang={lang} />
+
+			<div className="l-contents__body p-single-news">
+				<div className="p-single-news__header">
+					<time className="p-single-news__date" dateTime={article.date}>
+						{article.date}
+					</time>
+					<h2 className="p-single-news__title">{article.title}</h2>
+					{article.categories && article.categories.length > 0 && (
+						<div className="p-single-news__categories">
+							{article.categories.map((category) => (
+								<span key={category.id} className="p-single-news__category c-taxonomy">
+									{category.name}
+								</span>
+							))}
+						</div>
+					)}
+					{article.guides && article.guides.length > 0 && (
+						<div className="p-single-news__guides">
+							{article.guides.map((guide) => (
+								<div key={guide.id} className="p-single-news__guide">
+									<NavigatorInfo guide={guide} link lang={lang}  />
+								</div>
+							))}
+						</div>
+					)}
+				</div>
+				{article.featured_media && <figure className="p-single-news__image">{article.featured_media && <Image src={article.featured_media.media_details.sizes['1536x1536'].source_url} alt={article.title} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>}
+				<div className="p-single-news__content">
+					<div className='c-article' dangerouslySetInnerHTML={{ __html: article.content }} />
+				</div>
+			</div>
+		</>
+	);
+}
+
+```
+
+### app/[lang]/news/[id]/not-found.tsx
+
+```
+
+export default function NotFound() {
+
+  return (
+    <div className="">
+			404 not found
+    </div>
+  );
 }
 
 ```
@@ -823,7 +925,7 @@ import { getFormattedNewsData } from '@/lib/utils';
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
 	const newsArticles = await getFormattedNewsData(lang);
-	console.log('newsArticles:', newsArticles);
+	// console.log('newsArticles:', newsArticles);
 
 	return (
 		<>
@@ -923,18 +1025,13 @@ import Image from 'next/image';
 import { Locale } from '@/constants/site';
 // import { useTranslations } from '@/lib/i18n';
 import { notFound } from 'next/navigation';
-import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
+import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData } from '@/lib/utils';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { TourItem } from '@/components/Tour/TourItem';
 import Link from 'next/link';
-import { fetchNewsArticles } from '@/lib/fetchData';
-
-// export async function generateStaticParams({ params: { lang } }: { params: { lang: Locale } }) {
-// 	const guides = await extractGuideData(lang);
-// 	return guides.map((guide) => ({
-// 		id: guide.id.toString()
-// 	}));
-// }
+// import { fetchNewsArticles } from '@/lib/fetchData';
+import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
+import NewsItem from '@/components/News/NewsItem';
 
 export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
 	// const t = useTranslations(lang);
@@ -942,8 +1039,10 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 	const otherGuides = guides.filter((g) => g.id !== parseInt(id));
 	const guide = guides.find((g) => g.id === parseInt(id));
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-	const newsArticles = await fetchNewsArticles(lang);
+	const newsArticles = await getFormattedNewsData(lang);
 	const filteredActivities = guide ? activities.filter((activity) => activity.guideIds?.includes(guide.id)) : [];
+	const relatedNews = guide ? newsArticles.filter((news) => news.guides?.some((g) => g.id === guide.id)) : [];
+
 	console.log(newsArticles);
 
 	if (!guide) {
@@ -958,61 +1057,82 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 				<div className="p-page-navigator__profile">
 					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
 					<div className="p-page-navigator__detail">
+						<h2 className="p-page-navigator__copy" dangerouslySetInnerHTML={{ __html: guide.copy || '' }} />
 						{guide.regions && guide.regions.length > 0 && (
 							<div className="p-page-navigator__region">
 								<i className="c-pin"></i>
 								<span>{guide.regions.join(', ')}</span>
 							</div>
 						)}
-						<div className="p-page-navigator__name">{guide.name}</div>
-						<div className="p-page-navigator__title">{guide.title}</div>
+						<NavigatorInfo className="p-page-navigator__info" guide={guide} lang={lang} />
 						<div className="p-page-navigator__tags">
 							{guide.tags.map((tag) => (
-								<span key={tag.id} className="p-page-navigator__tag">
+								<span key={tag.id} className="p-page-navigator__tag c-taxonomy">
 									#{tag.name}
 								</span>
 							))}
 						</div>
-						<h2 className="p-page-navigator__copy" dangerouslySetInnerHTML={{ __html: guide.copy || '' }} />
-						<div className="p-page-navigator__description" dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
-						{/* {guide.values && guide.values.length > 0 && (
-							<>
-								<h2 className="p-page-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
-								<div className="p-page-navigator__values">
-									{guide.values.map((value, index) => (
-										<div key={index} className="p-page-navigator__value">
-											<h3>{value.title}</h3>
-											<p dangerouslySetInnerHTML={{ __html: value.description || '' }} />
-										</div>
-									))}
-								</div>
-							</>
-						)} */}
+						<ul className="p-page-navigator__sns">
+							<li>
+								<a href="#">
+									<Image src={'/icon_instagram.svg'} width={15} height={15} alt="" />
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<Image src={'/icon_fb.svg'} width={15} height={15} alt="" />
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<Image src={'/icon_x.svg'} width={15} height={15} alt="" />
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" />
+								</a>
+							</li>
+						</ul>
 					</div>
+					<div className="p-page-navigator__description" dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
 				</div>
 
-				<div className="p-page-navigator-tours">
-					<div className="p-page-navigator-tours__title">
-						<h2 className="c-heading c-heading--2">TOURS</h2>
-					</div>
-					<div className="p-page-navigator-tours__tours c-tours">
-						{filteredActivities.length > 0 ? (
-							filteredActivities.map((activity) => (
+				{filteredActivities.length > 0 && (
+					<div className="p-page-navigator-tours">
+						<div className="p-page-navigator-tours__title">
+							<h2 className="c-heading c-heading--2">TOURS</h2>
+						</div>
+						<div className="p-page-navigator-tours__tours c-tours">
+							{filteredActivities.map((activity) => (
 								<TourItem key={activity.id} activity={activity} className="c-tours__tour" />
-							))
-						) : (
-							<p>アクティビティが見つかりません。</p>
-						)}
+							))}
+						</div>
 					</div>
-				</div>
+				)}
 
-				<div className="p-page-navigator-others">
-					<div className="p-page-navigator-others__title">
-						<h2 className="c-heading c-heading--2">OTHER NAVIGATORS</h2>
+				{relatedNews.length > 0 && (
+					<div className="p-page-navigator-news">
+						<div className="p-page-navigator-news__title">
+							<h2 className="c-heading c-heading--2">RELATED NEWS</h2>
+						</div>
+						<div className="p-page-navigator-news__items">
+							{relatedNews.map((article) => (
+								<div key={article.id} className="p-page-news__item">
+									<NewsItem article={article} />
+								</div>
+							))}
+						</div>
 					</div>
-					<div className="p-page-navigator-others__items">
-						{otherGuides.length > 0 ? (
-							otherGuides.map((guide) => (
+				)}
+
+				{otherGuides.length > 0 && (
+					<div className="p-page-navigator-others">
+						<div className="p-page-navigator-others__title">
+							<h2 className="c-heading c-heading--2">OTHER NAVIGATORS</h2>
+						</div>
+						<div className="p-page-navigator-others__items">
+							{otherGuides.map((guide) => (
 								<div key={guide.id} className="p-page-navigator-others__item">
 									<div className="c-navigator-circle u-hover">
 										<figure className="c-navigator-circle__thumb">
@@ -1020,7 +1140,9 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 										</figure>
 
 										<h3 className="c-navigator-circle__name">
-											<Link href={`/${lang}/navigator/${guide.id}`} className='c-navigator-circle__link'>{guide.name}</Link>
+											<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-circle__link">
+												{guide.name}
+											</Link>
 										</h3>
 										{guide.regions && guide.regions.length > 0 && (
 											<div className="c-navigator-circle__region">
@@ -1030,12 +1152,10 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 										)}
 									</div>
 								</div>
-							))
-						) : (
-							<p>ガイドが見つかりません。</p>
-						)}
+							))}
+						</div>
 					</div>
-				</div>
+				)}
 			</div>
 		</>
 	);
@@ -1145,13 +1265,15 @@ import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
 import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
 import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
 import { VideoPlayer } from '@/components/VideoPlayer';
-import { Locale } from '@/constants/site';
+import { INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
 import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
 // import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import Image from 'next/image';
 import NewsItem from '@/components/News/NewsItem';
+import InstagramFeed from '@/components/InstagramFeed';
+import Link from 'next/link';
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
@@ -1178,7 +1300,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 						<HomeNavigatorSlider lang={lang} guides={guides} />
 					</div>
 					<div className="p-home-navigators__button">
-						<Button href="/navigator" label="VIEW ALL NAVIGATORS" />
+						<Button href={`/${lang}/navigator`} label="VIEW ALL NAVIGATORS" />
 					</div>
 				</div>
 
@@ -1193,7 +1315,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 						<HomeRegionSlider lang={lang} regions={regions} />
 					</div>
 					<div className="p-home-regions__button">
-						<Button href="/region" label="VIEW ALL REGIONS" color="light" />
+						<Button href={`/${lang}/region`} label="VIEW ALL REGIONS" color="light" />
 					</div>
 				</div>
 
@@ -1220,7 +1342,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					</div>
 					<div className="p-home-video__footer">
 						<div className="p-home-video__button2">
-							<Button href="/about" label="ABOUT US" color="light" />
+							<Button href={`/${lang}/about`} label="ABOUT US" color="light" />
 						</div>
 					</div>
 				</div>
@@ -1237,27 +1359,43 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					</div>
 					<div className="p-home-tours__tours c-tours">{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}</div>
 					<div className="p-home-tours__button">
-						<Button href="/tour" label="VIEW ALL TOURS" />
+						<Button href={`/${lang}/tour`} label="VIEW ALL TOURS" />
 					</div>
 				</div>
 
 				<div className="p-home-news">
-					<div className="p-home-news__title">
-						<h2 className="c-heading">NEWS</h2>
-					</div>
-					<div className="p-home-news__news">
-						{newsArticles.length > 0 ? (
-							newsArticles.slice(0, 4).map((article) => (
-								<div key={article.id} className="">
-									<NewsItem article={article} />
-								</div>
-							))
-						) : (
-							<p>ニュースが見つかりません。</p>
-						)}
+					<div className="p-home-news__inner">
+						<div className="p-home-news__title">
+							<h2 className="c-heading c-heading--2">NEWS</h2>
+						</div>
+						<div className="p-home-news__items">
+							{newsArticles.length > 0 ? (
+								newsArticles.slice(0, 3).map((article) => (
+									<div key={article.id} className="p-home-news__item">
+										<NewsItem article={article} />
+									</div>
+								))
+							) : (
+								<p>ニュースが見つかりません。</p>
+							)}
+						</div>
 					</div>
 					<div className="p-home-news__button">
-						<Button href="/news" label="VIEW ALL NEWS" />
+						<Button href={`/${lang}/news`} label="VIEW ALL NEWS" />
+					</div>
+				</div>
+
+				<div className="p-home-instagram">
+					<div className="p-home-instagram__title">
+						<h2 className="c-heading c-heading--2">INSTAGRAM</h2>
+					</div>
+					<div className="p-home-instagram__link">
+						<Link href={`${INSTAGRAM_URL}`} target="_blank">
+							@authentic_japan
+						</Link>
+					</div>
+					<div className="p-home-instagram__feed u-full-bleed">
+						<InstagramFeed />
 					</div>
 				</div>
 			</div>
@@ -1276,6 +1414,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 export const SITE_URL = 'https://transformativetour.pages.dev/';
 export const SITE_TITLE = 'AUTHENTIC JAPAN';
 export const SITE_DESCRIPTION = 'A Gathering of Passionate Navigators Providing Transformative Travel in Japan';
+export const INSTAGRAM_URL = 'https://www.instagram.com/shimatoworks/';
 
 export const LOCALES = ['en', 'ja', 'fr'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -1291,6 +1430,7 @@ export const NAVI_ITEMS = [
 ];
 
 export const FOOTER_NAVI_ITEMS = [
+	{ label: 'HOME', href: `/` },
 	{ label: 'NAVIGATORS', href: `/navigator` },
 	{ label: 'REGIONS', href: `/region` },
 	{ label: 'ABOUT US', href: `/about` },
@@ -1355,6 +1495,42 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+```
+
+### components/InstagramFeed.tsx
+
+```
+'use client';
+import React, { useEffect } from 'react';
+import Script from 'next/script';
+
+declare global {
+  interface Window {
+    elfsight?: {
+      initialize: () => void;
+    };
+  }
+}
+
+export default function InstaFeed() {
+  useEffect(() => {
+    window.elfsight?.initialize();
+  }, []);
+
+  return (
+    <div>
+      <Script
+        src="https://static.elfsight.com/platform/platform.js"
+        strategy="lazyOnload"
+        onLoad={() => {
+          window.elfsight?.initialize();
+        }}
+      />
+      <div className="elfsight-app-9b32843e-3af8-4ccd-8e69-9f6637341c8a" data-elfsight-app-lazy></div>
+    </div>
+  );
+}
 
 ```
 
@@ -1726,7 +1902,7 @@ export function ContentHeader({ title, breadcrumbs, lang }: ContentHeaderProps) 
 ### components/Layout/Footer.tsx
 
 ```
-import { FOOTER_NAVI_ITEMS, Locale } from '@/constants/site';
+import { FOOTER_NAVI_ITEMS, INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getFormattedRegionData } from '@/lib/utils';
 import Link from 'next/link';
 import React from 'react';
@@ -1761,7 +1937,7 @@ export default async function Footer({ lang }: { lang: Locale }) {
 			<nav className="l-footer__navi-sub">
 				<ul>
 					<li>
-						<Link href={`#`}>INSTAGRAM</Link>
+						<Link href={`${INSTAGRAM_URL}`} target='_blank'>INSTAGRAM</Link>
 					</li>
 					<li>
 						<Link href={`#`}>PRIVACY POLICY</Link>
@@ -1814,26 +1990,114 @@ export default function Header({ lang }: { lang: Locale }) {
 
 ```
 
+### components/Region/RegionSlider.tsx
+
+```
+'use client';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectFade, Navigation, Autoplay, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import 'swiper/css/autoplay';
+import 'swiper/css/pagination';
+import { Locale } from '@/constants/site';
+import { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
+import { Region } from '@/types';
+
+export function RegionSlider({ images }: { lang: Locale; images: string[] }) {
+	const [activeIndex, setActiveIndex] = useState(0);
+	const swiperRef = useRef<SwiperType | null>(null);
+
+	useEffect(() => {
+		const handleResize = () => {
+			// リサイズ時の処理があれば、ここに記述
+		};
+
+		handleResize(); // 初期化時に一度実行
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
+	const handleRegionClick = (index: number) => {
+		setActiveIndex(index);
+		if (swiperRef.current) {
+			swiperRef.current.slideTo(index);
+		}
+	};
+
+	return (
+		<div className="p-page-regions-slider">
+			<div className="p-page-regions-slider__navi">
+				<div className="p-page-regions-slider__navi-items">
+					{images.map((image, index) => (
+						<button key={index} className={`p-page-regions-slider__navi-item ${index === activeIndex ? 'is-active' : ''}`} onClick={() => handleRegionClick(index)}>
+							<span>{index}</span>
+						</button>
+					))}
+				</div>
+			</div>
+			<div className="p-page-regions-slider__content">
+				<Swiper
+					modules={[EffectFade, Navigation, Autoplay, Pagination]}
+					effect="fade"
+					fadeEffect={{ crossFade: true }}
+					navigation
+					autoplay={{
+						delay: 5000,
+						disableOnInteraction: false
+					}}
+					speed={1000}
+					pagination={{
+						type: 'progressbar'
+					}}
+					onSwiper={(swiper) => (swiperRef.current = swiper)}
+					onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+					className="p-page-regions-slider__slider">
+					{images.map((image, index) => (
+						<SwiperSlide key={index}>
+							{image}
+						</SwiperSlide>
+					))}
+				</Swiper>
+			</div>
+		</div>
+	);
+}
+
+```
+
 ### components/News/NewsItem.tsx
 
 ```
 // import { Locale } from '@/constants/site';
 import { News } from '@/types';
 import NavigatorInfo from '../Navigator/NavigatorInfo';
+import Image from 'next/image';
+import Link from 'next/link';
+// import { Locale } from '@/constants/site';
 
 export default function NewsItem({ article }: { article: News }) {
-	// const guide = article.ac
+	// console.log('featured_media:', article.featured_media);
 	return (
 		<div className="c-news">
 			<div className="c-news__inner">
-				<figure className="c-news__thumbnail"></figure>
+				<figure className="c-news__thumbnail">
+					<Image src={article.featured_media?.media_details.sizes.large.source_url ?? '/default-image.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+				</figure>
 				<div className="c-news__content">
-					<time> {article.date}</time>
-					<h2>{article.title}</h2>
+					<time className="c-news__date">{article.date}</time>
+					<h2 className="c-news__title">
+						<Link href={`/news/${article.id}`}>{article.title}</Link>
+					</h2>
 					{article.categories && article.categories.length > 0 && (
 						<div className="c-news__categories">
 							{article.categories.map((category) => (
-								<span key={category.id} className="c-news__category">
+								<span key={category.id} className="c-news__category c-taxonomy">
 									{category.name}
 								</span>
 							))}
@@ -1843,7 +2107,7 @@ export default function NewsItem({ article }: { article: News }) {
 						<div className="c-news__guides">
 							{article.guides.map((guide) => (
 								<div key={guide.id} className="c-news__guide">
-									<NavigatorInfo guide={guide} />
+									<NavigatorInfo guide={guide}/>
 								</div>
 							))}
 						</div>
@@ -1859,28 +2123,47 @@ export default function NewsItem({ article }: { article: News }) {
 ### components/Navigator/NavigatorInfo.tsx
 
 ```
-// import { Locale } from '@/constants/site';
 import { Guide } from '@/types';
 import Image from 'next/image';
-// interface GuideInfoProps {
-// 	className?: string;
-//   name: string;
-//   title: string;
-// 	photo: string;
-// }
+import Link from 'next/link';
+import { Locale } from '@/constants/site';
+import clsx from 'clsx';
 
-export default function NavigatorInfo({ guide }: { guide: Guide }) {
-	return (
-		<div className="c-navigator-info">
-			<div className="c-navigator-info__photo">
-				<Image src={guide.photo?.link ?? '/default-image.jpg'} alt="" fill sizes="20vw" style={{ objectFit: 'cover' }} />
-			</div>
-			<div className="c-navigator-info__content">
-				<p className="c-navigator-info__name">{guide.name}</p>
-				<p className="c-navigator-info__title">{guide.title}</p>
-			</div>
-		</div>
-	);
+interface NavigatorInfoProps {
+	className?: string;
+  guide: Guide;
+  link?: boolean;
+  lang?: Locale;
+}
+
+export default function NavigatorInfo({ guide, link, lang, className }: NavigatorInfoProps) {
+  const content = (
+		<div className={clsx('c-navigator-info', className)}>
+      <div className="c-navigator-info__photo">
+        <Image
+          src={guide.photo?.link ?? '/default-image.jpg'}
+          alt=""
+          fill
+          sizes="20vw"
+          style={{ objectFit: 'cover' }}
+        />
+      </div>
+      <div className="c-navigator-info__content">
+        <h3 className="c-navigator-info__name">{guide.name}</h3>
+        <p className="c-navigator-info__title">{guide.title}</p>
+      </div>
+    </div>
+  );
+
+  if (link && lang) {
+    return (
+      <Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-info__link">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }
 
 ```
@@ -1946,6 +2229,7 @@ import { Guide } from '@/types';
 import Image from 'next/image';
 // import { useTranslations } from '@/lib/i18n';
 import Link from 'next/link';
+import NavigatorInfo from './NavigatorInfo';
 
 export function NavigatorItem({ lang, guide }: { lang: Locale; guide: Guide }) {
 	// const t = useTranslations(lang);
@@ -1968,13 +2252,14 @@ export function NavigatorItem({ lang, guide }: { lang: Locale; guide: Guide }) {
 						<span>{guide.regions.join(', ')}</span>
 					</div>
 				)}
-				<h2 className="c-navigator__name">
+				<NavigatorInfo className="c-navigator__info" guide={guide} link lang={lang}  />
+				{/* <h2 className="c-navigator__name">
 					<Link href={`/navigator/${guide.id}`}>{guide.name}</Link>
 				</h2>
-				<h2 className="c-navigator__title">{guide.title}</h2>
+				<h2 className="c-navigator__title">{guide.title}</h2> */}
 				<div className="c-navigator__tags">
 					{guide.tags.map((tag) => (
-						<span key={tag.id} className="c-navigator__tag">
+						<span key={tag.id} className="c-navigator__tag c-taxonomy">
 							#{tag.name}
 						</span>
 					))}
@@ -2314,7 +2599,7 @@ export function ScrollBarWidthManager() {
 		const updateScrollBarWidth = () => {
 			const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
 			document.documentElement.style.setProperty('--scrollbar-width', `${scrollBarWidth}px`);
-			console.log(scrollBarWidth, 'scrollBarWidth');
+			// console.log(scrollBarWidth, 'scrollBarWidth');
 		};
 
 		updateScrollBarWidth();
@@ -2440,6 +2725,7 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@wordpress/block-library": "^9.9.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.14",
     "typescript": "^5"
@@ -2528,7 +2814,7 @@ export function getLangFromUrl(url: URL) {
 ### lib/fetchData.ts
 
 ```
-import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPCategory, WPNewsArticle, } from '@/types';
+import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPCategory, WPNewsArticle, WPMediaItem, } from '@/types';
 import { Locale, DEFAULT_LOCALE } from '@/constants/site';
 
 const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
@@ -2617,6 +2903,11 @@ export async function getWPSiteOptions(lang: Locale = DEFAULT_LOCALE): Promise<W
 	return cachedFetch(`options-${lang}`, () => fetchWithErrorHandling<WPSiteContent>(url));
 }
 
+export function fetchWPMediaItem(id: number): Promise<WPMediaItem> {
+	const url = `${WP_API_BASE_URL}/media/${id}`;
+	return cachedFetch(`media-${id}`, () => fetchWithErrorHandling<WPMediaItem>(url));
+}
+
 export async function fetchWPTag(id: number): Promise<WPTag> {
 	const url = `${WP_API_BASE_URL}/tags/${id}`;
 	return cachedFetch(`tag-${id}`, () => fetchWithErrorHandling<WPTag>(url));
@@ -2697,8 +2988,9 @@ export type { BokunSearchParams };
 
 ```
 import { DEFAULT_LOCALE, Locale } from '@/constants/site';
-import { Guide, Activity, Region, News } from '@/types';
-import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
+import { Guide, Activity, Region, News, WPMediaItem } from '@/types';
+import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPMediaItem, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
+import { formatDate } from './formatDate';
 
 // タグ・カテゴリー情報のキャッシュ
 let tagCache: Map<number, { name: string; slug: string }> | null = null;
@@ -2762,13 +3054,14 @@ export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Prom
 
 export async function getFormattedRegionData(lang: Locale = DEFAULT_LOCALE): Promise<Region[]> {
 	const regions = await fetchWPRegions(lang);
-	// console.log('regions:', regions);
+
 	return regions.map((region) => ({
 		id: region.id,
 		name: region.acf.name,
-		// photo: region.acf.photo,
 		description: region.acf.description,
-		mv: region.acf?.mv?.sizes?.large
+		mv: region.acf?.mv?.sizes?.large,
+		gallery: region.acf.gallery,
+		access: region.acf.access
 	}));
 }
 
@@ -2832,6 +3125,16 @@ export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promi
 	const formattedNewsArticles = await Promise.all(
 		newsArticles.map(async (article) => {
 			// console.log('categories:', article.categories);
+			const formatedDate = formatDate(article.date);
+			// アイキャッチ画像がある場合はその詳細を取得
+			let mediaItem: WPMediaItem | undefined;
+			if (article.featured_media) {
+				try {
+					mediaItem = await fetchWPMediaItem(article.featured_media);
+				} catch (error) {
+					console.error(`Failed to fetch media for post ${article.id}:`, error);
+				}
+			}
 			const guideIds = article?.acf.guide || [];
 			const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
 			const categories = article.categories
@@ -2843,9 +3146,10 @@ export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promi
 
 			return {
 				id: article.id,
-				date: article.date,
+				date: formatedDate,
 				title: article.title.rendered,
 				content: article.content.rendered,
+				featured_media: mediaItem,
 				categories: categories.map((category) => ({
 					id: category.id,
 					name: category.name,
@@ -2891,6 +3195,26 @@ export function extractVideoID(url: string): string | null {
 	const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
 	const match = url.match(regExp);
 	return match && match[2].length === 11 ? match[2] : null;
+}
+
+```
+
+### lib/formatDate.ts
+
+```
+export function formatDate(isoDate: string): string {
+  const date = new Date(isoDate);
+
+  // 無効な日付のチェック
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date string provided");
+  }
+
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  return `${year}.${month}.${day}`;
 }
 
 ```

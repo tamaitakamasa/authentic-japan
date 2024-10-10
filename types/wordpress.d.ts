@@ -1,5 +1,3 @@
-import { LocationGroup } from './location';
-
 export interface WPArticle {
 	id: number;
 	date: string;
@@ -209,6 +207,8 @@ export interface WPRegion extends WPArticle {
 		name: string;
 		description: string;
 		mv: WPGalleryItem;
+		gallery: WPGalleryItem[];
+		access: string;
 	};
 }
 
@@ -219,9 +219,9 @@ export interface WPTour extends WPArticle {
 	};
 }
 
-export interface WPLocationData {
-	locationGroups: LocationGroup[];
-}
+// export interface WPLocationData {
+// 	locationGroups: LocationGroup[];
+// }
 
 export interface WPSiteContent {
 	home_slider: {

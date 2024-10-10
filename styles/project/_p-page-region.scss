@@ -56,6 +56,30 @@
 		// background-color: g.$color-main;
 	}
 
+	&-slider {
+		&__slide {
+			position: relative;
+			aspect-ratio: 16 / 9;
+			width: 100%;
+		}
+
+		&__navi {
+			@include g.clamp(margin-top, 24, 16);
+		}
+
+		&__navi-items {
+			display: flex;
+			gap: 10px;
+		}
+
+		&__navi-item {
+			position: relative;
+			aspect-ratio: 1 / 1;
+			width: 70px;
+			border: none;
+		}
+	}
+
 	&__mv {
 		position: relative;
 		aspect-ratio: 16 / 9;
