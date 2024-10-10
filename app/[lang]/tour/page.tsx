@@ -7,8 +7,11 @@ import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData }
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 // import { FilterComponent } from '@/components/FilterComponent';
 import { ClientFilteredActivities } from '@/components/Tour/ClientFilteredActivities';
+import { getWPSiteOptions } from '@/lib/fetchData';
+import Image from 'next/image';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
+	const siteOptions = await getWPSiteOptions(lang);
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
@@ -22,7 +25,18 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
-			<div className="l-contents__body p-page-tours">
+			<div className="l-contents__body p-page p-page-tours">
+				<div className="p-page__header u-full-bleed">
+					{/* <div className="p-page__inner c-container">
+						<h2 className="p-page__title">{siteOptions.navigators_title}</h2>
+						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
+					</div> */}
+					{siteOptions.tours_mv && (
+						<figure className="p-page__mv">
+							<Image src={siteOptions.tours_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+				</div>
 				<ClientFilteredActivities lang={lang} initialActivities={activities} guides={guides} regions={regions} tags={allTags} />
 			</div>
 		</>

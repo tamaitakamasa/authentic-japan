@@ -247,10 +247,12 @@ export interface WPSiteContent {
 	about_section3_description?: string;
 	regions_description?: string;
 	regions_mv?: WPGalleryItem;
-	regions: {
-		description: string;
-		mv: WPGalleryItem;
-	};
+	// regions: {
+	// 	description: string;
+	// 	mv: WPGalleryItem;
+	// };
 	navigators_title: string;
 	navigators_description: string;
+	navigators_mv?: WPGalleryItem;
+	tours_mv?: WPGalleryItem;
 }
