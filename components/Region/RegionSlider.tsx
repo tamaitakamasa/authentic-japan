@@ -10,7 +10,7 @@ import 'swiper/css/autoplay';
 import 'swiper/css/pagination';
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
-import { Region, WPGalleryItem } from '@/types';
+import { WPGalleryItem } from '@/types';
 
 export function RegionSlider({ images }: { images: WPGalleryItem[] }) {
 	const [activeIndex, setActiveIndex] = useState(0);
