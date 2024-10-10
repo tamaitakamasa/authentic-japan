@@ -1,0 +1,47 @@
+// project/_p-page.scss
+
+@use '../global/' as g;
+
+.p-page {
+	$this: &;
+
+	&__header {
+		position: relative;
+		aspect-ratio: 16 / 9;
+		width: 100%;
+		@include g.clamp(margin-bottom, 60, 40);
+	}
+
+	&__inner {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		height: 100%;
+
+
+		& * {
+			color: #ffffff;
+		}
+	}
+
+	&__mv {
+		position: absolute;
+		inset: 0;
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.2);
+		}
+	}
+
+	&__description {
+		position: absolute;
+		right: 0;
+		bottom: 60px;
+		font-weight: 700;
+		line-height: 3;
+		text-shadow: g.$text-shadow;
+	}
+}

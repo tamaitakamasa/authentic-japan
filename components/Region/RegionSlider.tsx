@@ -55,7 +55,7 @@ export function RegionSlider({ images }: { images: WPGalleryItem[] }) {
 					className="c-region-slider__slider">
 					{images.map((image, index) => (
 						<SwiperSlide key={index} className='c-region-slider__slide'>
-							<Image src={image.sizes['1536x1536']} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+							<Image src={image.sizes['1536x1536']} alt="" fill sizes="100vw" style={{ objectFit: 'contain' }} />
 						</SwiperSlide>
 					))}
 				</Swiper>

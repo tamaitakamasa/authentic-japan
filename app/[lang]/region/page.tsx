@@ -18,7 +18,17 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} />
-			<div className="l-contents__body p-page-region">
+			<div className="l-contents__body p-page p-page-region">
+				<div className="p-page__header u-full-bleed">
+					<div className="p-page__inner c-container">
+						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.regions_description || '' }} />
+					</div>
+					{siteOptions.regions_mv && (
+						<figure className="p-page__mv">
+							<Image src={siteOptions.regions_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+				</div>
 				<div className="p-page-region__index">
 					<figure className="p-page-region__map">
 						<Image src="/region/map.svg" alt="" fill unoptimized />
@@ -83,9 +93,9 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 							);
 						})}
 				</div>
-				<figure className="p-page-region__mv u-full-bleed">
+				{/* <figure className="p-page-region__mv u-full-bleed">
 					<Image src={regionsPage.mv.sizes['1536x1536']} alt="" fill />
-				</figure>
+				</figure> */}
 			</div>
 		</>
 	);
