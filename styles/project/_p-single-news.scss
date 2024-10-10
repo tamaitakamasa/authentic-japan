@@ -1,0 +1,16 @@
+// project/_p-single-news.scss
+
+@use '../global/' as g;
+
+.p-single-news {
+	$this: &;
+
+	// padding-top: 0;
+
+	&__image {
+		position: relative;
+		// overflow: hidden;
+		aspect-ratio: 16 / 9;
+		width: 100%;
+	}
+}

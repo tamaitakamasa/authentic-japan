@@ -2,10 +2,10 @@
 import { News } from '@/types';
 import NavigatorInfo from '../Navigator/NavigatorInfo';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function NewsItem({ article }: { article: News }) {
 	// console.log('featured_media:', article.featured_media);
-	// const guide = article.ac
 	return (
 		<div className="c-news">
 			<div className="c-news__inner">
@@ -14,7 +14,9 @@ export default function NewsItem({ article }: { article: News }) {
 				</figure>
 				<div className="c-news__content">
 					<time className="c-news__date">{article.date}</time>
-					<h2 className="c-news__title">{article.title}</h2>
+					<h2 className="c-news__title">
+						<Link href={`/news/${article.id}`}>{article.title}</Link>
+					</h2>
 					{article.categories && article.categories.length > 0 && (
 						<div className="c-news__categories">
 							{article.categories.map((category) => (

@@ -8,7 +8,7 @@ export function ScrollBarWidthManager() {
 		const updateScrollBarWidth = () => {
 			const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
 			document.documentElement.style.setProperty('--scrollbar-width', `${scrollBarWidth}px`);
-			console.log(scrollBarWidth, 'scrollBarWidth');
+			// console.log(scrollBarWidth, 'scrollBarWidth');
 		};
 
 		updateScrollBarWidth();
