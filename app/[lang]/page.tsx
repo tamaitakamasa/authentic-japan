@@ -5,13 +5,15 @@ import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
 import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
 import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
 import { VideoPlayer } from '@/components/VideoPlayer';
-import { Locale } from '@/constants/site';
+import { INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
 import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
 // import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import Image from 'next/image';
 import NewsItem from '@/components/News/NewsItem';
+import InstagramFeed from '@/components/InstagramFeed';
+import Link from 'next/link';
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
@@ -120,6 +122,20 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					</div>
 					<div className="p-home-news__button">
 						<Button href={`/${lang}/news`} label="VIEW ALL NEWS" />
+					</div>
+				</div>
+
+				<div className="p-home-instagram">
+					<div className="p-home-instagram__title">
+						<h2 className="c-heading c-heading--2">INSTAGRAM</h2>
+					</div>
+					<div className="p-home-instagram__link">
+						<Link href={`${INSTAGRAM_URL}`} target="_blank">
+							@authentic_japan
+						</Link>
+					</div>
+					<div className="p-home-instagram__feed u-full-bleed">
+						<InstagramFeed />
 					</div>
 				</div>
 			</div>

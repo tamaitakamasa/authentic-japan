@@ -10,10 +10,6 @@
 		display: grid;
 		grid-template-columns: auto 1fr;
 		column-gap: 60px;
-		// margin-right: calc(g.$bleed-width * -1);
-		// padding-right: g.$bleed-width;
-		// background-color: #ffffff;
-		// @include g.clamp(margin-top, 80, 60);
 	}
 
 	&__title > h2 {

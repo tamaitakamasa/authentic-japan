@@ -1,0 +1,34 @@
+// project/_p-home-instagram.scss
+
+@use '../global/' as g;
+
+.p-home-instagram {
+	$this: &;
+
+	@include g.clamp(padding-top, 120, 80);
+
+	&__title {
+		display: flex;
+		justify-content: center;
+	}
+
+	&__link {
+		display: grid;
+		place-content: center;
+		@include g.clamp(margin-top, 48, 32);
+
+		& > a {
+			font-family: g.$font-montserrat;
+			font-size: g.$font-size-md;
+			font-weight: 700;
+			// text-align: center;
+			color: g.$color-accent;
+			letter-spacing: 0.1em;
+		}
+	}
+
+	&__feed {
+		// @include g.clamp(margin-top, 36, 24);
+		@include g.clamp(margin-top, 60, 40);
+	}
+}

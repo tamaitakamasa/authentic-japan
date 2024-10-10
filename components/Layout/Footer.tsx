@@ -1,4 +1,4 @@
-import { FOOTER_NAVI_ITEMS, Locale } from '@/constants/site';
+import { FOOTER_NAVI_ITEMS, INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getFormattedRegionData } from '@/lib/utils';
 import Link from 'next/link';
 import React from 'react';
@@ -33,7 +33,7 @@ export default async function Footer({ lang }: { lang: Locale }) {
 			<nav className="l-footer__navi-sub">
 				<ul>
 					<li>
-						<Link href={`#`}>INSTAGRAM</Link>
+						<Link href={`${INSTAGRAM_URL}`} target='_blank'>INSTAGRAM</Link>
 					</li>
 					<li>
 						<Link href={`#`}>PRIVACY POLICY</Link>
