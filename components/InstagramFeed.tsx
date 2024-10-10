@@ -2,6 +2,14 @@
 import React, { useEffect } from 'react';
 import Script from 'next/script';
 
+declare global {
+  interface Window {
+    elfsight?: {
+      initialize: () => void;
+    };
+  }
+}
+
 export default function InstaFeed() {
   useEffect(() => {
     window.elfsight?.initialize();

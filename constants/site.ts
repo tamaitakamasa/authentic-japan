@@ -20,6 +20,7 @@ export const NAVI_ITEMS = [
 ];
 
 export const FOOTER_NAVI_ITEMS = [
+	{ label: 'HOME', href: `/` },
 	{ label: 'NAVIGATORS', href: `/navigator` },
 	{ label: 'REGIONS', href: `/region` },
 	{ label: 'ABOUT US', href: `/about` },
