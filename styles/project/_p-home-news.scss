@@ -1,0 +1,54 @@
+// project/_p-home-news.scss
+
+@use '../global/' as g;
+
+.p-home-news {
+	$this: &;
+
+	// padding-top: 0;
+	&__inner {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		column-gap: 60px;
+		// margin-right: calc(g.$bleed-width * -1);
+		// padding-right: g.$bleed-width;
+		// background-color: #ffffff;
+		// @include g.clamp(margin-top, 80, 60);
+	}
+
+	&__title > h2 {
+		@include g.clamp(margin-top, 120, 80);
+		line-height: 1;
+	}
+
+	&__items {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 60px;
+		margin-right: calc(g.$bleed-width * -1);
+		padding-right: g.$bleed-width;
+		@include g.clamp(padding-top, 120, 80);
+		@include g.clamp(padding-bottom, 120, 80);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			left: 100px;
+			background-color: #ffffff;
+		}
+	}
+
+	&__item {
+		position: relative;
+		z-index: 1;
+	}
+
+	&__button {
+		display: flex;
+		justify-content: flex-end;
+		@include g.clamp(margin-top, 60, 40);
+	}
+}

@@ -6,6 +6,7 @@
 	$this: &;
 
 	@include g.clamp(margin-top, 120, 80);
+	@include g.clamp(padding-bottom, 120, 80);
 
 	&__title {
 		text-align: center;

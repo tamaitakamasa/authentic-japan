@@ -38,7 +38,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 						<HomeNavigatorSlider lang={lang} guides={guides} />
 					</div>
 					<div className="p-home-navigators__button">
-						<Button href="/navigator" label="VIEW ALL NAVIGATORS" />
+						<Button href={`/${lang}/navigator`} label="VIEW ALL NAVIGATORS" />
 					</div>
 				</div>
 
@@ -53,7 +53,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 						<HomeRegionSlider lang={lang} regions={regions} />
 					</div>
 					<div className="p-home-regions__button">
-						<Button href="/region" label="VIEW ALL REGIONS" color="light" />
+						<Button href={`/${lang}/region`} label="VIEW ALL REGIONS" color="light" />
 					</div>
 				</div>
 
@@ -80,7 +80,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					</div>
 					<div className="p-home-video__footer">
 						<div className="p-home-video__button2">
-							<Button href="/about" label="ABOUT US" color="light" />
+							<Button href={`/${lang}/about`} label="ABOUT US" color="light" />
 						</div>
 					</div>
 				</div>
@@ -97,27 +97,29 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					</div>
 					<div className="p-home-tours__tours c-tours">{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}</div>
 					<div className="p-home-tours__button">
-						<Button href="/tour" label="VIEW ALL TOURS" />
+						<Button href={`/${lang}/tour`} label="VIEW ALL TOURS" />
 					</div>
 				</div>
 
 				<div className="p-home-news">
-					<div className="p-home-news__title">
-						<h2 className="c-heading">NEWS</h2>
-					</div>
-					<div className="p-home-news__news">
-						{newsArticles.length > 0 ? (
-							newsArticles.slice(0, 4).map((article) => (
-								<div key={article.id} className="">
-									<NewsItem article={article} />
-								</div>
-							))
-						) : (
-							<p>ニュースが見つかりません。</p>
-						)}
+					<div className="p-home-news__inner">
+						<div className="p-home-news__title">
+							<h2 className="c-heading c-heading--2">NEWS</h2>
+						</div>
+						<div className="p-home-news__items">
+							{newsArticles.length > 0 ? (
+								newsArticles.slice(0, 3).map((article) => (
+									<div key={article.id} className="p-home-news__item">
+										<NewsItem article={article} />
+									</div>
+								))
+							) : (
+								<p>ニュースが見つかりません。</p>
+							)}
+						</div>
 					</div>
 					<div className="p-home-news__button">
-						<Button href="/news" label="VIEW ALL NEWS" />
+						<Button href={`/${lang}/news`} label="VIEW ALL NEWS" />
 					</div>
 				</div>
 			</div>
