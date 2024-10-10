@@ -1,0 +1,3059 @@
+# authentic-japan
+
+## Directory Structure
+
+- authentic-japan/
+  - middleware.ts
+  - types/
+    - news.ts
+    - wordpress.d.ts
+    - activity.ts
+    - region.ts
+    - index.ts
+    - bokun.ts
+    - guide.ts
+  - app/
+    - favicon.ico (binary file)
+    - [lang]/
+      - contact/
+        - page.tsx
+      - about/
+        - page.tsx
+      - region/
+        - page.tsx
+      - news/
+        - page.tsx
+      - layout.tsx
+      - navigator/
+        - [id]/
+          - page.tsx
+          - not-found.tsx
+        - page.tsx
+      - tour/
+        - page.tsx
+      - page.tsx
+  - bun.lockb (binary file)
+  - constants/
+    - site.ts
+  - next.config.mjs
+  - .next/
+  - README.md
+  - components/
+    - Home/
+      - HomeNavigatorSlider.tsx
+      - HomeRegionSlider.tsx
+      - HomeHeroSlider.tsx
+    - Contact/
+      - ContactForm.tsx
+    - Layout/
+      - ContentHeader.tsx
+      - Footer.tsx
+      - Header.tsx
+    - News/
+      - NewsItem.tsx
+    - Navigator/
+      - NavigatorInfo.tsx
+      - NavigatorCard.tsx
+      - NavigatorItem.tsx
+    - Tour/
+      - ClientFilteredActivities.tsx
+      - TourButton.tsx
+      - FilterComponent.tsx
+      - TourItem.tsx
+    - VideoPlayer.tsx
+    - ScrollBarWidthManager.tsx
+    - Button.tsx
+    - LanguageSwitcher.tsx
+  - package.json
+  - lib/
+    - debounce.ts
+    - i18n.ts
+    - fetchData.ts
+    - utils.ts
+    - youTubePlayer.js
+  - tsconfig.json
+  - .eslintrc.json
+
+## File Contents
+
+### middleware.ts
+
+```
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { match as matchLocale } from '@formatjs/intl-localematcher'
+import Negotiator from 'negotiator'
+import { LOCALES, DEFAULT_LOCALE } from '@/constants/site'
+
+// ユーザーの優先言語を取得する関数
+function getLocale(request: NextRequest): string {
+  // Negotiatorに渡すためにヘッダーをプレーンなオブジェクトに変換
+  const negotiatorHeaders: Record<string, string> = {}
+  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value))
+
+  const locales = LOCALES
+  // Accept-Languageヘッダーから言語リストを取得
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages()
+
+  // intl-localematcherを使用して最適な言語を選択
+  return matchLocale(languages, locales, DEFAULT_LOCALE)
+}
+
+export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  // パスに言語コードが含まれているかチェック
+  const pathnameIsMissingLocale = LOCALES.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  )
+
+  if (pathnameIsMissingLocale) {
+    // ユーザーの優先言語を取得
+    const locale = getLocale(request)
+
+    // デフォルト言語でパスが存在するかチェック
+    const response = NextResponse.next()
+    if (response.status === 404) {
+      // ページが存在しない場合、検出された言語のホームページにリダイレクト
+      return NextResponse.redirect(new URL(`/${locale}`, request.url))
+    }
+
+    // 存在する場合、検出された言語をパスに追加してリダイレクト
+    return NextResponse.redirect(
+      new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
+    )
+  }
+}
+
+// ミドルウェアを適用するパスを指定
+export const config = {
+  // matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+	matcher: [
+    // 静的ファイルや特定のパスを除外
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\..*$).*)'
+  ],
+}
+
+```
+
+### types/news.ts
+
+```
+import type { Guide, WPMediaItem } from '@/types';
+
+// export interface News extends WPNewsArticle {
+// 	featured_media_item?: WPMediaItem;
+// 	news_categories: {
+//     id: number;
+//     name: string;
+//     slug: string;
+//   }[];
+// }
+
+export interface News {
+	id: number;
+	date: string;
+	title: string;
+	content: string;
+	featured_media?: WPMediaItem;
+	categories: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
+	guides?: Guide[];
+}
+
+```
+
+### types/wordpress.d.ts
+
+```
+import { LocationGroup } from './location';
+
+export interface WPArticle {
+	id: number;
+	date: string;
+	title: {
+		rendered: string;
+	};
+	content: {
+		rendered: string;
+	};
+	featured_media: number;
+	categories: number[];
+	tags: number[];
+}
+
+export interface WPLink {
+	href: string;
+}
+
+export interface WPTag {
+  id: number;
+  count: number;
+  description: string;
+  link: string;
+  name: string;
+  slug: string;
+  taxonomy: string;
+  parent: number;
+}
+
+export interface WPCategory {
+  id: number;
+  count: number;
+  description: string;
+  link: string;
+  name: string;
+  slug: string;
+  taxonomy: string;
+  parent: number;
+}
+
+export interface WPImageSize {
+  file: string;
+  width: number;
+  height: number;
+  filesize: number;
+  mime_type: string;
+  source_url: string;
+}
+
+export interface WPMediaSizes {
+  medium: WPImageSize;
+  large: WPImageSize;
+  thumbnail: WPImageSize;
+  medium_large: WPImageSize;
+  "1536x1536": WPImageSize;
+  "2048x2048": WPImageSize;
+  full: Omit<WPImageSize, "filesize">; // full サイズには filesize プロパティがないようです
+  [key: string]: WPImageSize | Omit<WPImageSize, "filesize">; // カスタムサイズに対応
+}
+
+export interface WPMediaItem {
+  id: number;
+  date: string;
+  date_gmt: string;
+  guid: {
+    rendered: string;
+  };
+  modified: string;
+  modified_gmt: string;
+  slug: string;
+  status: string;
+  type: string;
+  link: string;
+  title: {
+    rendered: string;
+  };
+  author: number;
+  featured_media: number;
+  comment_status: string;
+  ping_status: string;
+  template: string;
+  meta: {
+    _acf_changed: boolean;
+  };
+  class_list: string[];
+  acf: unknown[]; // You might want to define a more specific type if ACF fields are used
+  description: {
+    rendered: string;
+  };
+  caption: {
+    rendered: string;
+  };
+  alt_text: string;
+  media_type: string;
+  mime_type: string;
+  media_details: {
+    width: number;
+    height: number;
+    file: string;
+    filesize: number;
+    sizes: WPMediaSizes;
+    image_meta: {
+      aperture: string;
+      credit: string;
+      camera: string;
+      caption: string;
+      created_timestamp: string;
+      copyright: string;
+      focal_length: string;
+      iso: string;
+      shutter_speed: string;
+      title: string;
+      orientation: string;
+      keywords: string[];
+    };
+    original_image: string;
+  };
+  post: number;
+  source_url: string;
+  _links: {
+    self: Array<{ href: string }>;
+    collection: Array<{ href: string }>;
+    about: Array<{ href: string }>;
+    author: Array<{ embeddable: boolean; href: string }>;
+  };
+}
+
+export interface WPImageSizes {
+	thumbnail: string;
+	'thumbnail-width': number;
+	'thumbnail-height': number;
+	medium: string;
+	'medium-width': number;
+	'medium-height': number;
+	medium_large: string;
+	'medium_large-width': number;
+	'medium_large-height': number;
+	large: string;
+	'large-width': number;
+	'large-height': number;
+	'1536x1536': string;
+	'1536x1536-width': number;
+	'1536x1536-height': number;
+	'2048x2048': string;
+	'2048x2048-width': number;
+	'2048x2048-height': number;
+}
+
+export interface WPGalleryItem {
+	ID: number;
+	id: number;
+	title: string;
+	filename: string;
+	filesize: number;
+	url: string;
+	link: string;
+	alt: string;
+	author: string;
+	description: string;
+	caption: string;
+	name: string;
+	status: string;
+	uploaded_to: number;
+	date: string;
+	modified: string;
+	menu_order: number;
+	mime_type: string;
+	type: string;
+	subtype: string;
+	icon: string;
+	width: number;
+	height: number;
+	sizes: WPImageSizes;
+}
+
+// export interface WPArticleWithDetails extends WPArticle {
+// 	featured_media_item?: WPMediaItem;
+// 	category_details: WPCategory[];
+// }
+
+export interface WPNewsArticle extends WPArticle {
+	acf: {
+		guide?: number[];
+	};
+}
+
+export interface WPGuide extends WPArticle {
+	acf: {
+		// vendor_id: string;
+		title: string;
+		name: string;
+		mv: WPGalleryItem;
+		photo: WPGalleryItem;
+		copy: string;
+		description: string;
+		career: string;
+		region: number[];
+		values: {
+			title: string;
+			description: string;
+		}[];
+	};
+}
+
+export interface WPRegion extends WPArticle {
+	acf: {
+		name: string;
+		description: string;
+		mv: WPGalleryItem;
+	};
+}
+
+export interface WPTour extends WPArticle {
+	acf: {
+		bokun_id: string;
+		guide: number[];
+	};
+}
+
+export interface WPLocationData {
+	locationGroups: LocationGroup[];
+}
+
+export interface WPSiteContent {
+	home_slider: {
+		main_copy: string;
+		sub_copy: string;
+		mv: WPGalleryItem;
+		url: string;
+	}[];
+	home_regions_description?: string;
+	home_about_description?: string;
+	home_about_mv?: WPGalleryItem;
+	home_about_video?: string;
+	// locations?: LocationGroup[];
+	about_description?: string;
+	about_video?: string;
+	about_mv?: WPGalleryItem;
+	about_section0_description?: string;
+	about_section1_title?: string;
+	about_section1_description?: string;
+	about_section2_title?: string;
+	about_section2_description?: string;
+	about_section3_title?: string;
+	about_section3_description?: string;
+	regions: {
+		description: string;
+		mv: WPGalleryItem;
+	};
+	navigators_title: string;
+	navigators_description: string;
+}
+
+```
+
+### types/activity.ts
+
+```
+import type { Guide } from '@/types';
+// import type { BokunActivity } from '@/types';
+
+export interface Activity {
+	id: number;
+	title: string;
+	summary?: string;
+	excerpt?: string;
+	photo?: string;
+	categories: string[];
+	tags?: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
+	price: number;
+	formattedPrice: string;
+	regions?: string[];
+	duration: string;
+	durationDays: number;
+	durationHours: number;
+	guides?: Guide[];
+	guideIds?: number[];
+}
+
+```
+
+### types/region.ts
+
+```
+export interface Region {
+	id: number;
+	name: string;
+	description: string;
+	mv: string;
+}
+
+```
+
+### types/index.ts
+
+```
+export * from "@/types/bokun";
+export * from "@/types/wordpress";
+export * from "@/types/activity";
+export * from "@/types/guide";
+export * from "@/types/region";
+export * from "@/types/news";
+
+```
+
+### types/bokun.ts
+
+```
+interface TermFacetEntry {
+	key: string;
+	count: number;
+}
+
+interface TermFacet {
+	name: string;
+	title: string;
+	entries: TermFacetEntry[];
+	flags: any[];
+	multipleSelection: boolean;
+	sortedEntries: TermFacetEntry[];
+}
+
+interface TermFacets {
+	difficulty: TermFacet;
+	country: TermFacet;
+	city: TermFacet;
+	supplier: TermFacet;
+	activityAttributes: TermFacet;
+	guidanceLanguages: TermFacet;
+	activityType: TermFacet;
+	activityCategories: TermFacet;
+}
+
+interface LocationCode {
+	country: string;
+	location: string;
+	name: string;
+}
+
+interface GooglePlace {
+	placeId: string;
+	address: string;
+}
+
+interface Vendor {
+	id: number;
+	title: string;
+}
+
+export interface DerivedPhoto {
+	name: string;
+	url: string;
+	cleanUrl: string;
+}
+
+export interface KeyPhoto {
+	id: number;
+	originalUrl: string;
+	description: string | null;
+	alternateText: string | null;
+	height: string;
+	width: string;
+	flags: any[];
+	derived: DerivedPhoto[];
+	fileName: string;
+}
+
+export interface BokunActivity {
+	id: string;
+	productGroupId: number;
+	title: string;
+	summary: string;
+	excerpt?: string;
+	price: number;
+	locationCode?: LocationCode;
+	googlePlace: GooglePlace;
+	vendor: Vendor;
+	box: boolean;
+	inventoryLocal: boolean;
+	usedInAffiliateHub: boolean;
+	showInMarketplaceSearch: boolean;
+	boxedProductId: number;
+	boxedSupplierId: number;
+	difficultyLevel: string;
+	activityCategories: string[];
+	keywords: string[];
+	flags: any[];
+	reviewRating: number;
+	reviewCount: number;
+	durationText: string;
+	baseLanguage: string;
+	languages: string[];
+	paymentCurrencies: string[];
+	customFields: any[];
+	places: string[];
+	keyPhoto: KeyPhoto;
+	photos: KeyPhoto[];
+	videos: any[];
+	fields: {
+		durationWeeks: number;
+		durationDays: number;
+		durationHours: number;
+	};
+}
+
+export interface BokunResponseData {
+	tookInMillis: number;
+	totalHits: number;
+	tagFilters: any[];
+	tagFacets: any[];
+	termFacets: TermFacets;
+	tagFacetHierarchy: any[];
+	items: BokunActivity[];
+}
+
+```
+
+### types/guide.ts
+
+```
+import type { WPGalleryItem } from '@/types';
+
+export interface Guide {
+	id: number;
+	wpPostId?: number;
+	title: string;
+	name: string;
+	mv?: WPGalleryItem;
+	photo?: WPGalleryItem;
+	copy?: string;
+	description?: string;
+	// career?: string;
+	regionIds?: number[];
+	regions?: string[];
+	tags: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
+	values: {
+		title: string;
+		description: string;
+	}[];
+}
+
+```
+
+### app/[lang]/contact/page.tsx
+
+```
+// import Image from 'next/image';
+import ContactForm from '@/components/Contact/ContactForm';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { Locale } from '@/constants/site';
+
+export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
+	return (
+		<>
+			<ContentHeader title="CONTACT" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'CONTACT' }]} lang={lang} />
+			<div className="l-contents__body p-page-contact">
+				<ContactForm lang={lang} />
+			</div>
+		</>
+	);
+}
+
+```
+
+### app/[lang]/about/page.tsx
+
+```
+// import Image from 'next/image';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { VideoPlayer } from '@/components/VideoPlayer';
+import { Locale } from '@/constants/site';
+import { getWPSiteOptions } from '@/lib/fetchData';
+import Image from 'next/image';
+
+export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
+	const siteOptions = await getWPSiteOptions(lang);
+
+	return (
+		<>
+			<ContentHeader title="ABOUT US" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'ABOUT US' }]} lang={lang} />
+			<div className="l-contents__body p-page-about">
+				<div className="p-page-about__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_description || '' }} />
+				{siteOptions.about_video && (
+					<div className="p-page-about__video">
+						<VideoPlayer videoUrl={siteOptions.about_video} />
+					</div>
+				)}
+
+				<div className="p-page-about-section">
+					<div className="p-page-about-section__cols">
+						<div className="p-page-about-section__col-left">
+							<div className="p-page-about-section__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_section0_description || '' }} />
+						</div>
+						<div className="p-page-about-section__col-right">
+							<figure className="p-page-about-section__illust">
+								<Image src="/about/about_all.svg" alt="" fill unoptimized />
+							</figure>
+						</div>
+					</div>
+				</div>
+
+				<div className="p-page-about-section">
+					<div className="p-page-about-section__cols">
+						<div className="p-page-about-section__col-left">
+							<p className="p-page-about-section__number">01</p>
+							<h2 className="p-page-about-section__title">{siteOptions.about_section1_title}</h2>
+							<div className="p-page-about-section__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_section1_description || '' }} />
+						</div>
+						<div className="p-page-about-section__col-right">
+							<figure className="p-page-about-section__illust">
+								<Image src="/about/about1.svg" alt="" fill unoptimized />
+							</figure>
+						</div>
+					</div>
+				</div>
+
+				<div className="p-page-about-section">
+					<div className="p-page-about-section__cols">
+						<div className="p-page-about-section__col-left">
+							<p className="p-page-about-section__number">02</p>
+							<h2 className="p-page-about-section__title">{siteOptions.about_section2_title}</h2>
+							<div className="p-page-about-section__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_section2_description || '' }} />
+						</div>
+						<div className="p-page-about-section__col-right">
+							<figure className="p-page-about-section__illust">
+								<Image src="/about/about2.svg" alt="" fill unoptimized />
+							</figure>
+						</div>
+					</div>
+				</div>
+
+				<div className="p-page-about-section">
+					<div className="p-page-about-section__cols">
+						<div className="p-page-about-section__col-left">
+							<p className="p-page-about-section__number">03</p>
+							<h2 className="p-page-about-section__title">{siteOptions.about_section3_title}</h2>
+							<div className="p-page-about-section__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_section3_description || '' }} />
+						</div>
+						<div className="p-page-about-section__col-right">
+							<figure className="p-page-about-section__illust">
+								<Image src="/about/about3.svg" alt="" fill unoptimized />
+							</figure>
+						</div>
+					</div>
+				</div>
+
+				<figure className="p-page-about__mv u-full-bleed">{siteOptions.about_mv && <Image src={siteOptions.about_mv.sizes['1536x1536']} alt="" fill />}</figure>
+			</div>
+		</>
+	);
+}
+
+```
+
+### app/[lang]/region/page.tsx
+
+```
+import Image from 'next/image';
+import { Locale } from '@/constants/site';
+// import { useTranslations } from '@/lib/i18n';
+import { getFormattedRegionData } from '@/lib/utils';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { getWPSiteOptions } from '@/lib/fetchData';
+
+export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
+	// const t = useTranslations(lang);
+	const regions = await getFormattedRegionData(lang);
+	const siteOptions = await getWPSiteOptions(lang);
+	const regionsPage = siteOptions.regions;
+	// console.log('regions:', regions);
+	return (
+		<>
+			<ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} />
+			<div className="l-contents__body p-page-region">
+				<div className="p-page-region__index">
+					<figure className="p-page-region__map">
+						<Image src="/region/map.svg" alt="" fill unoptimized />
+					</figure>
+					<ul className="p-page-region__list">
+						{regions && regions.length > 0 ? (
+							regions.map((region, index) => (
+								<li key={index}>
+									<a href={`#region${region.id}`}>
+										<i className="c-pin"></i>
+										<span>{region.name}</span>
+									</a>
+								</li>
+							))
+						) : (
+							<div>No regions available</div>
+						)}
+					</ul>
+				</div>
+				<div className="p-page-region__items u-full-bleed">
+					{regions && regions.length > 0 ? (
+						regions.map((region, index) => (
+							<div key={index} id={`region${region.id}`} className="p-page-region__item">
+								<div className="c-region">
+									<div className="c-region__inner">
+										<div className="c-region__content">
+											<h2 className="c-region__name">
+												<i className="c-pin"></i>
+												<span>{region.name}</span>
+												</h2>
+											<div className="c-region__description">
+												<p>{region.description}</p>
+											</div>
+										</div>
+										<div className="c-region__images">
+											{region.mv && (
+												<figure className="c-region__image">
+													<Image src={region.mv} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+												</figure>
+											)}
+										</div>
+									</div>
+								</div>
+							</div>
+						))
+					) : (
+						<div>No regions available</div>
+					)}
+				</div>
+				<figure className="p-page-region__mv u-full-bleed">
+					<Image src={regionsPage.mv.sizes['1536x1536']} alt="" fill />
+				</figure>
+			</div>
+		</>
+	);
+}
+
+```
+
+### app/[lang]/news/page.tsx
+
+```
+// import Image from 'next/image';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import NewsItem from '@/components/News/NewsItem';
+import { Locale } from '@/constants/site';
+import { getFormattedNewsData } from '@/lib/utils';
+
+export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
+	const newsArticles = await getFormattedNewsData(lang);
+	console.log('newsArticles:', newsArticles);
+
+	return (
+		<>
+			<ContentHeader title="NEWS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NEWS' }]} lang={lang} />
+			<div className="l-contents__body p-page-news">
+				<div className="p-page-news__items">
+					{newsArticles.length > 0 ? (
+						newsArticles.map((article) => (
+							<div key={article.id} className="p-page-news__item">
+								<NewsItem article={article} />
+							</div>
+						))
+					) : (
+						<p>ニュースが見つかりません。</p>
+					)}
+				</div>
+			</div>
+			{/* <TestLink /> */}
+		</>
+	);
+}
+
+```
+
+### app/[lang]/layout.tsx
+
+```
+// 'use server'
+export const runtime = 'edge';
+
+import { Noto_Sans_JP, Noto_Serif_JP, EB_Garamond, Montserrat } from 'next/font/google';
+import type { Metadata } from 'next';
+import '@/styles/style.scss';
+import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
+// import Script from 'next/script';
+import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
+import Header from '@/components/Layout/Header';
+import Footer from '@/components/Layout/Footer';
+
+
+export const metadata: Metadata = {
+	title: SITE_TITLE,
+	description: SITE_DESCRIPTION
+};
+
+const notoSansJP = Noto_Sans_JP({
+	weight: ['400', '500', '700'],
+	subsets: ['latin'],
+	display: 'swap',
+	variable: '--font-noto-sans-jp'
+});
+
+const notoSerifJP = Noto_Serif_JP({
+	weight: ['400', '500', '700'],
+	subsets: ['latin'],
+	display: 'swap',
+	variable: '--font-noto-serif-jp'
+});
+
+const ebGaramond = EB_Garamond({
+	weight: ['400'],
+	subsets: ['latin'],
+	display: 'swap',
+	variable: '--font-eb-garamond'
+});
+
+const montserrat = Montserrat({
+	weight: ['400'],
+	subsets: ['latin'],
+	display: 'swap',
+	variable: '--font-montserrat'
+});
+
+export default async function RootLayout({ children, params: { lang } }: { children: React.ReactNode; params: { lang: Locale } }) {
+	console.log('RootLayout:', lang);
+	return (
+		<html lang={lang} className={`${notoSansJP.variable} ${notoSerifJP.variable} ${ebGaramond.variable} ${montserrat.variable}`}>
+			<body className='l-body'>
+				<ScrollBarWidthManager />
+				<Header lang={lang} />
+				<main className="l-contents">
+					<div className="c-container">{children}</div>
+				</main>
+				<Footer lang={lang} />
+				{/* <Script src="https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=f34383c7-3179-43f7-a169-d3058ddf6840" strategy="lazyOnload" /> */}
+			</body>
+		</html>
+	);
+}
+
+```
+
+### app/[lang]/navigator/[id]/page.tsx
+
+```
+import Image from 'next/image';
+import { Locale } from '@/constants/site';
+// import { useTranslations } from '@/lib/i18n';
+import { notFound } from 'next/navigation';
+import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { TourItem } from '@/components/Tour/TourItem';
+import Link from 'next/link';
+import { fetchNewsArticles } from '@/lib/fetchData';
+
+// export async function generateStaticParams({ params: { lang } }: { params: { lang: Locale } }) {
+// 	const guides = await extractGuideData(lang);
+// 	return guides.map((guide) => ({
+// 		id: guide.id.toString()
+// 	}));
+// }
+
+export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
+	// const t = useTranslations(lang);
+	const guides = await getFormattedGuideData(lang);
+	const otherGuides = guides.filter((g) => g.id !== parseInt(id));
+	const guide = guides.find((g) => g.id === parseInt(id));
+	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+	const newsArticles = await fetchNewsArticles(lang);
+	const filteredActivities = guide ? activities.filter((activity) => activity.guideIds?.includes(guide.id)) : [];
+	console.log(newsArticles);
+
+	if (!guide) {
+		notFound();
+	}
+
+	return (
+		<>
+			<ContentHeader title="NAVIGATOR" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NAVIGATORS', href: '/navigator' }, { label: 'NAVIGATOR' }]} lang={lang} />
+
+			<div className="l-contents__body p-page-navigator">
+				<div className="p-page-navigator__profile">
+					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
+					<div className="p-page-navigator__detail">
+						{guide.regions && guide.regions.length > 0 && (
+							<div className="p-page-navigator__region">
+								<i className="c-pin"></i>
+								<span>{guide.regions.join(', ')}</span>
+							</div>
+						)}
+						<div className="p-page-navigator__name">{guide.name}</div>
+						<div className="p-page-navigator__title">{guide.title}</div>
+						<div className="p-page-navigator__tags">
+							{guide.tags.map((tag) => (
+								<span key={tag.id} className="p-page-navigator__tag">
+									#{tag.name}
+								</span>
+							))}
+						</div>
+						<h2 className="p-page-navigator__copy" dangerouslySetInnerHTML={{ __html: guide.copy || '' }} />
+						<div className="p-page-navigator__description" dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
+						{/* {guide.values && guide.values.length > 0 && (
+							<>
+								<h2 className="p-page-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
+								<div className="p-page-navigator__values">
+									{guide.values.map((value, index) => (
+										<div key={index} className="p-page-navigator__value">
+											<h3>{value.title}</h3>
+											<p dangerouslySetInnerHTML={{ __html: value.description || '' }} />
+										</div>
+									))}
+								</div>
+							</>
+						)} */}
+					</div>
+				</div>
+
+				<div className="p-page-navigator-tours">
+					<div className="p-page-navigator-tours__title">
+						<h2 className="c-heading c-heading--2">TOURS</h2>
+					</div>
+					<div className="p-page-navigator-tours__tours c-tours">
+						{filteredActivities.length > 0 ? (
+							filteredActivities.map((activity) => (
+								<TourItem key={activity.id} activity={activity} className="c-tours__tour" />
+							))
+						) : (
+							<p>アクティビティが見つかりません。</p>
+						)}
+					</div>
+				</div>
+
+				<div className="p-page-navigator-others">
+					<div className="p-page-navigator-others__title">
+						<h2 className="c-heading c-heading--2">OTHER NAVIGATORS</h2>
+					</div>
+					<div className="p-page-navigator-others__items">
+						{otherGuides.length > 0 ? (
+							otherGuides.map((guide) => (
+								<div key={guide.id} className="p-page-navigator-others__item">
+									<div className="c-navigator-circle u-hover">
+										<figure className="c-navigator-circle__thumb">
+											<Image src={guide.photo?.link ?? '/no-photo.jpg'} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
+										</figure>
+
+										<h3 className="c-navigator-circle__name">
+											<Link href={`/${lang}/navigator/${guide.id}`} className='c-navigator-circle__link'>{guide.name}</Link>
+										</h3>
+										{guide.regions && guide.regions.length > 0 && (
+											<div className="c-navigator-circle__region">
+												<i className="c-pin"></i>
+												<span>{guide.regions.join(', ')}</span>
+											</div>
+										)}
+									</div>
+								</div>
+							))
+						) : (
+							<p>ガイドが見つかりません。</p>
+						)}
+					</div>
+				</div>
+			</div>
+		</>
+	);
+}
+
+```
+
+### app/[lang]/navigator/[id]/not-found.tsx
+
+```
+
+export default function NotFound() {
+
+  return (
+    <div className="">
+			404 not found
+    </div>
+  );
+}
+
+```
+
+### app/[lang]/navigator/page.tsx
+
+```
+import { Locale } from '@/constants/site';
+// import { useTranslations } from '@/lib/i18n';
+import { getFormattedGuideData } from '@/lib/utils';
+import { NavigatorItem } from '@/components/Navigator/NavigatorItem';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { getWPSiteOptions } from '@/lib/fetchData';
+
+export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
+	// const t = useTranslations(lang);
+	const guides = await getFormattedGuideData(lang);
+	const siteOptions = await getWPSiteOptions(lang);
+	// console.log('guides:', guides);
+	return (
+		<>
+			<ContentHeader title="NAVIGATORS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NAVIGATORS' }]} lang={lang} />
+			<div className="l-contents__body p-page-navigators">
+				<div className="p-page-navigators__header">
+					<h2 className="p-page-navigators__title c-heading c-heading--2">{siteOptions.navigators_title}</h2>
+					<div className="p-page-navigators__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
+				</div>
+				<div className="p-page-navigators__items u-full-bleed">
+					{guides && guides.length > 0 ? (
+						guides.map((guide, index) => (
+							<div key={index} className="p-page-navigators__item">
+								<NavigatorItem lang={lang} guide={guide} />
+							</div>
+						))
+					) : (
+						<li>No guides available</li>
+					)}
+				</div>
+			</div>
+		</>
+	);
+}
+
+```
+
+### app/[lang]/tour/page.tsx
+
+```
+// 'use client';
+
+// import Image from 'next/image';
+import { Locale } from '@/constants/site';
+// import { TourItem } from '@/components/Tour/TourItem';
+import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+// import { FilterComponent } from '@/components/FilterComponent';
+import { ClientFilteredActivities } from '@/components/Tour/ClientFilteredActivities';
+
+export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
+	const guides = await getFormattedGuideData(lang);
+	const regions = await getFormattedRegionData(lang);
+	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+	const allTags = Array.from(new Set(activities.flatMap((activity) => activity.tags || []))).map((tag) => ({
+		id: tag.id,
+		name: tag.name,
+		slug: tag.slug
+	}));
+	// console.log(activities);
+
+	return (
+		<>
+			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
+			<div className="l-contents__body p-page-tours">
+				<ClientFilteredActivities lang={lang} initialActivities={activities} guides={guides} regions={regions} tags={allTags} />
+			</div>
+		</>
+	);
+}
+
+```
+
+### app/[lang]/page.tsx
+
+```
+// import { Suspense } from 'react';
+import { TourItem } from '@/components/Tour/TourItem';
+import { Button } from '@/components/Button';
+import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
+import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
+import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
+import { VideoPlayer } from '@/components/VideoPlayer';
+import { Locale } from '@/constants/site';
+import { getWPSiteOptions } from '@/lib/fetchData';
+// import { useTranslations } from '@/lib/i18n';
+import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
+// import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
+import Image from 'next/image';
+import NewsItem from '@/components/News/NewsItem';
+// import Link from 'next/link';
+
+export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
+	// const t = useTranslations(lang);
+	const siteOptions = await getWPSiteOptions(lang);
+	const guides = await getFormattedGuideData(lang);
+	const regions = await getFormattedRegionData(lang);
+	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+	// const newsArticles = await fetchNewsArticles(lang);
+	const newsArticles = await getFormattedNewsData(lang);
+	// console.log('newsArticles:', newsArticles);
+
+	return (
+		<>
+			<div className="l-contents__body p-home">
+				<div className="p-home-hero u-full-bleed">
+					<HomeHeroSlider lang={lang} slides={siteOptions.home_slider} />
+				</div>
+
+				<div className="p-home-navigators">
+					<h2 className="p-home-navigators__copy">{siteOptions.navigators_title}</h2>
+					<p className="p-home-navigators__text" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
+					<div className="p-home-navigators__slider u-full-bleed">
+						<HomeNavigatorSlider lang={lang} guides={guides} />
+					</div>
+					<div className="p-home-navigators__button">
+						<Button href="/navigator" label="VIEW ALL NAVIGATORS" />
+					</div>
+				</div>
+
+				<div className="p-home-regions">
+					<div className="p-home-regions__header">
+						<div className="p-home-regions__title">
+							<h2 className="c-heading">REGIONS</h2>
+						</div>
+						<h3 className="p-home-regions__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_regions_description || '' }} />
+					</div>
+					<div className="p-home-regions__slider">
+						<HomeRegionSlider lang={lang} regions={regions} />
+					</div>
+					<div className="p-home-regions__button">
+						<Button href="/region" label="VIEW ALL REGIONS" color="light" />
+					</div>
+				</div>
+
+				<div className="p-home-video">
+					<div className="p-home-video__inner u-full-bleed">
+						<div className="p-home-video__bg">
+							{siteOptions.home_about_mv && (
+								<figure className="p-home-video__mv">
+									<Image src={siteOptions.home_about_mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+								</figure>
+							)}
+							{siteOptions.home_about_video && <VideoPlayer videoUrl={siteOptions.home_about_video} />}
+						</div>
+						<div className="p-home-video__content c-container">
+							<h2 className="p-home-video__title c-heading">
+								Authentic <br />
+								Destinations
+							</h2>
+							<h3 className="p-home-video__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_about_description || '' }} />
+							<div className="p-home-video__button1">
+								<Button href={siteOptions.home_about_video || '#'} label="CONCEPT MOVIE" color="light" />
+							</div>
+						</div>
+					</div>
+					<div className="p-home-video__footer">
+						<div className="p-home-video__button2">
+							<Button href="/about" label="ABOUT US" color="light" />
+						</div>
+					</div>
+				</div>
+
+				<div className="p-home-tours">
+					<div className="p-home-tours__title">
+						<h2 className="c-heading">TOURS</h2>
+					</div>
+					<div className="p-home-tours__total">
+						<div className="c-total">
+							<div className="c-total__label">ALL TOURS</div>
+							<span className="c-total__count">{activities.length}</span>
+						</div>
+					</div>
+					<div className="p-home-tours__tours c-tours">{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}</div>
+					<div className="p-home-tours__button">
+						<Button href="/tour" label="VIEW ALL TOURS" />
+					</div>
+				</div>
+
+				<div className="p-home-news">
+					<div className="p-home-news__title">
+						<h2 className="c-heading">NEWS</h2>
+					</div>
+					<div className="p-home-news__news">
+						{newsArticles.length > 0 ? (
+							newsArticles.slice(0, 4).map((article) => (
+								<div key={article.id} className="">
+									<NewsItem article={article} />
+								</div>
+							))
+						) : (
+							<p>ニュースが見つかりません。</p>
+						)}
+					</div>
+					<div className="p-home-news__button">
+						<Button href="/news" label="VIEW ALL NEWS" />
+					</div>
+				</div>
+			</div>
+		</>
+	);
+}
+
+```
+
+### constants/site.ts
+
+```
+// Place any global data in this file.
+// You can import this data from anywhere in your site by using the `import` keyword.
+
+export const SITE_URL = 'https://transformativetour.pages.dev/';
+export const SITE_TITLE = 'AUTHENTIC JAPAN';
+export const SITE_DESCRIPTION = 'A Gathering of Passionate Navigators Providing Transformative Travel in Japan';
+
+export const LOCALES = ['en', 'ja', 'fr'] as const;
+export type Locale = (typeof LOCALES)[number];
+export const DEFAULT_LOCALE = 'ja' as Locale;
+
+export const NAVI_ITEMS = [
+	{ label: 'NAVIGATORS', href: `/navigator` },
+	{ label: 'TOURS', href: `/tour` },
+	{ label: 'REGIONS', href: `/region` },
+	{ label: 'NEWS', href: `/news` },
+	{ label: 'ABOUT US', href: `/about` },
+	{ label: 'CONTACT', href: `/contact` },
+];
+
+export const FOOTER_NAVI_ITEMS = [
+	{ label: 'NAVIGATORS', href: `/navigator` },
+	{ label: 'REGIONS', href: `/region` },
+	{ label: 'ABOUT US', href: `/about` },
+	{ label: 'TOURS', href: `/tour` },
+	{ label: 'NEWS', href: `/news` },
+	{ label: 'CONTACT', href: `/contact` }
+];
+
+```
+
+### next.config.mjs
+
+```
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+	reactStrictMode: true,
+	images: {
+		domains: ['shimatoworks.xsrv.jp', 'bokun.s3.amazonaws.com', 'imgcdn.bokun.tools', 'placehold.jp']
+	}
+};
+
+export default nextConfig;
+
+```
+
+### README.md
+
+```
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+```
+
+### components/Home/HomeNavigatorSlider.tsx
+
+```
+'use client';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperType } from 'swiper';
+import { Navigation, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+// import 'swiper/css/free-mode';
+import 'swiper/css/autoplay';
+import 'swiper/css/navigation';
+import { Guide } from '@/types';
+import { Locale } from '@/constants/site';
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import { NavigatorCard } from '@/components/Navigator/NavigatorCard';
+
+export function HomeNavigatorSlider({ lang, guides }: { lang: Locale; guides: Guide[] }) {
+	const [activeIndex, setActiveIndex] = useState(0);
+	const [spaceBetween, setSpaceBetween] = useState(40);
+	const swiperRef = useRef<SwiperType | null>(null);
+
+	const handleGuideClick = (index: number) => {
+		if (swiperRef.current) {
+			const realIndex = index % guides.length;
+			swiperRef.current.slideToLoop(realIndex, 300);
+		}
+	};
+
+	useEffect(() => {
+		const handleResize = () => {
+			if (window.innerWidth < 768) {
+				setSpaceBetween(20); // スマートフォンサイズの場合
+			} else {
+				setSpaceBetween(40); // それ以外の場合
+			}
+		};
+
+		handleResize(); // 初期化時に一度実行
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
+	return (
+		<div className="p-home-navigators-slider">
+			<Swiper
+				modules={[Autoplay, Navigation]}
+				spaceBetween={spaceBetween}
+				slidesPerView={1}
+				initialSlide={1}
+				autoplay={{
+					delay: 8000,
+					disableOnInteraction: false
+				}}
+				// speed={300}
+				onSwiper={(swiper) => {
+					swiperRef.current = swiper;
+					setActiveIndex(swiper.realIndex);
+				}}
+				onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+				className="p-home-navigators-slider__slider">
+				{guides.map((guide, index) => (
+					<SwiperSlide key={`${guide.id}-${index}`}>
+						<NavigatorCard lang={lang} guide={guide} />
+					</SwiperSlide>
+				))}
+			</Swiper>
+			<div className="p-home-navigators-slider__navi c-container">
+				<div className="p-home-navigators-slider__navi-total">
+					<div className="c-total">
+						<div className="c-total__label">NAVIGATORS</div>
+						<span className="c-total__count">{guides.length}</span>
+					</div>
+				</div>
+				<div className="p-home-navigators-slider__navi-items">
+					{guides.map((guide, index) => (
+						<button key={guide.id} className={`p-home-navigators-slider__navi-item c-navigator-circle u-hover ${index === activeIndex ? 'is-active' : ''}`} onClick={() => handleGuideClick(index)}>
+							<figure className="c-navigator-circle__thumb">
+								<Image src={guide.photo?.link ?? '/no-photo.jpg'} alt={guide.name} fill sizes="20vw" style={{ objectFit: 'cover' }} />
+							</figure>
+							<h3 className="c-navigator-circle__name">{guide.name}</h3>
+							{guide.regions && guide.regions.length > 0 && (
+								<div className="c-navigator-circle__region">
+									<i className="c-pin"></i>
+									<span>{guide.regions.join(', ')}</span>
+								</div>
+							)}
+						</button>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/Home/HomeRegionSlider.tsx
+
+```
+'use client';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectFade, Navigation, Autoplay, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import 'swiper/css/autoplay';
+import 'swiper/css/pagination';
+import { Locale } from '@/constants/site';
+import { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
+import { Region } from '@/types';
+import { Button } from '@/components/Button';
+
+export function HomeRegionSlider({ regions }: { lang: Locale; regions: Region[] }) {
+	const [activeIndex, setActiveIndex] = useState(0);
+	const swiperRef = useRef<SwiperType | null>(null);
+
+	useEffect(() => {
+		const handleResize = () => {
+			// リサイズ時の処理があれば、ここに記述
+		};
+
+		handleResize(); // 初期化時に一度実行
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
+	const handleRegionClick = (index: number) => {
+		setActiveIndex(index);
+		if (swiperRef.current) {
+			swiperRef.current.slideTo(index);
+		}
+	};
+
+	return (
+		<div className="p-home-regions-slider">
+			<div className="p-home-regions-slider__navi">
+				<div className="p-home-regions-slider__navi-total">
+					<div className="c-total">
+						<div className="c-total__label">REGIONS</div>
+						<span className="c-total__count">{regions.length}</span>
+					</div>
+				</div>
+				<div className="p-home-regions-slider__navi-items">
+					{regions.map((region, index) => (
+						<button key={region.id} className={`p-home-regions-slider__navi-item ${index === activeIndex ? 'is-active' : ''}`} onClick={() => handleRegionClick(index)}>
+							<i></i>
+							<span>{region.name}</span>
+						</button>
+					))}
+				</div>
+			</div>
+			<div className="p-home-regions-slider__content">
+				<Swiper
+					modules={[EffectFade, Navigation, Autoplay, Pagination]}
+					effect="fade"
+					fadeEffect={{ crossFade: true }}
+					navigation
+					autoplay={{
+						delay: 5000,
+						disableOnInteraction: false
+					}}
+					speed={1000}
+					pagination={{
+						type: 'progressbar'
+					}}
+					onSwiper={(swiper) => (swiperRef.current = swiper)}
+					onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+					className="p-home-regions-slider__slider">
+					{regions.map((region, index) => (
+						<SwiperSlide key={index}>
+							<div className="p-home-regions-slider-slide">
+								<div className="p-home-regions-slider-slide__top">
+									<figure className="p-home-regions-slider-slide__mv">
+										<Image src={region.mv} alt={region.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />
+									</figure>
+									<figure className="p-home-regions-slider-slide__map">
+										<Image src={`/map.png`} alt={region.name} width={280} height={228} />
+									</figure>
+									<div className="p-home-regions-slider-slide__label">
+										<div>
+											<i className="c-pin"></i>
+											<span>{region.name}</span>
+										</div>
+									</div>
+								</div>
+								<div className="p-home-regions-slider-slide__bottom">
+									<div className="p-home-regions-slider-slide__button">
+									<Button href={`/region#region${region.id}`} label="VIEW DETAIL" color="light" />
+									</div>
+									<p className="p-home-regions-slider-slide__description">{region.description}</p>
+								</div>
+							</div>
+						</SwiperSlide>
+					))}
+				</Swiper>
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/Home/HomeHeroSlider.tsx
+
+```
+'use client';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectFade, Navigation, Autoplay, Pagination, Parallax } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import 'swiper/css/autoplay';
+import 'swiper/css/pagination';
+import { Locale } from '@/constants/site';
+import { useRef } from 'react';
+import Image from 'next/image';
+import { WPSiteContent } from '@/types';
+// import Link from 'next/link';
+import { Button } from '@/components/Button';
+
+export function HomeHeroSlider({ slides }: { lang: Locale; slides: WPSiteContent['home_slider'] }) {
+	// const [activeIndex, setActiveIndex] = useState(0);
+	const swiperRef = useRef<SwiperType | null>(null);
+
+	// const handleRegionClick = (index: number) => {
+	// 	setActiveIndex(index);
+	// 	if (swiperRef.current) {
+	// 		swiperRef.current.slideTo(index);
+	// 	}
+	// };
+
+	return (
+		<Swiper
+			modules={[EffectFade, Navigation, Autoplay, Pagination, Parallax]}
+			effect="fade"
+			fadeEffect={{ crossFade: true }}
+			navigation={true}
+			autoplay={{
+				delay: 5000,
+				disableOnInteraction: false
+			}}
+			parallax={true}
+			speed={1000}
+			pagination={{
+				type: 'progressbar'
+			}}
+			onSwiper={(swiper) => (swiperRef.current = swiper)}
+			// onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+			className="p-home-hero-slider__slider">
+			{slides.map((slide, index) => (
+				<SwiperSlide key={index} className="p-home-hero-slider-slide">
+					{slide.mv && (
+						<figure className="p-home-hero-slider-slide__image">
+							<Image src={slide.mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+					<div className="p-home-hero-slider-slide__inner">
+						<hgroup className="p-home-hero-slider-slide__title">
+							{slide.sub_copy && <h3 data-swiper-parallax="-30">{slide.sub_copy}</h3>}
+							{slide.main_copy && <h2 data-swiper-parallax="-60" dangerouslySetInnerHTML={{ __html: slide.main_copy || '' }} />}
+						</hgroup>
+						{slide.url && <Button href={slide.url} label="LEARN MORE" color="light" className="p-home-hero-slider-slide__button" />}
+					</div>
+				</SwiperSlide>
+			))}
+		</Swiper>
+	);
+}
+
+```
+
+### components/Contact/ContactForm.tsx
+
+```
+'use client';
+
+import { Locale } from '@/constants/site';
+import { useTranslations } from '@/lib/i18n';
+
+export default function ContactForm({ lang }: { lang: Locale }) {
+	const t = useTranslations(lang);
+	return (
+		<form action="https://ssgform.com/s/27prG3SjVBW4" method="post" className="c-form">
+			<div className="c-form__items">
+				<div className="c-form__item c-form-item">
+					<div className="c-form-item__label">
+						<label htmlFor="user-name">{t({ ja: 'お名前', en: 'Name' })}</label>
+					</div>
+					<div className="c-form-item__control">
+						<input type="text" id="user-name" name={t({ ja: 'お名前', en: 'Name' })} required />
+					</div>
+				</div>
+				<div className="c-form__item c-form-item">
+					<div className="c-form-item__label">
+						<label htmlFor="user-email">{t({ ja: 'メールアドレス', en: 'Email' })}</label>
+					</div>
+					<div className="c-form-item__control">
+						<input type="email" id="user-email" name={t({ ja: 'メールアドレス', en: 'Email' })} required />
+					</div>
+				</div>
+				<div className="c-form__item c-form-item">
+					<div className="c-form-item__label">
+						<label htmlFor="contact-contents">{t({ ja: 'お問い合わせ内容', en: 'Inquiry details' })}</label>
+					</div>
+					<div className="c-form-item__control">
+						<textarea id="contact-contents" name={t({ ja: 'お問い合わせ内容', en: 'Inquiry details' })} required></textarea>
+					</div>
+				</div>
+			</div>
+			<div className="c-form__submit">
+				<button type="submit">{t({ ja: '送信する', en: 'Submit' })}</button>
+			</div>
+		</form>
+	);
+}
+
+```
+
+### components/Layout/ContentHeader.tsx
+
+```
+import Link from 'next/link';
+import { Locale } from '@/constants/site';
+
+interface Breadcrumb {
+  label: string;
+  href?: string;
+}
+
+interface ContentHeaderProps {
+  title: string;
+  breadcrumbs: Breadcrumb[];
+  lang: Locale;
+}
+
+export function ContentHeader({ title, breadcrumbs, lang }: ContentHeaderProps) {
+  return (
+    <div className="l-contents__header">
+      <h1 className="l-contents__title">{title}</h1>
+      <ul className="l-contents__breadcrumb">
+        {breadcrumbs.map((crumb, index) => (
+          <li key={index}>
+            {crumb.href ? (
+              <Link href={`/${lang}${crumb.href}`}>{crumb.label}</Link>
+            ) : (
+              crumb.label
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+```
+
+### components/Layout/Footer.tsx
+
+```
+import { FOOTER_NAVI_ITEMS, Locale } from '@/constants/site';
+import { getFormattedRegionData } from '@/lib/utils';
+import Link from 'next/link';
+import React from 'react';
+
+export default async function Footer({ lang }: { lang: Locale }) {
+	const regions = await getFormattedRegionData(lang);
+
+	return (
+		<div className="l-footer">
+			<nav className="l-footer__navi">
+				<ul>
+					{FOOTER_NAVI_ITEMS.map((item, index) => (
+						<li key={index}>
+							{item.label === 'REGIONS' ? (
+								<>
+									<Link href={`/${lang}${item.href}`}>{item.label}</Link>
+									<ul>
+										{regions.map((region) => (
+											<li key={region.id}>
+												<Link href={`/region#region${region.id}`}>{region.name}</Link>
+											</li>
+										))}
+									</ul>
+								</>
+							) : (
+								<Link href={`/${lang}${item.href}`}>{item.label}</Link>
+							)}
+						</li>
+					))}
+				</ul>
+			</nav>
+			<nav className="l-footer__navi-sub">
+				<ul>
+					<li>
+						<Link href={`#`}>INSTAGRAM</Link>
+					</li>
+					<li>
+						<Link href={`#`}>PRIVACY POLICY</Link>
+					</li>
+				</ul>
+			</nav>
+			<div className="l-footer__copyright">
+				<p>&copy; 2024 Authentic Japan</p>
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/Layout/Header.tsx
+
+```
+import { Locale, NAVI_ITEMS, SITE_TITLE } from '@/constants/site';
+import Link from 'next/link';
+import React from 'react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import Image from 'next/image';
+
+export default function Header({ lang }: { lang: Locale }) {
+	return (
+		<header className={`l-header`}>
+			<h1 className="l-header__title">
+				<Link href={`/${lang}`}>
+					<Image src="/logo.svg" alt={SITE_TITLE} unoptimized fill />
+				</Link>
+			</h1>
+			<div className="l-header__inner">
+				<div className="l-header__navi">
+					<ul>
+						{NAVI_ITEMS.map((item, index) => (
+							<li key={index}>
+								<Link href={`/${lang}${item.href}`}>{item.label}</Link>
+							</li>
+						))}
+					</ul>
+				</div>
+				<div className="l-header__langSwitcher">
+					<LanguageSwitcher currentLang={lang} />
+				</div>
+			</div>
+		</header>
+	);
+}
+
+```
+
+### components/News/NewsItem.tsx
+
+```
+// import { Locale } from '@/constants/site';
+import { News } from '@/types';
+import NavigatorInfo from '../Navigator/NavigatorInfo';
+
+export default function NewsItem({ article }: { article: News }) {
+	// const guide = article.ac
+	return (
+		<div className="c-news">
+			<div className="c-news__inner">
+				<figure className="c-news__thumbnail"></figure>
+				<div className="c-news__content">
+					<time> {article.date}</time>
+					<h2>{article.title}</h2>
+					{article.categories && article.categories.length > 0 && (
+						<div className="c-news__categories">
+							{article.categories.map((category) => (
+								<span key={category.id} className="c-news__category">
+									{category.name}
+								</span>
+							))}
+						</div>
+					)}
+					{article.guides && article.guides.length > 0 && (
+						<div className="c-news__guides">
+							{article.guides.map((guide) => (
+								<div key={guide.id} className="c-news__guide">
+									<NavigatorInfo guide={guide} />
+								</div>
+							))}
+						</div>
+					)}
+				</div>
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/Navigator/NavigatorInfo.tsx
+
+```
+// import { Locale } from '@/constants/site';
+import { Guide } from '@/types';
+import Image from 'next/image';
+// interface GuideInfoProps {
+// 	className?: string;
+//   name: string;
+//   title: string;
+// 	photo: string;
+// }
+
+export default function NavigatorInfo({ guide }: { guide: Guide }) {
+	return (
+		<div className="c-navigator-info">
+			<div className="c-navigator-info__photo">
+				<Image src={guide.photo?.link ?? '/default-image.jpg'} alt="" fill sizes="20vw" style={{ objectFit: 'cover' }} />
+			</div>
+			<div className="c-navigator-info__content">
+				<p className="c-navigator-info__name">{guide.name}</p>
+				<p className="c-navigator-info__title">{guide.title}</p>
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/Navigator/NavigatorCard.tsx
+
+```
+'use client';
+
+import { Locale } from '@/constants/site';
+import { Guide } from '@/types';
+import Image from 'next/image';
+// import { useTranslations } from '@/lib/i18n';
+import Link from 'next/link';
+
+export function NavigatorCard({ lang, guide }: { lang: Locale; guide: Guide }) {
+	// const t = useTranslations(lang);
+	return (
+		<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-card">
+			<figure className="c-navigator-card__image">
+				<Image src={guide.mv?.sizes['1536x1536'] ?? '/default-image.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+			</figure>
+			<div className="c-navigator-card__inner">
+				<h3 className="c-navigator-card__copy">
+					<p>{guide.copy}</p>
+				</h3>
+				{guide.regions && guide.regions.length > 0 && (
+					<div className="c-navigator-card__region">
+						<i className="c-pin"></i>
+						<span>{guide.regions.join(', ')}</span>
+					</div>
+				)}
+				<div className="c-navigator-card__cols">
+					<div className="c-navigator-card__col-left">
+						<div className="c-navigator-card__photo">
+							<Image src={guide.photo?.link ?? '/default-image.jpg'} alt="" fill sizes="20vw" style={{ objectFit: 'cover' }} />
+						</div>
+					</div>
+					<div className="c-navigator-card__col-right">
+						<h2 className="c-navigator-card__name">{guide.name}</h2>
+						<h3 className="c-navigator-card__title">{guide.title}</h3>
+					</div>
+				</div>
+				<div className="c-navigator-card__tags">
+					{guide.tags.map((tag) => (
+						<span key={tag.id} className="c-navigator-card__tag">
+							#{tag.name}
+						</span>
+					))}
+				</div>
+			</div>
+		</Link>
+	);
+}
+
+```
+
+### components/Navigator/NavigatorItem.tsx
+
+```
+import { Locale } from '@/constants/site';
+import { Guide } from '@/types';
+import Image from 'next/image';
+// import { useTranslations } from '@/lib/i18n';
+import Link from 'next/link';
+
+export function NavigatorItem({ lang, guide }: { lang: Locale; guide: Guide }) {
+	// const t = useTranslations(lang);
+	return (
+		<div className="c-navigator">
+			<div className="c-navigator__header">
+				<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator__link">
+					<h3 className="c-navigator__copy">
+						<p>{guide.copy}</p>
+					</h3>
+					<figure className="c-navigator__image">
+						<Image src={guide.mv?.link ?? '/no-photo.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
+					</figure>
+				</Link>
+			</div>
+			<div className="c-navigator__body">
+				{guide.regions && guide.regions.length > 0 && (
+					<div className="c-navigator__region">
+						<i className="c-pin"></i>
+						<span>{guide.regions.join(', ')}</span>
+					</div>
+				)}
+				<h2 className="c-navigator__name">
+					<Link href={`/navigator/${guide.id}`}>{guide.name}</Link>
+				</h2>
+				<h2 className="c-navigator__title">{guide.title}</h2>
+				<div className="c-navigator__tags">
+					{guide.tags.map((tag) => (
+						<span key={tag.id} className="c-navigator__tag">
+							#{tag.name}
+						</span>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/Tour/ClientFilteredActivities.tsx
+
+```
+'use client';
+
+import React, { useState, useCallback } from 'react';
+import { Activity, Guide, Region } from '@/types';
+import { TourItem } from '@/components/Tour/TourItem';
+import { FilterComponent } from '@/components/Tour/FilterComponent';
+import { filterActivities } from '@/lib/utils';
+import { Locale } from '@/constants/site';
+
+interface ClientFilteredActivitiesProps {
+	lang: Locale;
+	initialActivities: Activity[];
+	guides: Guide[];
+	regions: Region[];
+	tags: { id: number; name: string; slug: string }[];
+}
+
+export function ClientFilteredActivities({ initialActivities, guides, regions, tags, lang }: ClientFilteredActivitiesProps) {
+	const [filteredActivities, setFilteredActivities] = useState(initialActivities);
+	const handleFilterChange = useCallback(
+		(newFilters: { guideId: number | null; regionId: number | null; tagIds: number[] }) => {
+			const filtered = filterActivities(initialActivities, newFilters, guides, regions);
+			setFilteredActivities(filtered);
+		},
+		[initialActivities, guides, regions]
+	);
+
+	return (
+		<>
+			<div className="p-page-tours__filter">
+				<FilterComponent guides={guides} regions={regions} tags={tags} onFilterChange={handleFilterChange} lang={lang} />
+			</div>
+			<div className="p-page-tours__tours c-tours">{filteredActivities.length > 0 ? filteredActivities.map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>ツアーが見つかりません。</p>}</div>
+		</>
+	);
+}
+
+```
+
+### components/Tour/TourButton.tsx
+
+```
+'use client';
+
+import { ReactNode } from 'react';
+import clsx from 'clsx';
+
+interface TourButtonProps {
+	tourId: number;
+	children?: ReactNode;
+	className?: string;
+}
+
+export default function TourButton({ tourId, children, className }: TourButtonProps) {
+	return (
+		<button className={clsx('bokunButton', className)} disabled id={`bokun_${tourId}`} data-src={`https://widgets.bokun.io/online-sales/f34383c7-3179-43f7-a169-d3058ddf6840/experience/${tourId}?partialView=1`} data-testid="widget-book-button" style={{ border: 'none', backgroundColor: 'transparent', textAlign:'left' }}>
+			{children}
+		</button>
+	);
+}
+
+```
+
+### components/Tour/FilterComponent.tsx
+
+```
+'use client';
+
+import React, { useState, useCallback } from 'react';
+import { Guide, Region } from '@/types';
+import { useTranslations } from '@/lib/i18n';
+import { Locale } from '@/constants/site';
+
+interface FilterOption {
+	id: number;
+	name: string;
+}
+
+interface FilterComponentProps {
+	guides: Guide[];
+	regions: Region[];
+	tags: FilterOption[];
+	onFilterChange: (filters: FilterState) => void;
+	lang: Locale; // 言語を指定するためのpropを追加
+}
+
+interface FilterState {
+	guideId: number | null;
+	regionId: number | null;
+	tagIds: number[];
+}
+
+const FilterButtonGroup: React.FC<{
+	label: string;
+	options: FilterOption[];
+	selectedIds: number[];
+	onChange: (ids: number[]) => void;
+	multiSelect?: boolean;
+}> = React.memo(({ label, options, selectedIds, onChange, multiSelect = false }) => (
+	<div className="c-filter-group">
+		<div className="c-filter-group__label">{label}</div>
+		<div className="c-filter-group__buttons">
+			{options.map((option) => (
+				<button
+					key={option.id}
+					className={`c-filter-group__button u-hover ${selectedIds.includes(option.id) ? 'is-active' : ''}`}
+					onClick={() => {
+						if (multiSelect) {
+							onChange(selectedIds.includes(option.id) ? selectedIds.filter((id) => id !== option.id) : [...selectedIds, option.id]);
+						} else {
+							onChange(selectedIds.includes(option.id) ? [] : [option.id]);
+						}
+					}}>
+					{option.name}
+				</button>
+			))}
+		</div>
+	</div>
+));
+
+FilterButtonGroup.displayName = 'FilterButtonGroup';
+
+export const FilterComponent: React.FC<FilterComponentProps> = React.memo(
+  ({ guides, regions, tags, onFilterChange, lang }) => {
+    const t = useTranslations(lang);
+
+    const [filters, setFilters] = useState<FilterState>({
+      guideId: null,
+      regionId: null,
+      tagIds: [],
+    });
+
+    const handleFilterChange = useCallback(
+      (filterType: keyof FilterState, value: number[]) => {
+        const newFilters = {
+          ...filters,
+          [filterType]: filterType === 'tagIds' ? value : value.length > 0 ? value[0] : null,
+        };
+        setFilters(newFilters);
+        onFilterChange(newFilters);
+      },
+      [filters, onFilterChange]
+    );
+
+    return (
+      <div className="c-filter">
+        <FilterButtonGroup
+          label={t({ ja: 'コーディネーターで絞り込む', en: 'Filter by Navigator' })}
+          options={guides}
+          selectedIds={filters.guideId ? [filters.guideId] : []}
+          onChange={(ids) => handleFilterChange('guideId', ids)}
+        />
+        <FilterButtonGroup
+          label={t({ ja: '地域で絞り込む', en: 'Filter by Region' })}
+          options={regions}
+          selectedIds={filters.regionId ? [filters.regionId] : []}
+          onChange={(ids) => handleFilterChange('regionId', ids)}
+        />
+        <FilterButtonGroup
+          label={t({ ja: 'キーワードで絞り込む', en: 'Filter by Keyword' })}
+          options={tags}
+          selectedIds={filters.tagIds}
+          onChange={(ids) => handleFilterChange('tagIds', ids)}
+          multiSelect={true}
+        />
+      </div>
+    );
+  }
+);
+
+FilterComponent.displayName = 'FilterComponent';
+
+```
+
+### components/Tour/TourItem.tsx
+
+```
+import Image from 'next/image';
+import { Activity } from '@/types';
+import TourButton from '@/components/Tour/TourButton';
+import clsx from 'clsx';
+
+export function TourItem({ activity, className }: { activity: Activity; className?: string }) {
+	// console.log(activity);
+	return (
+		<div className={clsx('c-tour', className)} data-activity-id={activity.id}>
+			<div className="c-tour__regions">
+				{activity.regions &&
+					activity.regions.map((region, index) => (
+						<div key={index} className="c-tour__region">
+							<i className="c-pin"></i>
+							<span>{region}</span>
+						</div>
+					))}
+			</div>
+			<h2 className="c-tour__title">
+				<TourButton tourId={activity.id} className="u-hover">
+					{activity.title}
+				</TourButton>
+			</h2>
+			<div className="c-tour__header">
+				{activity.photo && (
+					<div className="c-tour__image">
+						<TourButton tourId={activity.id}>
+							<Image src={activity.photo} alt={activity.title} fill sizes="50vw" style={{ objectFit: 'cover' }} />
+						</TourButton>
+					</div>
+				)}
+				<div className="c-tour__header-inner">
+					<p className="c-tour__price">
+						{activity.formattedPrice}
+						<span>JPY</span>
+					</p>
+					<p className="c-tour__duration">{activity.duration}</p>
+				</div>
+			</div>
+			<div className="c-tour__body">
+				{activity.excerpt && <div className="c-tour__summary">{activity.excerpt}</div>}
+				{activity.guides && (
+					<div className="c-tour__guides">
+						{activity.guides.map((guide, index) => (
+							<div key={index} className="c-tour__guide">
+								{guide.photo && (
+									<figure className="c-tour__guide-image">
+										<Image src={guide.photo.link} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
+									</figure>
+								)}
+								<div className="c-tour__guide-info">
+									<span className="c-tour__guide-name">{guide.name}</span>
+									<span className="c-tour__guide-title">{guide.title}</span>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+				{activity.tags && activity.tags.length > 1 && (
+					<div className="c-tour__tags">
+						{activity.tags.map((tag, index) => (
+							<span key={index} className="c-tour__tag">
+								{tag.name}
+							</span>
+						))}
+					</div>
+				)}
+			</div>
+			<div className="c-tour__button">
+				<TourButton tourId={activity.id} className="c-tour-button u-hover">
+					<span className="c-tour-button__label">RESERVATION & VIEW DETAIL</span>
+					<div className="c-tour-button__circle">
+						<i className="c-tour-button__icon"></i>
+					</div>
+				</TourButton>
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/VideoPlayer.tsx
+
+```
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import YouTubePlayer from '@/lib/youTubePlayer';
+import { extractVideoID } from '@/lib/utils';
+
+export function VideoPlayer({ videoUrl }: { videoUrl: string }) {
+	const playerRef = useRef<HTMLDivElement>(null);
+	const youtubePlayerRef = useRef<YouTubePlayer | null>(null);
+
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const videoId = extractVideoID(videoUrl);
+		if (!videoId || !playerRef.current) return;
+
+		const playerId = `youtube-player-${videoId}`;
+		playerRef.current.id = playerId;
+
+		const player = new YouTubePlayer(videoId, playerId, true);
+		youtubePlayerRef.current = player;
+
+		player
+			.initialize()
+			.then(() => setIsLoading(false))
+			.catch((err) => {
+				console.error(err);
+				setError('Failed to load video');
+				setIsLoading(false);
+			});
+
+		return () => {
+			if (youtubePlayerRef.current) {
+				youtubePlayerRef.current.destroy();
+			}
+		};
+	}, [videoUrl]);
+
+	return (
+		<div className="c-video">
+			{isLoading && <div>Loading...</div>}
+			{error && <div>{error}</div>}
+			<div className="c-video__player" ref={playerRef}></div>
+		</div>
+	);
+}
+
+```
+
+### components/ScrollBarWidthManager.tsx
+
+```
+'use client';
+
+import { debounce } from '@/lib/debounce';
+import { useEffect } from 'react';
+
+export function ScrollBarWidthManager() {
+	useEffect(() => {
+		const updateScrollBarWidth = () => {
+			const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+			document.documentElement.style.setProperty('--scrollbar-width', `${scrollBarWidth}px`);
+			console.log(scrollBarWidth, 'scrollBarWidth');
+		};
+
+		updateScrollBarWidth();
+
+		const debouncedUpdateScrollBarWidth = debounce(updateScrollBarWidth, 200);
+		window.addEventListener('resize', debouncedUpdateScrollBarWidth);
+
+		return () => {
+			window.removeEventListener('resize', debouncedUpdateScrollBarWidth);
+		};
+	}, []);
+
+	return null;
+}
+
+```
+
+### components/Button.tsx
+
+```
+import Link from 'next/link';
+
+interface ButtonProps {
+  href: string;
+  label: string;
+  color?: 'default' | 'light';
+  className?: string;
+}
+
+export const Button: React.FC<ButtonProps> = ({ href, label, color = 'default', className = '' }) => {
+  const buttonClass = `c-button ${color === 'light' ? 'c-button--light' : ''} ${className}`.trim();
+
+  return (
+    <div className={buttonClass}>
+      <span className="c-button__label">
+        <Link href={href} className="c-button__link">
+          {label}
+        </Link>
+      </span>
+      <div className="c-button__circle">
+        <i className="c-button__icon"></i>
+      </div>
+    </div>
+  );
+};
+
+```
+
+### components/LanguageSwitcher.tsx
+
+```
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { LOCALES, Locale } from '@/constants/site';
+
+export default function LanguageSwitcher({ currentLang }: { currentLang: Locale }) {
+  const pathname = usePathname();
+
+  return (
+    <div className="c-lang-switcher">
+      {LOCALES.map((locale) => {
+        const isActive = currentLang === locale;
+        // Remove the current language prefix and add the new one
+        const newPathname = pathname.replace(`/${currentLang}`, `/${locale}`);
+
+        if (isActive) {
+          return (
+            <Link
+              key={locale}
+							href={newPathname}
+              className="c-lang-switcher__item is-active"
+              aria-current="true"
+            >
+              {locale.toUpperCase()}
+            </Link>
+          );
+        }
+
+        return (
+          <Link
+            key={locale}
+            href={newPathname}
+            className="c-lang-switcher__item"
+            lang={locale}
+          >
+            {locale.toUpperCase()}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+```
+
+### package.json
+
+```
+{
+  "name": "authentic-japan",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@formatjs/intl-localematcher": "^0.5.4",
+    "clsx": "^2.1.1",
+    "negotiator": "^0.6.3",
+    "next": "14.2.14",
+    "react": "^18",
+    "react-dom": "^18",
+    "sass": "^1.79.4",
+    "swiper": "^11.1.14"
+  },
+  "devDependencies": {
+    "@types/negotiator": "^0.6.3",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.14",
+    "typescript": "^5"
+  }
+}
+
+```
+
+### lib/debounce.ts
+
+```
+/**
+ * 指定された遅延時間後に関数を実行するdebounce関数
+ * @param callback 実行する関数
+ * @param delay 遅延時間（ミリ秒）
+ * @returns debounceされた関数
+ */
+export const debounce = <T extends unknown[], R>(callback: (...args: T) => R, delay: number = 0): ((...args: T) => void) => {
+	let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+	return (...args: T): void => {
+			if (timeoutId) {
+					clearTimeout(timeoutId);
+			}
+
+			timeoutId = setTimeout(() => {
+					callback(...args);
+			}, delay);
+	};
+};
+
+```
+
+### lib/i18n.ts
+
+```
+import { LOCALES, DEFAULT_LOCALE } from '@/constants/site';
+import type { Locale } from '@/constants/site';
+
+// 例：{ja: 'お名前', en: 'Name', fr: 'Nom'}
+type Multilingual = {
+  [key in Locale]?: string;
+};
+
+// export function useTranslations(lang: Locale) {
+// 	return function t(multilingual: Multilingual): string {
+// 		// multilingual[lang] が存在しない場合は multilingual[DEFAULT_LOCALE] を返す
+// 		return multilingual[lang] || multilingual[DEFAULT_LOCALE];
+// 	};
+// }
+
+export function useTranslations(lang: Locale) {
+  return function t(multilingual: Multilingual): string {
+    // 指定された言語の翻訳がある場合はそれを返す
+    if (multilingual[lang]) {
+      return multilingual[lang]!;
+    }
+
+    // 指定された言語の翻訳がない場合、デフォルト言語の翻訳を返す
+    if (multilingual[DEFAULT_LOCALE]) {
+      return multilingual[DEFAULT_LOCALE]!;
+    }
+
+    // デフォルト言語の翻訳もない場合、最初に見つかった翻訳を返す
+    for (const locale of LOCALES) {
+      if (multilingual[locale]) {
+        return multilingual[locale]!;
+      }
+    }
+
+    // どの翻訳も見つからない場合、エラーメッセージを返す
+    return 'Translation not found';
+  };
+}
+
+export function getLangFromUrl(url: URL) {
+	const [, lang] = url.pathname.split('/');
+	if (LOCALES.includes(lang as (typeof LOCALES)[number])) {
+		return lang as (typeof LOCALES)[number];
+	}
+	return DEFAULT_LOCALE;
+}
+
+```
+
+### lib/fetchData.ts
+
+```
+import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPCategory, WPNewsArticle, } from '@/types';
+import { Locale, DEFAULT_LOCALE } from '@/constants/site';
+
+const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
+// const BOKUN_API_BASE_URL = 'https://neighborsflavorstours-bokun-wrapper.pages.dev';
+const WP_API_BASE_URL = 'https://shimatoworks.xsrv.jp/transformativetour/wp-json/wp/v2';
+
+interface BokunSearchParams {
+	facetFilters?: Array<{
+		excluded: boolean;
+		name: string;
+		values: string[];
+	}>;
+	page: number;
+	pageSize: number;
+	vendorId?: number;
+}
+
+// カスタムエラークラス
+class FetchError extends Error {
+	constructor(public status: number, message: string) {
+		super(message);
+		this.name = 'FetchError';
+	}
+}
+
+// 再利用可能なfetch関数
+async function fetchWithErrorHandling<T>(url: string, options?: RequestInit): Promise<T> {
+	const response = await fetch(url, options);
+	if (!response.ok) {
+		throw new FetchError(response.status, `HTTP error! status: ${response.status}`);
+	}
+	return await response.json();
+}
+
+// キャッシュオブジェクト
+const cache: Record<string, unknown> = {};
+
+// キャッシュ付きfetch関数
+async function cachedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+	const start = Date.now();
+	let source: 'cache' | 'fetch';
+
+	if (process.env.NODE_ENV === 'development') {
+		// 開発環境ではキャッシュを使用しない
+		const data = await fetcher();
+		source = 'fetch';
+		const end = Date.now();
+		const duration = end - start;
+		console.log(`${source}: ${key} (${duration}ms)`);
+		return data;
+	}
+
+	if (cache[key]) {
+		source = 'cache';
+		const data = cache[key] as T;
+		const end = Date.now();
+		const duration = end - start;
+		console.log(`${source}: ${key} (${duration}ms)`);
+		return data;
+	}
+
+	const data = await fetcher();
+	cache[key] = data;
+	source = 'fetch';
+	const end = Date.now();
+	const duration = end - start;
+	console.log(`${source}: ${key} (${duration}ms)`);
+	return data;
+}
+
+export async function postSearchActivities(params: BokunSearchParams, lang: Locale = DEFAULT_LOCALE): Promise<BokunResponseData> {
+	const url = `${BOKUN_API_BASE_URL}/activity.json/search?lang=${encodeURIComponent(lang)}`;
+	return cachedFetch(`activities-${lang}-${JSON.stringify(params)}`, () =>
+		fetchWithErrorHandling<BokunResponseData>(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(params)
+		})
+	);
+}
+
+export async function getWPSiteOptions(lang: Locale = DEFAULT_LOCALE): Promise<WPSiteContent> {
+	const BASE_URL = 'https://shimatoworks.xsrv.jp/transformativetour/wp-json';
+	const url = `${BASE_URL}/acf/v1/options?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	// const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	return cachedFetch(`options-${lang}`, () => fetchWithErrorHandling<WPSiteContent>(url));
+}
+
+export async function fetchWPTag(id: number): Promise<WPTag> {
+	const url = `${WP_API_BASE_URL}/tags/${id}`;
+	return cachedFetch(`tag-${id}`, () => fetchWithErrorHandling<WPTag>(url));
+}
+
+export async function fetchAllWPTags(lang: Locale = DEFAULT_LOCALE): Promise<WPTag[]> {
+	const url = `${WP_API_BASE_URL}/tags?per_page=100&lang=${encodeURIComponent(lang)}`;
+	return cachedFetch(`all-tags-${lang}`, () => fetchWithErrorHandling<WPTag[]>(url));
+}
+
+export async function fetchAllWPCategories(lang: Locale = DEFAULT_LOCALE): Promise<WPCategory[]> {
+	const url = `${WP_API_BASE_URL}/categories?per_page=100&lang=${encodeURIComponent(lang)}`;
+	return cachedFetch(`all-categories-${lang}`, () => fetchWithErrorHandling<WPCategory[]>(url));
+}
+
+export async function fetchWPGuides(lang: Locale = DEFAULT_LOCALE): Promise<WPGuide[]> {
+	const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	return cachedFetch(`guides-${lang}`, () => fetchWithErrorHandling<WPGuide[]>(url));
+}
+
+export async function fetchWPRegions(lang: Locale = DEFAULT_LOCALE): Promise<WPRegion[]> {
+	const url = `${WP_API_BASE_URL}/region?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	return cachedFetch(`regions-${lang}`, () => fetchWithErrorHandling<WPRegion[]>(url));
+}
+
+export async function fetchWPTours(lang: Locale = DEFAULT_LOCALE): Promise<WPTour[]> {
+	const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	return cachedFetch(`tours-${lang}`, () => fetchWithErrorHandling<WPTour[]>(url));
+}
+
+export async function fetchNewsArticles(lang: Locale = DEFAULT_LOCALE): Promise<WPNewsArticle[]> {
+	const url = `${WP_API_BASE_URL}/posts?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	return cachedFetch(`news-${lang}`, () => fetchWithErrorHandling<WPNewsArticle[]>(url));
+}
+
+
+// export async function fetchPostsWithDetails<T extends WPArticle>(
+//   fetchPostsFn: () => Promise<T[]>,
+// ): Promise<WPArticleWithDetails[]> {
+//   const [posts, categories] = await Promise.all([fetchPostsFn(), fetchWPCategories()]);
+
+//   const postsWithDetails = await Promise.all(
+//     posts.map(async (post) => {
+//       let mediaItem: WPMediaItem | undefined;
+// 			// アイキャッチ画像がある場合はその詳細を取得
+//       if (post.featured_media) {
+//         try {
+//           mediaItem = await fetchWPMediaItem(post.featured_media);
+//         } catch (error) {
+//           console.error(`Failed to fetch media for post ${post.id}:`, error);
+//         }
+//       }
+// 			// カテゴリーの詳細を取得
+//       const categoryDetails = categories.filter(category =>
+//         post.categories.includes(category.id)
+//       );
+
+//       return {
+//         ...post,
+//         featured_media_item: mediaItem,
+//         category_details: categoryDetails
+//       };
+//     }),
+//   );
+
+//   return postsWithDetails;
+// }
+
+// export async function fetchNewsArticlesWithDetails(): Promise<WPArticleWithDetails[]> {
+//   return fetchPostsWithDetails(fetchNewsArticles);
+// }
+
+export type { BokunSearchParams };
+
+```
+
+### lib/utils.ts
+
+```
+import { DEFAULT_LOCALE, Locale } from '@/constants/site';
+import { Guide, Activity, Region, News } from '@/types';
+import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
+
+// タグ・カテゴリー情報のキャッシュ
+let tagCache: Map<number, { name: string; slug: string }> | null = null;
+let categoryCache: Map<number, { name: string; slug: string }> | null = null;
+
+async function getTagCache(lang: Locale): Promise<Map<number, { name: string; slug: string }>> {
+	if (!tagCache) {
+		const tags = await fetchAllWPTags(lang);
+		tagCache = new Map(tags.map((tag) => [tag.id, { name: tag.name, slug: tag.slug }]));
+	}
+	return tagCache;
+}
+
+async function getCategoryCache(lang: Locale): Promise<Map<number, { name: string; slug: string }>> {
+	if (!categoryCache) {
+		const categories = await fetchAllWPCategories(lang);
+		// console.log('categoryCache:', categories);
+		categoryCache = new Map(categories.map((category) => [category.id, { name: category.name, slug: category.slug }]));
+	}
+	return categoryCache;
+}
+
+export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Promise<Guide[]> {
+	const [guides, regions, tagCacheResult] = await Promise.all([fetchWPGuides(lang), fetchWPRegions(lang), getTagCache(lang)]);
+
+	const regionMap = new Map(regions.map((region) => [region.id, region.acf.name]));
+
+	const formattedGuides = await Promise.all(
+		guides.map(async (guide) => {
+			// console.log('guide:', guide);
+			const tags = guide.tags
+				? guide.tags.map((tagId) => {
+						const tagInfo = tagCacheResult.get(tagId);
+						return tagInfo ? { id: tagId, name: tagInfo.name, slug: tagInfo.slug } : { id: tagId, name: '', slug: '' };
+				  })
+				: [];
+			// const tags = guide.tags ? await Promise.all(guide.tags.map(fetchWPTag)) : [];
+
+			return {
+				id: guide.id,
+				title: guide.acf.title,
+				name: guide.acf.name,
+				mv: guide.acf.mv,
+				photo: guide.acf.photo,
+				copy: guide.acf.copy,
+				description: guide.acf.description,
+				regionIds: guide.acf.region ?? [], // nullish coalescing operator を使用
+				regions: guide.acf.region?.map((id) => regionMap.get(id) || '').filter((name): name is string => name !== '') ?? [],
+				tags: tags.map((tag) => ({
+					id: tag.id,
+					name: tag.name,
+					slug: tag.slug
+				})),
+				values: guide.acf.values ?? []
+			};
+		})
+	);
+
+	return formattedGuides;
+}
+
+export async function getFormattedRegionData(lang: Locale = DEFAULT_LOCALE): Promise<Region[]> {
+	const regions = await fetchWPRegions(lang);
+	// console.log('regions:', regions);
+	return regions.map((region) => ({
+		id: region.id,
+		name: region.acf.name,
+		// photo: region.acf.photo,
+		description: region.acf.description,
+		mv: region.acf?.mv?.sizes?.large
+	}));
+}
+
+export async function getFormattedActivities(searchParams: BokunSearchParams, lang: Locale = DEFAULT_LOCALE): Promise<Activity[]> {
+	try {
+		const [bokunActivities, wpTours, formattedGuides, tagCacheResult] = await Promise.all([postSearchActivities(searchParams, lang), fetchWPTours(lang), getFormattedGuideData(lang), getTagCache(lang)]);
+
+		// console.log('bokunActivities:', bokunActivities);
+
+		const activities = await Promise.all(
+			bokunActivities.items.map(async (item) => {
+				const wpTour = wpTours.find((tour) => tour.acf.bokun_id === item.id);
+				const guideIds = wpTour?.acf.guide || [];
+				const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
+
+				// guides から regions を抽出
+				const regions = Array.from(new Set(guides.flatMap((guide) => guide.regions))).filter((region): region is string => region !== undefined);
+
+				// キャッシュからタグ情報を取得
+				const tags = wpTour?.tags
+					? wpTour.tags.map((tagId) => {
+							const tagInfo = tagCacheResult.get(tagId);
+							return tagInfo ? { id: tagId, name: tagInfo.name, slug: tagInfo.slug } : { id: tagId, name: '', slug: '' };
+					  })
+					: [];
+
+				const formattedDuration = formatDuration(item.fields.durationWeeks || 0, item.fields.durationDays || 0, item.fields.durationHours || 0);
+				const totalDays = (item.fields.durationWeeks || 0) * 7 + (item.fields.durationDays || 0);
+				// const fields = item.fields || {};
+				// console.log('fields:', fields);
+
+				return {
+					id: parseInt(item.id),
+					wpId: wpTour?.id,
+					title: item.title,
+					excerpt: item.excerpt,
+					photo: item.keyPhoto?.derived.find((p) => p.name === 'large')?.url || item.keyPhoto?.originalUrl,
+					categories: item.activityCategories,
+					tags: tags,
+					price: item.price,
+					formattedPrice: formatNumber(item.price),
+					regions: regions,
+					duration: formattedDuration,
+					durationDays: totalDays,
+					durationHours: totalDays > 0 ? 0 : item.fields.durationHours || 0,
+					guideIds: guideIds,
+					guides: guides
+				};
+			})
+		);
+		return activities;
+	} catch (error) {
+		console.error('Error in getFormattedActivities:', error);
+		throw error;
+	}
+}
+
+export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promise<News[]> {
+	const [newsArticles, formattedGuides, categoryCacheResult] = await Promise.all([fetchNewsArticles(lang), getFormattedGuideData(lang), getCategoryCache(lang)]);
+
+	const formattedNewsArticles = await Promise.all(
+		newsArticles.map(async (article) => {
+			// console.log('categories:', article.categories);
+			const guideIds = article?.acf.guide || [];
+			const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
+			const categories = article.categories
+				? article.categories.map((categoryId) => {
+						const categoryInfo = categoryCacheResult.get(categoryId);
+						return categoryInfo ? { id: categoryId, name: categoryInfo.name, slug: categoryInfo.slug } : { id: categoryId, name: '', slug: '' };
+				  })
+				: [];
+
+			return {
+				id: article.id,
+				date: article.date,
+				title: article.title.rendered,
+				content: article.content.rendered,
+				categories: categories.map((category) => ({
+					id: category.id,
+					name: category.name,
+					slug: category.slug
+				})),
+				guides: guides
+			};
+		})
+	);
+
+	return formattedNewsArticles;
+}
+
+function formatDuration(weeks: number, days: number, hours: number): string {
+	const totalDays = weeks * 7 + days;
+
+	if (totalDays > 0) {
+		return `${totalDays} Day${totalDays > 1 ? 's' : ''}`;
+	} else if (hours > 0) {
+		return `${hours} Hour${hours !== 1 ? 's' : ''}`;
+	} else {
+		return 'Less than an hour';
+	}
+}
+
+export function formatNumber(num: number): string {
+	return num.toLocaleString('ja-JP');
+}
+
+export function filterActivities(activities: Activity[], filters: { guideId: number | null; regionId: number | null; tagIds: number[] }, guides: Guide[], regions: Region[]): Activity[] {
+	return activities.filter((activity) => {
+		if (filters.guideId != null && !activity.guides?.some((guide) => guide.id === filters.guideId)) return false;
+		if (filters.regionId != null) {
+			const regionName = regions.find((r) => r.id === filters.regionId)?.name;
+			if (regionName && !activity.regions?.includes(regionName)) return false;
+		}
+		if (filters.tagIds.length > 0 && !filters.tagIds.every((tagId) => activity.tags?.some((tag) => tag.id === tagId))) return false;
+		return true;
+	});
+}
+
+export function extractVideoID(url: string): string | null {
+	const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+	const match = url.match(regExp);
+	return match && match[2].length === 11 ? match[2] : null;
+}
+
+```
+
+### lib/youTubePlayer.js
+
+```
+// YouTubePlayer.js
+
+class YouTubePlayer {
+	constructor(videoId, playerId, autoplay = false) {
+		this.videoId = videoId;
+		this.playerId = playerId;
+		this.player = null;
+		this.played = false;
+		this.autoplay = autoplay;
+		this.isReady = false;
+		this.interval = null;
+	}
+
+	async initialize() {
+		if (typeof window === 'undefined') return; // サーバーサイドレンダリング対策
+
+		if (!window.YT) {
+			await this.loadYouTubeAPI();
+		}
+
+		await this.createPlayer();
+	}
+
+	loadYouTubeAPI() {
+		return new Promise((resolve) => {
+			const tag = document.createElement('script');
+			tag.src = 'https://www.youtube.com/iframe_api';
+			const firstScriptTag = document.getElementsByTagName('script')[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+			window.onYouTubeIframeAPIReady = resolve;
+		});
+	}
+
+	createPlayer() {
+		return new Promise((resolve) => {
+			this.player = new YT.Player(this.playerId, {
+				videoId: this.videoId,
+				playerVars: {
+					autoplay: this.autoplay ? 1 : 0,
+					controls: 0,
+					rel: 0,
+					showinfo: 0,
+					mute: 1,
+					modestbranding: 1,
+					iv_load_policy: 3,
+					playsinline: 1
+				},
+				events: {
+					onReady: () => {
+						this.isReady = true;
+						this.onPlayerReady();
+						resolve();
+					},
+					onStateChange: (event) => this.onPlayerStateChange(event)
+				}
+			});
+		});
+	}
+
+	onPlayerReady() {
+		if (this.player && this.isReady) {
+			this.player.setPlaybackQuality('highres');
+			if (this.autoplay) {
+				this.player.playVideo();
+			}
+		}
+	}
+
+	onPlayerStateChange() {
+		if (!this.player || !this.isReady) return;
+
+		try {
+			const ytStatus = this.player.getPlayerState();
+			const playerElement = document.getElementById(this.playerId);
+
+			switch (ytStatus) {
+				case YT.PlayerState.PLAYING:
+					playerElement?.parentNode?.classList.add('is-loaded');
+					if (!this.played) {
+						this.played = true;
+						const duration = this.player.getDuration() || 0;
+						this.interval = window.setInterval(() => {
+							this.player.seekTo(0);
+							this.player.playVideo();
+						}, duration * 1000);
+					}
+					break;
+				// 他のケースも同様に処理
+			}
+		} catch (error) {
+			console.error('YouTube player error:', error);
+		}
+	}
+
+	play() {
+		if (this.player && this.isReady) {
+			this.player.playVideo();
+		}
+	}
+
+	destroy() {
+		if (this.player) {
+			this.player.destroy();
+			this.player = null;
+		}
+		if (this.interval) {
+			clearInterval(this.interval);
+			this.interval = null;
+		}
+		this.isReady = false;
+		this.played = false;
+	}
+}
+
+export default YouTubePlayer;
+
+```
+
+### tsconfig.json
+
+```
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+```
+
+### .eslintrc.json
+
+```
+{
+  "extends": ["next/core-web-vitals", "next/typescript"]
+}
+
+```
+

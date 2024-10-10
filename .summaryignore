@@ -1,0 +1,7 @@
+# See https://github.com/Olemi-llm-apprentice/generate-project-summary
+
+# sass
+/styles
+/public
+
+

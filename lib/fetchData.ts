@@ -1,4 +1,4 @@
-import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPCategory, WPNewsArticle, } from '@/types';
+import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPCategory, WPNewsArticle, WPMediaItem, } from '@/types';
 import { Locale, DEFAULT_LOCALE } from '@/constants/site';
 
 const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
@@ -85,6 +85,11 @@ export async function getWPSiteOptions(lang: Locale = DEFAULT_LOCALE): Promise<W
 	const url = `${BASE_URL}/acf/v1/options?lang=${encodeURIComponent(lang)}&acf_format=standard`;
 	// const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
 	return cachedFetch(`options-${lang}`, () => fetchWithErrorHandling<WPSiteContent>(url));
+}
+
+export function fetchWPMediaItem(id: number): Promise<WPMediaItem> {
+	const url = `${WP_API_BASE_URL}/media/${id}`;
+	return cachedFetch(`media-${id}`, () => fetchWithErrorHandling<WPMediaItem>(url));
 }
 
 export async function fetchWPTag(id: number): Promise<WPTag> {

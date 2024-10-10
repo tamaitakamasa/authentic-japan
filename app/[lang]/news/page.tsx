@@ -6,7 +6,7 @@ import { getFormattedNewsData } from '@/lib/utils';
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
 	const newsArticles = await getFormattedNewsData(lang);
-	console.log('newsArticles:', newsArticles);
+	// console.log('newsArticles:', newsArticles);
 
 	return (
 		<>
@@ -16,7 +16,7 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 					{newsArticles.length > 0 ? (
 						newsArticles.map((article) => (
 							<div key={article.id} className="p-page-news__item">
-								<NewsItem lang={lang} article={article} />
+								<NewsItem article={article} />
 							</div>
 						))
 					) : (

@@ -1,6 +1,7 @@
 import { DEFAULT_LOCALE, Locale } from '@/constants/site';
-import { Guide, Activity, Region, News } from '@/types';
-import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
+import { Guide, Activity, Region, News, WPMediaItem } from '@/types';
+import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPMediaItem, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
+import { formatDate } from './formatDate';
 
 // タグ・カテゴリー情報のキャッシュ
 let tagCache: Map<number, { name: string; slug: string }> | null = null;
@@ -134,6 +135,16 @@ export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promi
 	const formattedNewsArticles = await Promise.all(
 		newsArticles.map(async (article) => {
 			// console.log('categories:', article.categories);
+			const formatedDate = formatDate(article.date);
+			// アイキャッチ画像がある場合はその詳細を取得
+			let mediaItem: WPMediaItem | undefined;
+			if (article.featured_media) {
+				try {
+					mediaItem = await fetchWPMediaItem(article.featured_media);
+				} catch (error) {
+					console.error(`Failed to fetch media for post ${article.id}:`, error);
+				}
+			}
 			const guideIds = article?.acf.guide || [];
 			const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
 			const categories = article.categories
@@ -145,9 +156,10 @@ export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promi
 
 			return {
 				id: article.id,
-				date: article.date,
+				date: formatedDate,
 				title: article.title.rendered,
 				content: article.content.rendered,
+				featured_media: mediaItem,
 				categories: categories.map((category) => ({
 					id: category.id,
 					name: category.name,

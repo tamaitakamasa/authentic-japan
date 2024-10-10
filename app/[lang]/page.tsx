@@ -109,7 +109,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 						{newsArticles.length > 0 ? (
 							newsArticles.slice(0, 4).map((article) => (
 								<div key={article.id} className="">
-									<NewsItem lang={lang} article={article} />
+									<NewsItem article={article} />
 								</div>
 							))
 						) : (
