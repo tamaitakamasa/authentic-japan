@@ -13,7 +13,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	const regions = await getFormattedRegionData(lang);
 	const siteOptions = await getWPSiteOptions(lang);
 	const guides = await getFormattedGuideData(lang);
-	const regionsPage = siteOptions.regions;
+	// const regionsPage = siteOptions.regions;
 	// console.log('regions:', regions);
 	return (
 		<>
