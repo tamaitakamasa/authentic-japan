@@ -9,9 +9,10 @@ import Link from 'next/link';
 // import { fetchNewsArticles } from '@/lib/fetchData';
 import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
 import NewsItem from '@/components/News/NewsItem';
+import { useTranslations } from '@/lib/i18n';
 
 export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
-	// const t = useTranslations(lang);
+	const t = useTranslations(lang);
 	const guides = await getFormattedGuideData(lang);
 	const otherGuides = guides.filter((g) => g.id !== parseInt(id));
 	const guide = guides.find((g) => g.id === parseInt(id));
@@ -23,7 +24,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 	// objectFit値を決定
 	const mvAspectRatio = guide?.mv ? guide.mv.width / guide.mv.height : undefined;
 	const baseAspectRatio = 1 / 1;
-  const objectFit = mvAspectRatio !== undefined && mvAspectRatio < baseAspectRatio ? 'contain' : 'cover';
+	const objectFit = mvAspectRatio !== undefined && mvAspectRatio < baseAspectRatio ? 'contain' : 'cover';
 
 	console.log(newsArticles);
 
@@ -86,11 +87,24 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 								</li>
 							</ul>
 						</div>
-						{guide.mv?.width}
 					</div>
 				</div>
 
-				<div className="p-page-navigator__profile">
+				{guide.values && guide.values.length > 0 && (
+					<>
+						<h2 className="p-single-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
+						<ul className="p-single-navigator__values">
+							{guide.values.map((value, index) => (
+								<li key={index} className="p-single-navigator__value">
+									<h3>{value.title}</h3>
+									<p dangerouslySetInnerHTML={{ __html: value.description }} />
+								</li>
+							))}
+						</ul>
+					</>
+				)}
+
+				{/* <div className="p-page-navigator__profile">
 					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
 					<div className="p-page-navigator__detail">
 						<h2 className="p-page-navigator__copy" dangerouslySetInnerHTML={{ __html: guide.copy || '' }} />
@@ -132,7 +146,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 						</ul>
 					</div>
 					<div className="p-page-navigator__description" dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
-				</div>
+				</div> */}
 
 				{filteredActivities.length > 0 && (
 					<div className="p-page-navigator-tours">

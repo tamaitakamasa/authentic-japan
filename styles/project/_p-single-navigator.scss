@@ -124,6 +124,44 @@
 		@include g.clamp(margin-top, 48, 36);
 	}
 
+		&__values-title {
+		@include g.clamp(margin-top, 60, 40);
+		@include g.font-clamp('xl', 'lg');
+		font-weight: 500;
+		letter-spacing: 0.15em;
+		text-align: center;
+	}
+
+	&__values {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 32px;
+		@include g.clamp(margin-top, 48, 32);
+	}
+
+	&__value {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		& > h3 {
+			font-family: g.$font-noto-sans;
+			@include g.font-clamp('md', 'sm');
+			font-weight: 700;
+			color: g.$color-accent;
+			letter-spacing: 0.15em;
+			text-align: center;
+		}
+
+		& > p {
+			font-weight: 500;
+			line-height: 2.2;
+			text-align: center;
+		}
+	}
+
 // 	&__inner {
 // 		position: relative;
 // 		z-index: 1;
