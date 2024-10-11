@@ -7,7 +7,7 @@ import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { TourItem } from '@/components/Tour/TourItem';
 import Link from 'next/link';
 // import { fetchNewsArticles } from '@/lib/fetchData';
-import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
+// import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
 import NewsItem from '@/components/News/NewsItem';
 import { useTranslations } from '@/lib/i18n';
 
