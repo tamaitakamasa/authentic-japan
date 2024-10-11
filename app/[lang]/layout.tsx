@@ -5,7 +5,7 @@ import { Noto_Sans_JP, Noto_Serif_JP, EB_Garamond, Montserrat } from 'next/font/
 import type { Metadata } from 'next';
 import '@/styles/style.scss';
 import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
-// import Script from 'next/script';
+import Script from 'next/script';
 import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
@@ -55,7 +55,7 @@ export default async function RootLayout({ children, params: { lang } }: { child
 					<div className="c-container">{children}</div>
 				</main>
 				<Footer lang={lang} />
-				{/* <Script src="https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=f34383c7-3179-43f7-a169-d3058ddf6840" strategy="lazyOnload" /> */}
+				<Script src="https://widgets.bokun.io/assets/javascripts/apps/build/BokunWidgetsLoader.js?bookingChannelUUID=f34383c7-3179-43f7-a169-d3058ddf6840" strategy="lazyOnload" />
 			</body>
 		</html>
 	);

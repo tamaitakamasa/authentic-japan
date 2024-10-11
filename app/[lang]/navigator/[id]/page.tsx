@@ -20,6 +20,11 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 	const filteredActivities = guide ? activities.filter((activity) => activity.guideIds?.includes(guide.id)) : [];
 	const relatedNews = guide ? newsArticles.filter((news) => news.guides?.some((g) => g.id === guide.id)) : [];
 
+	// objectFit値を決定
+	const mvAspectRatio = guide?.mv ? guide.mv.width / guide.mv.height : undefined;
+	const baseAspectRatio = 1 / 1;
+  const objectFit = mvAspectRatio !== undefined && mvAspectRatio < baseAspectRatio ? 'contain' : 'cover';
+
 	console.log(newsArticles);
 
 	if (!guide) {
@@ -33,7 +38,8 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 			<div className="l-contents__body p-page-navigator p-single p-single-navigator">
 				<div className="p-single__header u-full-bleed">
 					<div className="p-single-navigator__profile c-container">
-						<figure className="p-single-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'contain' }} />}</figure>
+						<figure className="p-single-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: objectFit }} />}</figure>
+						{guide.copy && <h2 className="p-single-navigator__copy">{guide.copy}</h2>}
 						<div className="p-single-navigator__info">
 							{guide.regions && guide.regions.length > 0 && (
 								<div className="p-single-navigator__region">
@@ -57,7 +63,30 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 									))}
 								</div>
 							)}
+							<ul className="p-single-navigator__sns">
+								<li>
+									<a href="#">
+										<Image src={'/icon_instagram.svg'} width={15} height={15} alt="" />
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										<Image src={'/icon_fb.svg'} width={15} height={15} alt="" />
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										<Image src={'/icon_x.svg'} width={15} height={15} alt="" />
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" />
+									</a>
+								</li>
+							</ul>
 						</div>
+						{guide.mv?.width}
 					</div>
 				</div>
 

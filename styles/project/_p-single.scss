@@ -17,6 +17,16 @@
 		max-height: 800px;
 		@include g.clamp(margin-bottom, 60, 40);
 		background-color: #333631;
+
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: 50%;
+			// background: rgba(0, 0, 0, 0.2);
+			background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4));
+		}
 	}
 
 // 	&__inner {
