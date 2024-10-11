@@ -11,10 +11,20 @@ import { getWPSiteOptions } from '@/lib/fetchData';
 import Image from 'next/image';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
+
+	// const [siteOptions, guides, regions, activities] = await Promise.all([
+  //   getWPSiteOptions(lang),
+  //   getFormattedGuideData(lang),
+  //   getFormattedRegionData(lang),
+  //   getFormattedActivities({ page: 1, pageSize: 10 }, lang)
+  // ]);
+
 	const siteOptions = await getWPSiteOptions(lang);
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+
+
 	const allTags = Array.from(new Set(activities.flatMap((activity) => activity.tags || []))).map((tag) => ({
 		id: tag.id,
 		name: tag.name,

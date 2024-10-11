@@ -1,5 +1,6 @@
 // import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { PageHeader } from '@/components/Layout/PageHeader';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
@@ -11,13 +12,14 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<ContentHeader title="ABOUT US" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'ABOUT US' }]} lang={lang} />
-			<div className="l-contents__body p-page-about">
-				<div className="p-page-about__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_description || '' }} />
+			<div className="l-contents__body p-page p-page-about">
+				<PageHeader description={siteOptions.about_description} mv={siteOptions.about_mv} />
+				{/* <div className="p-page-about__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_description || '' }} />
 				{siteOptions.about_video && (
 					<div className="p-page-about__video">
 						<VideoPlayer videoUrl={siteOptions.about_video} />
 					</div>
-				)}
+				)} */}
 
 				<div className="p-page-about-section">
 					<div className="p-page-about-section__cols">
@@ -76,8 +78,6 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 						</div>
 					</div>
 				</div>
-
-				<figure className="p-page-about__mv u-full-bleed">{siteOptions.about_mv && <Image src={siteOptions.about_mv.sizes['1536x1536']} alt="" fill />}</figure>
 			</div>
 		</>
 	);

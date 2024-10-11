@@ -50,6 +50,7 @@
     - Contact/
       - ContactForm.tsx
     - Layout/
+      - PageHeader.tsx
       - ContentHeader.tsx
       - Footer.tsx
       - Header.tsx
@@ -415,7 +416,7 @@ export interface WPSiteContent {
 	// locations?: LocationGroup[];
 	about_description?: string;
 	about_video?: string;
-	about_mv?: WPGalleryItem;
+	about_mv: WPGalleryItem;
 	about_section0_description?: string;
 	about_section1_title?: string;
 	about_section1_description?: string;
@@ -423,12 +424,16 @@ export interface WPSiteContent {
 	about_section2_description?: string;
 	about_section3_title?: string;
 	about_section3_description?: string;
-	regions: {
-		description: string;
-		mv: WPGalleryItem;
-	};
+	regions_description?: string;
+	regions_mv?: WPGalleryItem;
+	// regions: {
+	// 	description: string;
+	// 	mv: WPGalleryItem;
+	// };
 	navigators_title: string;
 	navigators_description: string;
+	navigators_mv?: WPGalleryItem;
+	tours_mv?: WPGalleryItem;
 }
 
 ```
@@ -659,6 +664,7 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 ```
 // import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { PageHeader } from '@/components/Layout/PageHeader';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
@@ -670,13 +676,14 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<ContentHeader title="ABOUT US" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'ABOUT US' }]} lang={lang} />
-			<div className="l-contents__body p-page-about">
-				<div className="p-page-about__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_description || '' }} />
+			<div className="l-contents__body p-page p-page-about">
+				<PageHeader description={siteOptions.about_description} mv={siteOptions.about_mv} />
+				{/* <div className="p-page-about__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_description || '' }} />
 				{siteOptions.about_video && (
 					<div className="p-page-about__video">
 						<VideoPlayer videoUrl={siteOptions.about_video} />
 					</div>
-				)}
+				)} */}
 
 				<div className="p-page-about-section">
 					<div className="p-page-about-section__cols">
@@ -735,8 +742,6 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 						</div>
 					</div>
 				</div>
-
-				<figure className="p-page-about__mv u-full-bleed">{siteOptions.about_mv && <Image src={siteOptions.about_mv.sizes['1536x1536']} alt="" fill />}</figure>
 			</div>
 		</>
 	);
@@ -750,28 +755,41 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 import Image from 'next/image';
 import { Locale } from '@/constants/site';
 // import { useTranslations } from '@/lib/i18n';
-import { getFormattedRegionData } from '@/lib/utils';
+import { getFormattedGuideData, getFormattedRegionData, getGuidesByRegion } from '@/lib/utils';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
 import { Button } from '@/components/Button';
 import { RegionSlider } from '@/components/Region/RegionSlider';
+import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
 
-export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
+export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const regions = await getFormattedRegionData(lang);
 	const siteOptions = await getWPSiteOptions(lang);
-	const regionsPage = siteOptions.regions;
+	const guides = await getFormattedGuideData(lang);
+	// const regionsPage = siteOptions.regions;
 	// console.log('regions:', regions);
 	return (
 		<>
 			<ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} />
-			<div className="l-contents__body p-page-region">
+			<div className="l-contents__body p-page p-page-region">
+				<div className="p-page__header u-full-bleed">
+					<div className="p-page__inner c-container">
+						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.regions_description || '' }} />
+					</div>
+					{siteOptions.regions_mv && (
+						<figure className="p-page__mv">
+							<Image src={siteOptions.regions_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+				</div>
 				<div className="p-page-region__index">
 					<figure className="p-page-region__map">
 						<Image src="/region/map.svg" alt="" fill unoptimized />
 					</figure>
 					<ul className="p-page-region__list">
-						{regions && regions.length > 0 ? (
+						{regions &&
+							regions.length > 0 &&
 							regions.map((region, index) => (
 								<li key={index}>
 									<a href={`#region${region.id}`}>
@@ -779,56 +797,59 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 										<span>{region.name}</span>
 									</a>
 								</li>
-							))
-						) : (
-							<div>No regions available</div>
-						)}
+							))}
 					</ul>
 				</div>
 				<div className="p-page-region__items u-full-bleed">
 					{regions.length > 0 &&
-						regions.map((region, index) => (
-							<div key={index} id={`region${region.id}`} className="p-page-region__item">
-								<div className="c-region">
-									{region.gallery && (
-										<div className="c-region__gallery">
-											{region.gallery.map((image, index) => (
-												<figure key={index} className="c-region__image">
-													<Image src={image.sizes['1536x1536']} alt="" fill style={{ objectFit: 'cover' }} />
+						regions.map((region, index) => {
+							const regionGuides = getGuidesByRegion(guides, region.id);
+							return (
+								<div key={index} id={`region${region.id}`} className="p-page-region__item">
+									<div className="c-region">
+										{region.gallery && (
+											<div className="c-region__gallery">
+												<RegionSlider images={region.gallery} />
+											</div>
+										)}
+										<div className="c-region__inner">
+											<div className="c-region__content">
+												<h2 className="c-region__name">{region.name}</h2>
+												<div className="c-region__description">
+													<p dangerouslySetInnerHTML={{ __html: region.description || '' }} />
+												</div>
+											</div>
+											<div className="c-region__locale">
+												<figure className="c-region__map">
+													<Image src="/region/map_sample.svg" alt="" fill unoptimized />
 												</figure>
-											))}
+												{region.access && (
+													<div className="c-region__access">
+														<Button href={`/${lang}/tour`} label="ACCESS" />
+													</div>
+												)}
+											</div>
 										</div>
-									)}
-									<div className="c-region__images">
-										{region.mv && (
-											<figure className="c-region__image">
-												<Image src={region.mv} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
-											</figure>
+										{regionGuides.length > 0 && (
+											<div className="c-region__navigators">
+												<h3 className="c-region__navigators-title">NAVIGATORS</h3>
+												<div className="c-region__navigators-list">
+													{regionGuides.map((guide) => (
+														<div key={guide.id} className="c-region__navigator">
+															<NavigatorInfo guide={guide} lang={lang} link />
+														</div>
+													))}
+												</div>
+											</div>
 										)}
 									</div>
-									<div className="c-region__inner">
-										<div className="c-region__content">
-											<h2 className="c-region__name">{region.name}</h2>
-											<div className="c-region__description">
-												<p>{region.description}</p>
-											</div>
-										</div>
-										<div className="c-region__local">
-											<figure className="c-region__map">
-												<Image src="/region/map.svg" alt="" fill unoptimized />
-											</figure>
-											<div className="c-region__access">
-												<Button href={`/${lang}/tour`} label="ACCESS" />
-											</div>
-										</div>
-									</div>
 								</div>
-							</div>
-						))}
+							);
+						})}
 				</div>
-				<figure className="p-page-region__mv u-full-bleed">
+				{/* <figure className="p-page-region__mv u-full-bleed">
 					<Image src={regionsPage.mv.sizes['1536x1536']} alt="" fill />
-				</figure>
+				</figure> */}
 			</div>
 		</>
 	);
@@ -1187,6 +1208,7 @@ import { getFormattedGuideData } from '@/lib/utils';
 import { NavigatorItem } from '@/components/Navigator/NavigatorItem';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
+import Image from 'next/image';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
@@ -1196,11 +1218,22 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<ContentHeader title="NAVIGATORS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NAVIGATORS' }]} lang={lang} />
-			<div className="l-contents__body p-page-navigators">
-				<div className="p-page-navigators__header">
+			<div className="l-contents__body p-page p-page-navigators">
+				<div className="p-page__header u-full-bleed">
+					<div className="p-page__inner c-container">
+						<h2 className="p-page__title">{siteOptions.navigators_title}</h2>
+						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
+					</div>
+					{siteOptions.navigators_mv && (
+						<figure className="p-page__mv">
+							<Image src={siteOptions.navigators_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+				</div>
+				{/* <div className="p-page-navigators__header">
 					<h2 className="p-page-navigators__title c-heading c-heading--2">{siteOptions.navigators_title}</h2>
 					<div className="p-page-navigators__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
-				</div>
+				</div> */}
 				<div className="p-page-navigators__items u-full-bleed">
 					{guides && guides.length > 0 ? (
 						guides.map((guide, index) => (
@@ -1231,11 +1264,24 @@ import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData }
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 // import { FilterComponent } from '@/components/FilterComponent';
 import { ClientFilteredActivities } from '@/components/Tour/ClientFilteredActivities';
+import { getWPSiteOptions } from '@/lib/fetchData';
+import Image from 'next/image';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
+
+	// const [siteOptions, guides, regions, activities] = await Promise.all([
+  //   getWPSiteOptions(lang),
+  //   getFormattedGuideData(lang),
+  //   getFormattedRegionData(lang),
+  //   getFormattedActivities({ page: 1, pageSize: 10 }, lang)
+  // ]);
+
+	const siteOptions = await getWPSiteOptions(lang);
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+
+
 	const allTags = Array.from(new Set(activities.flatMap((activity) => activity.tags || []))).map((tag) => ({
 		id: tag.id,
 		name: tag.name,
@@ -1246,7 +1292,18 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
-			<div className="l-contents__body p-page-tours">
+			<div className="l-contents__body p-page p-page-tours">
+				<div className="p-page__header u-full-bleed">
+					{/* <div className="p-page__inner c-container">
+						<h2 className="p-page__title">{siteOptions.navigators_title}</h2>
+						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
+					</div> */}
+					{siteOptions.tours_mv && (
+						<figure className="p-page__mv">
+							<Image src={siteOptions.tours_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+				</div>
 				<ClientFilteredActivities lang={lang} initialActivities={activities} guides={guides} regions={regions} tags={allTags} />
 			</div>
 		</>
@@ -1861,6 +1918,38 @@ export default function ContactForm({ lang }: { lang: Locale }) {
 
 ```
 
+### components/Layout/PageHeader.tsx
+
+```
+// 'use client';
+
+import { WPGalleryItem } from '@/types';
+import Image from 'next/image';
+
+interface PageHeaderProps {
+	title?: string;
+	description?: string;
+	mv: WPGalleryItem;
+}
+
+export function PageHeader({ title, description, mv }: PageHeaderProps) {
+	return (
+		<div className="p-page__header u-full-bleed">
+			<div className="p-page__inner c-container">
+				{title && <h2 className="p-page__title">{title}</h2>}
+				{description && <p className="p-page__description" dangerouslySetInnerHTML={{ __html: description || '' }} />}
+			</div>
+			{mv && (
+				<figure className="p-page__mv">
+					<Image src={mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+				</figure>
+			)}
+		</div>
+	);
+}
+
+```
+
 ### components/Layout/ContentHeader.tsx
 
 ```
@@ -2003,12 +2092,11 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 import 'swiper/css/autoplay';
 import 'swiper/css/pagination';
-import { Locale } from '@/constants/site';
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
-import { Region } from '@/types';
+import { WPGalleryItem } from '@/types';
 
-export function RegionSlider({ images }: { lang: Locale; images: string[] }) {
+export function RegionSlider({ images }: { images: WPGalleryItem[] }) {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const swiperRef = useRef<SwiperType | null>(null);
 
@@ -2031,39 +2119,39 @@ export function RegionSlider({ images }: { lang: Locale; images: string[] }) {
 	};
 
 	return (
-		<div className="p-page-regions-slider">
-			<div className="p-page-regions-slider__navi">
-				<div className="p-page-regions-slider__navi-items">
-					{images.map((image, index) => (
-						<button key={index} className={`p-page-regions-slider__navi-item ${index === activeIndex ? 'is-active' : ''}`} onClick={() => handleRegionClick(index)}>
-							<span>{index}</span>
-						</button>
-					))}
-				</div>
-			</div>
-			<div className="p-page-regions-slider__content">
+		<div className="c-region-slider">
+			<div className="c-region-slider__content">
 				<Swiper
 					modules={[EffectFade, Navigation, Autoplay, Pagination]}
 					effect="fade"
 					fadeEffect={{ crossFade: true }}
-					navigation
+					// navigation
 					autoplay={{
 						delay: 5000,
 						disableOnInteraction: false
 					}}
 					speed={1000}
-					pagination={{
-						type: 'progressbar'
-					}}
+					// pagination={{
+					// 	type: 'progressbar'
+					// }}
 					onSwiper={(swiper) => (swiperRef.current = swiper)}
 					onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-					className="p-page-regions-slider__slider">
+					className="c-region-slider__slider">
 					{images.map((image, index) => (
-						<SwiperSlide key={index}>
-							{image}
+						<SwiperSlide key={index} className='c-region-slider__slide'>
+							<Image src={image.sizes['1536x1536']} alt="" fill sizes="100vw" style={{ objectFit: 'contain' }} />
 						</SwiperSlide>
 					))}
 				</Swiper>
+			</div>
+			<div className="c-region-slider__navi">
+				<div className="c-region-slider__navi-items">
+					{images.map((image, index) => (
+						<button key={index} className={`c-region-slider__navi-item ${index === activeIndex ? 'is-active' : ''}`} onClick={() => handleRegionClick(index)}>
+							<Image src={image.sizes['1536x1536']} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+						</button>
+					))}
+				</div>
 			</div>
 		</div>
 	);
@@ -3161,6 +3249,10 @@ export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promi
 	);
 
 	return formattedNewsArticles;
+}
+
+export function getGuidesByRegion(guides: Guide[], regionId: number): Guide[] {
+  return guides.filter(guide => guide.regionIds?.includes(regionId));
 }
 
 function formatDuration(weeks: number, days: number, hours: number): string {
