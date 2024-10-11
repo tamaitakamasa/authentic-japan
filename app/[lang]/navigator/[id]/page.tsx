@@ -30,7 +30,37 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 		<>
 			<ContentHeader title="NAVIGATOR" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NAVIGATORS', href: '/navigator' }, { label: 'NAVIGATOR' }]} lang={lang} />
 
-			<div className="l-contents__body p-page-navigator">
+			<div className="l-contents__body p-page-navigator p-single p-single-navigator">
+				<div className="p-single__header u-full-bleed">
+					<div className="p-single-navigator__profile c-container">
+						<figure className="p-single-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'contain' }} />}</figure>
+						<div className="p-single-navigator__info">
+							{guide.regions && guide.regions.length > 0 && (
+								<div className="p-single-navigator__region">
+									<i className="c-pin"></i>
+									<span>{guide.regions.join(', ')}</span>
+								</div>
+							)}
+							{guide.name && <h2 className="p-single-navigator__name">{guide.name}</h2>}
+							{guide.title && <h3 className="p-single-navigator__title">{guide.title}</h3>}
+							{guide.photo && (
+								<figure className="p-single-navigator__photo">
+									<Image src={guide.photo.link} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
+								</figure>
+							)}
+							{guide.tags && guide.tags.length > 0 && (
+								<div className="p-single-navigator__tags">
+									{guide.tags.map((tag) => (
+										<span key={tag.id} className="p-single-navigator__tag c-taxonomy">
+											#{tag.name}
+										</span>
+									))}
+								</div>
+							)}
+						</div>
+					</div>
+				</div>
+
 				<div className="p-page-navigator__profile">
 					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
 					<div className="p-page-navigator__detail">
