@@ -90,19 +90,22 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 					</div>
 				</div>
 
-				{guide.values && guide.values.length > 0 && (
-					<>
-						<h2 className="p-single-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
-						<ul className="p-single-navigator__values">
-							{guide.values.map((value, index) => (
-								<li key={index} className="p-single-navigator__value">
-									<h3>{value.title}</h3>
-									<p dangerouslySetInnerHTML={{ __html: value.description }} />
-								</li>
-							))}
-						</ul>
-					</>
-				)}
+				<div className="p-single-navigator__description">
+					{guide.values && guide.values.length > 0 && (
+						<>
+							<p dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
+							<h2 className="p-single-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
+							<ul className="p-single-navigator__values">
+								{guide.values.map((value, index) => (
+									<li key={index} className="p-single-navigator__value">
+										<h3>{value.title}</h3>
+										<p dangerouslySetInnerHTML={{ __html: value.description }} />
+									</li>
+								))}
+							</ul>
+						</>
+					)}
+				</div>
 
 				{/* <div className="p-page-navigator__profile">
 					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
