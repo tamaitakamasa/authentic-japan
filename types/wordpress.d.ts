@@ -253,6 +253,6 @@ export interface WPSiteContent {
 	// };
 	navigators_title: string;
 	navigators_description: string;
-	navigators_mv?: WPGalleryItem;
+	navigators_mv: WPGalleryItem;
 	tours_mv?: WPGalleryItem;
 }

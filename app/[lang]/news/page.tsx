@@ -11,7 +11,7 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<ContentHeader title="NEWS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NEWS' }]} lang={lang} />
-			<div className="l-contents__body p-page-news">
+			<div className="l-contents__body p-page p-page--no-header p-page-news">
 				<div className="p-page-news__items">
 					{newsArticles.length > 0 ? (
 						newsArticles.map((article) => (

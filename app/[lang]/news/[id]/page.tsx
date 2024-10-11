@@ -22,7 +22,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 		<>
 			<ContentHeader title="NEWS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NEWS', href: '/news' }, { label: 'NEWS' }]} lang={lang} />
 
-			<div className="l-contents__body p-single-news">
+			<div className="l-contents__body p-single p-single--no-header p-single-news">
 				<div className="p-single-news__header">
 					<time className="p-single-news__date" dateTime={article.date}>
 						{article.date}
