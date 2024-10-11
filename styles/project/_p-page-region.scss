@@ -8,23 +8,27 @@
 	padding-bottom: 0;
 
 	&__index {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		align-items: center;
+		// display: grid;
+		// place-content: center;
+		// grid-template-columns: repeat(2, 1fr);
+		// align-items: center;
+		width: 100%;
+		min-height: 500px;
 		@include g.clamp(padding-bottom, 120, 80);
 	}
 
 	&__map {
-		position: relative;
+		position: absolute;
+		right: 0;
 		aspect-ratio: 590 / 478;
-		width: 100%;
+		width: 30vi;
 	}
 
 	&__list {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 20px;
-		padding-left: 4vi;
+		grid-template-columns: repeat(4, 1fr);
+		@include g.clamp(gap, 48, 32);
+		@include g.clamp(padding-top, 48, 32);
 
 		& > li {
 
