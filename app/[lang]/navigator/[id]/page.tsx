@@ -91,9 +91,9 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 				</div>
 
 				<div className="p-single-navigator__description">
+					<p dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
 					{guide.values && guide.values.length > 0 && (
 						<>
-							<p dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
 							<h2 className="p-single-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
 							<ul className="p-single-navigator__values">
 								{guide.values.map((value, index) => (
