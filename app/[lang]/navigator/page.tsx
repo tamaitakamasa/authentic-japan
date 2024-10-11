@@ -4,7 +4,7 @@ import { getFormattedGuideData } from '@/lib/utils';
 import { NavigatorItem } from '@/components/Navigator/NavigatorItem';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { PageHeader } from '@/components/Layout/PageHeader';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
