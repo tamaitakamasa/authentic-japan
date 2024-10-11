@@ -31,7 +31,7 @@ export function HomeHeroSlider({ slides }: { lang: Locale; slides: WPSiteContent
 			modules={[EffectFade, Navigation, Autoplay, Pagination, Parallax]}
 			effect="fade"
 			fadeEffect={{ crossFade: true }}
-			navigation={true}
+			// navigation={true}
 			autoplay={{
 				delay: 5000,
 				disableOnInteraction: false

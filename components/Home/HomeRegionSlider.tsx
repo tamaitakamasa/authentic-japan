@@ -59,7 +59,7 @@ export function HomeRegionSlider({ regions }: { lang: Locale; regions: Region[] 
 					modules={[EffectFade, Navigation, Autoplay, Pagination]}
 					effect="fade"
 					fadeEffect={{ crossFade: true }}
-					navigation
+					// navigation
 					autoplay={{
 						delay: 5000,
 						disableOnInteraction: false

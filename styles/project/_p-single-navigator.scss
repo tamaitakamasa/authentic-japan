@@ -16,6 +16,7 @@
 		position: relative;
 		aspect-ratio: 1 / 1;
 		height: 100%;
+		margin-left: 30px;
 		// background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
 		// border: 1px solid #ffffff;
 		&::after {
@@ -43,7 +44,7 @@
 	&__copy {
 		position: absolute;
 		z-index: 1;
-		@include g.clamp(bottom, 60, 40);
+		@include g.clamp(bottom, 80, 60);
 		// left: calc(1.5em * -1);
 		left: 0;
 		max-width: 10em;
@@ -127,6 +128,7 @@
 	&__description {
 		max-width: 50rem;
 		margin-inline: auto;
+		padding-top: 24px;
 
 		& p {
 			font-weight: 500;
