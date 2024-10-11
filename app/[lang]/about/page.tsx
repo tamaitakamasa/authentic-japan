@@ -1,7 +1,6 @@
 // import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { PageHeader } from '@/components/Layout/PageHeader';
-import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 import Image from 'next/image';
