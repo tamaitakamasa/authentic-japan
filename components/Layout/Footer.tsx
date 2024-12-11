@@ -1,7 +1,7 @@
 import { FOOTER_NAVI_ITEMS, INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getFormattedRegionData } from '@/lib/utils';
 import Link from 'next/link';
-import React from 'react';
+// import React from 'react';
 
 export default async function Footer({ lang }: { lang: Locale }) {
 	const regions = await getFormattedRegionData(lang);
@@ -36,7 +36,7 @@ export default async function Footer({ lang }: { lang: Locale }) {
 						<Link href={`${INSTAGRAM_URL}`} target='_blank'>INSTAGRAM</Link>
 					</li>
 					<li>
-						<Link href={`${lang}/privacy`}>PRIVACY POLICY</Link>
+						<Link href={`/${lang}/privacy`}>PRIVACY POLICY</Link>
 					</li>
 				</ul>
 			</nav>
