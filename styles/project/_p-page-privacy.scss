@@ -1,0 +1,53 @@
+// project/_p-page-privacy.scss
+
+@use '../global' as g;
+
+.p-page-privacy {
+	// padding-top: 0;
+
+	&__content > section {
+		@include g.clamp(margin-top, 96, 64);
+
+		p,li {
+			@include g.font-clamp('md', 'sm');
+		}
+
+		& > section {
+			@include g.clamp(margin-top, 48, 32);
+
+			& > h3 {
+				margin-bottom: 24px;
+			}
+
+			& > ol {
+				padding-left: 2em;
+				list-style-type: disc;
+
+				& > li {
+					& > ol {
+						padding-left: 2em;
+						list-style-type: circle;
+					}
+				}
+			}
+		}
+	}
+
+	&__law {
+		dl {
+			display: grid;
+			gap: 8px;
+			@include g.clamp(margin-top, 48, 32);
+		}
+
+		div {
+			display: grid;
+			grid-template-columns: 240px 1fr;
+			gap: 2em;
+		}
+
+		dt {
+			font-weight: bold;
+		}
+	}
+}

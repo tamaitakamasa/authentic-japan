@@ -45,7 +45,7 @@ const montserrat = Montserrat({
 });
 
 export default async function RootLayout({ children, params: { lang } }: { children: React.ReactNode; params: { lang: Locale } }) {
-	console.log('RootLayout:', lang);
+	// console.log('RootLayout:', lang);
 	return (
 		<html lang={lang} className={`${notoSansJP.variable} ${notoSerifJP.variable} ${ebGaramond.variable} ${montserrat.variable}`}>
 			<body className='l-body'>
