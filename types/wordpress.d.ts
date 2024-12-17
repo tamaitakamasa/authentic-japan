@@ -199,6 +199,12 @@ export interface WPGuide extends WPArticle {
 			title: string;
 			description: string;
 		}[];
+		sns: {
+			instagram: string;
+			facebook: string;
+			website: string;
+			note: string;
+		};
 	};
 }
 

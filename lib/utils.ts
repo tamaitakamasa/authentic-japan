@@ -55,7 +55,8 @@ export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Prom
 					name: tag.name,
 					slug: tag.slug
 				})),
-				values: guide.acf.values ?? []
+				values: guide.acf.values ?? [],
+				sns: guide.acf.sns,
 			};
 		})
 	);

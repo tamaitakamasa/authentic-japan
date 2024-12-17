@@ -26,7 +26,8 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 	const baseAspectRatio = 1 / 1;
 	const objectFit = mvAspectRatio !== undefined && mvAspectRatio < baseAspectRatio ? 'contain' : 'cover';
 
-	console.log(newsArticles);
+	// console.log(newsArticles);
+	// console.log(guide);
 
 	if (!guide) {
 		notFound();
@@ -67,27 +68,32 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 							<ul className="p-single-navigator__sns">
 								{guide.sns?.instagram && (
 									<li>
-										<a href={guide.sns.instagram}>
+										<a href={guide.sns.instagram} target="_blank" rel="noopener noreferrer">
 											<Image src={'/icon_instagram.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
 										</a>
 									</li>
 								)}
-
-								<li>
-									<a href="#">
-										<Image src={'/icon_fb.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
-									</a>
-								</li>
-								<li>
-									<a href="#">
-										<Image src={'/icon_x.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
-									</a>
-								</li>
-								<li>
-									<a href="#">
-										<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" style={{ aspectRatio: 400 / 87 }} />
-									</a>
-								</li>
+								{guide.sns?.facebook && (
+									<li>
+										<a href={guide.sns.facebook} target="_blank" rel="noopener noreferrer">
+											<Image src={'/icon_fb.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
+										</a>
+									</li>
+								)}
+								{guide.sns?.website && (
+									<li>
+										<a href={guide.sns.website} target="_blank" rel="noopener noreferrer">
+											<Image src={'/icon_x.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
+										</a>
+									</li>
+								)}
+								{guide.sns?.note && (
+									<li>
+										<a href={guide.sns.note} target="_blank" rel="noopener noreferrer">
+											<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" style={{ aspectRatio: 400 / 87 }} />
+										</a>
+									</li>
+								)}
 							</ul>
 						</div>
 					</div>

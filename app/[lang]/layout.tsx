@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 	icons: {
 		// 基本favicon
 		icon: [
-			{ url: '/icon.svg', type: 'image/svg+xml' },
+			{ url: '/favicon.svg', type: 'image/svg+xml' },
 			{ url: '/favicon.ico' }, // フォールバック用
 			{ url: '/icon.png', type: 'image/png' } // フォールバック用
 		],
