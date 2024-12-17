@@ -19,6 +19,9 @@ import Link from 'next/link';
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const siteOptions = await getWPSiteOptions(lang);
+	// const videoId = siteOptions.home_about_video ? siteOptions.home_about_video.split('v=')[1] : '';
+	// const videoId = siteOptions.home_about_video;
+	// console.log('videoId:', videoId);
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
@@ -75,9 +78,12 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 								Destinations
 							</h2>
 							<h3 className="p-home-video__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_about_description || '' }} />
-							<div className="p-home-video__button1">
-								<Button href={siteOptions.home_about_video || '#'} label="CONCEPT MOVIE" color="light" />
+							{siteOptions.home_about_video && (
+								<div className="p-home-video__button1">
+								<Button href={siteOptions.home_about_video} target='_blank' label="CONCEPT MOVIE" color="light" />
 							</div>
+							)}
+
 						</div>
 					</div>
 					<div className="p-home-video__footer">
@@ -131,7 +137,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					</div>
 					<div className="p-home-instagram__link">
 						<Link href={`${INSTAGRAM_URL}`} target="_blank">
-							@authentic_japan
+							@authentic_japan_official
 						</Link>
 					</div>
 					<div className="p-home-instagram__feed u-full-bleed">

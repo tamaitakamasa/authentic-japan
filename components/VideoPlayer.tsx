@@ -1,47 +1,45 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import YouTubePlayer from '@/lib/youTubePlayer';
-import { extractVideoID } from '@/lib/utils';
+import React from 'react';
+import dynamic from 'next/dynamic';
+// import ReactPlayer from 'react-player';
+// import { extractVideoID } from '@/lib/utils';
 
-export function VideoPlayer({ videoUrl }: { videoUrl: string }) {
-	const playerRef = useRef<HTMLDivElement>(null);
-	const youtubePlayerRef = useRef<YouTubePlayer | null>(null);
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+interface VideoPlayerProps {
+  videoUrl: string;
+}
 
-	useEffect(() => {
-		const videoId = extractVideoID(videoUrl);
-		if (!videoId || !playerRef.current) return;
+export function VideoPlayer({ videoUrl }: VideoPlayerProps) {
+  // const videoId = extractVideoID(videoUrl);
+  // const youtubeUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : '';
+	// console.log('youtubeUrl:', youtubeUrl);
 
-		const playerId = `youtube-player-${videoId}`;
-		playerRef.current.id = playerId;
-
-		const player = new YouTubePlayer(videoId, playerId, true);
-		youtubePlayerRef.current = player;
-
-		player
-			.initialize()
-			.then(() => setIsLoading(false))
-			.catch((err) => {
-				console.error(err);
-				setError('Failed to load video');
-				setIsLoading(false);
-			});
-
-		return () => {
-			if (youtubePlayerRef.current) {
-				youtubePlayerRef.current.destroy();
-			}
-		};
-	}, [videoUrl]);
-
-	return (
-		<div className="c-video">
-			{isLoading && <div>Loading...</div>}
-			{error && <div>{error}</div>}
-			<div className="c-video__player" ref={playerRef}></div>
-		</div>
-	);
+  return (
+    <div className="c-video">
+      <div className="c-video__player">
+        <ReactPlayer
+          url={videoUrl}
+          width="100%"
+          height="100%"
+          playing={true}
+          loop={true}
+          muted={true}
+          playsinline={true}
+          config={{
+            youtube: {
+              playerVars: {
+                controls: 0,
+                rel: 0,
+                showinfo: 0,
+                modestbranding: 1,
+                iv_load_policy: 3,
+              },
+            },
+          }}
+        />
+      </div>
+    </div>
+  );
 }
