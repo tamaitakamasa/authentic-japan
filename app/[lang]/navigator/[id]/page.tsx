@@ -65,24 +65,27 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 								</div>
 							)}
 							<ul className="p-single-navigator__sns">
+								{guide.sns?.instagram && (
+									<li>
+										<a href={guide.sns.instagram}>
+											<Image src={'/icon_instagram.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
+										</a>
+									</li>
+								)}
+
 								<li>
 									<a href="#">
-										<Image src={'/icon_instagram.svg'} width={15} height={15} alt="" />
+										<Image src={'/icon_fb.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
 									</a>
 								</li>
 								<li>
 									<a href="#">
-										<Image src={'/icon_fb.svg'} width={15} height={15} alt="" />
+										<Image src={'/icon_x.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
 									</a>
 								</li>
 								<li>
 									<a href="#">
-										<Image src={'/icon_x.svg'} width={15} height={15} alt="" />
-									</a>
-								</li>
-								<li>
-									<a href="#">
-										<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" />
+										<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" style={{ aspectRatio: 400 / 87 }} />
 									</a>
 								</li>
 							</ul>

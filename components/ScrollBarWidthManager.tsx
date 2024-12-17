@@ -30,8 +30,8 @@ export function ScrollBarWidthManager() {
         ? scrollBarWidth
         : 0;
 
+			// console.log('scrollBarWidth:', scrollBarWidth);
 
-			console.log('scrollBarWidth:', scrollBarWidth);
       // CSSカスタムプロパティに設定
       document.documentElement.style.setProperty(
         '--scrollbar-width',

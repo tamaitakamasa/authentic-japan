@@ -21,6 +21,7 @@
 		@include g.mq(md) {
 			flex-direction: column;
 			gap: 24px;
+			padding-bottom: 16px;
 		}
 	}
 

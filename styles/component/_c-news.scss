@@ -8,6 +8,10 @@
 		grid-template-columns: auto 1fr;
 		column-gap: 36px;
 		// align-items: stretch;
+
+		@include g.mq(md) {
+			column-gap: 16px;
+		}
 	}
 
 	&__thumbnail {
@@ -16,6 +20,10 @@
 		width: 200px;
 		// height: 100%;
 		background-color: rgba($color: #000000, $alpha: 0.1);
+
+		@include g.mq(md) {
+			width: 120px;
+		}
 	}
 
 	&__content {

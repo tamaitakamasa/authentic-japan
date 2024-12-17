@@ -13,7 +13,18 @@ import Footer from '@/components/Layout/Footer';
 
 export const metadata: Metadata = {
 	title: SITE_TITLE,
-	description: SITE_DESCRIPTION
+	description: SITE_DESCRIPTION,
+	icons: {
+		// 基本favicon
+		icon: [
+			{ url: '/icon.svg', type: 'image/svg+xml' },
+			{ url: '/favicon.ico' }, // フォールバック用
+			{ url: '/icon.png', type: 'image/png' } // フォールバック用
+		],
+		// icon: [{ url: '/favicon.ico' }, { url: '/icon.png', type: 'image/png' }],
+		// Apple Touch Icon
+		apple: [{ url: '/apple-icon.png' }],
+	}
 };
 
 const notoSansJP = Noto_Sans_JP({

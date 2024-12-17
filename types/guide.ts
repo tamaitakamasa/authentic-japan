@@ -21,4 +21,10 @@ export interface Guide {
 		title: string;
 		description: string;
 	}[];
+	sns?: {
+		instagram?: string;
+		facebook?: string;
+		website?: string;
+		note?: string;
+	};
 }

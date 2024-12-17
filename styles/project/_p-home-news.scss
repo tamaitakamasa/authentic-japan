@@ -38,11 +38,12 @@
 			inset: 0;
 			left: 100px;
 			background-color: #ffffff;
+
+			@include g.mq(md) {
+				left: 60px;
+			}
 		}
 
-		@include g.mq(md) {
-			display: none;
-		}
 	}
 
 	&__item {

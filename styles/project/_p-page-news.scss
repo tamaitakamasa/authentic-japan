@@ -9,5 +9,8 @@
 		grid-template-columns: repeat(2, 1fr);
 		gap: 60px;
 		// @include g.clamp(margin-top, 80, 60);
+		@include g.mq(md) {
+			grid-template-columns: 1fr;
+		}
 	}
 }
