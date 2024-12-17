@@ -92,7 +92,7 @@ export function HomeRegionSlider({ regions }: { lang: Locale; regions: Region[] 
 									<div className="p-home-regions-slider-slide__button">
 									<Button href={`/region#region${region.id}`} label="VIEW DETAIL" color="light" />
 									</div>
-									<p className="p-home-regions-slider-slide__description">{region.description}</p>
+									<p className="p-home-regions-slider-slide__description" dangerouslySetInnerHTML={{ __html: region.description || '' }} />
 								</div>
 							</div>
 						</SwiperSlide>

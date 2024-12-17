@@ -12,6 +12,10 @@
 	border-image-outset: 0 100vi;
 	@include g.clamp(padding-bottom, 150, 100);
 
+	@include g.mq(md) {
+		display: none;
+	}
+
 	&__inner {
 		position: relative;
 		aspect-ratio: 16 / 9;
