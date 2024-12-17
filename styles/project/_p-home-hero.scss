@@ -15,6 +15,7 @@
 			max-height: 100dvh;
 
 			@include g.mq(md) {
+				// display: none;
 				aspect-ratio: 1 / 1;
 			}
 

@@ -13,6 +13,10 @@
 	border-image-width: 1;
 	border-image-outset: 0 100vi;
 
+	@include g.mq(md) {
+		// display: none;
+	}
+
 	&__header {
 		display: flex;
 		flex-wrap: wrap;

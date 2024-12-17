@@ -30,5 +30,6 @@
 	&__feed {
 		// @include g.clamp(margin-top, 36, 24);
 		@include g.clamp(margin-top, 60, 40);
+		overflow: hidden;
 	}
 }
