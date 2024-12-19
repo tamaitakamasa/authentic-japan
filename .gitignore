@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# misaki環境ではnpmを使うので混乱しないように
+package-lock.json
