@@ -50,7 +50,7 @@
       letter-spacing: 0.1em;
 
       @include g.mq(md) {
-        font-size: g.$font-size-2xs;
+        font-size: g.$font-size-3xs;
       }
 
       &::after {
