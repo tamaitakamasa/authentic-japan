@@ -1,210 +1,214 @@
 // component/_c-form.scss
 
-@use '../global' as g;
+@use "../global" as g;
 
 .c-form {
-	$this: &;
+  $this: &;
 
-	background-color: #ffffff;
-	@include g.clamp(padding, 80, 40);
+  background-color: #ffffff;
+  @include g.clamp(padding, 80, 40);
 
-	@include g.mq(md) {
-		padding: 0;
-		background: none;
-	}
+  @include g.mq(md) {
+    padding: 0;
+    background: none;
+  }
 
-	&__required {
-		p {
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-			// font-family: g.$font-notosans;
-			font-size: g.$font-size-xs;
-			color: #c11313;
+  &__required {
+    p {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      // font-family: g.$font-notosans;
+      font-size: g.$font-size-xs;
+      color: #c11313;
 
-			span {
-				// font-family: g.$font-base;
-				font-size: g.$font-size-md;
-			}
-		}
-	}
+      span {
+        // font-family: g.$font-base;
+        font-size: g.$font-size-md;
+      }
+    }
+  }
 
-	&__items {
-		position: relative;
-		border-top: 1px solid rgba($color: #707070, $alpha: 0.3);
+  &__items {
+    position: relative;
+    border-top: 1px solid rgba($color: #707070, $alpha: 0.3);
 
-		&::before {
-			content: '';
-			position: absolute;
-			z-index: 1;
-			left: 0;
-			top: -1px;
-			display: block;
-			width: calc(20% - 10px);
-			height: 1px;
-			background-color: rgba($color: #707070, $alpha: 1);
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: -1px;
+      display: block;
+      width: calc(20% - 10px);
+      height: 1px;
+      background-color: rgba($color: #707070, $alpha: 1);
 
-			@include g.mq(md) {
-				width: calc(50%);
-			}
-		}
-	}
+      @include g.mq(md) {
+        width: calc(50%);
+      }
+    }
+  }
 
-	&-item {
-		$item: &;
-		position: relative;
-		display: flex;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		border-bottom: 1px solid rgba($color: #707070, $alpha: 0.3);
+  &-item {
+    $item: &;
+    position: relative;
+    display: flex;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba($color: #707070, $alpha: 0.3);
 
-		@include g.mq(md) {
-			display: block;
-			padding-right: 10px;
-			padding-left: 10px;
-		}
+    @include g.mq(md) {
+      display: block;
+      padding-top: 30px;
+      padding-bottom: 40px;
+      padding-right: 10px;
+      padding-left: 10px;
+    }
 
-		&:has([data-name='your-contact']) {
-			padding-top: 30px;
-			padding-bottom: 30px;
-		}
+    &:has([data-name="your-contact"]) {
+      padding-top: 30px;
+      padding-bottom: 30px;
+    }
 
-		&::before {
-			content: '';
-			position: absolute;
-			z-index: 1;
-			left: 0;
-			bottom: -1px;
-			display: block;
-			width: calc(20% - 10px);
-			height: 1px;
-			background-color: rgba($color: #707070, $alpha: 1);
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      bottom: -1px;
+      display: block;
+      width: calc(20% - 10px);
+      height: 1px;
+      background-color: rgba($color: #707070, $alpha: 1);
 
-			@include g.mq(md) {
-				width: calc(50%);
-			}
-		}
+      @include g.mq(md) {
+        width: calc(50%);
+      }
+    }
 
-		&__label {
-			width: 20%;
-			margin-top: 20px;
-			font-size: g.$font-size-md;
-			letter-spacing: 0.05em;
+    &__label {
+      width: 20%;
+      margin-top: 20px;
+      font-size: g.$font-size-md;
+      letter-spacing: 0.05em;
 
-			@include g.mq(md) {
-				width: 100%;
-				margin-top: 0;
-			}
+      @include g.mq(md) {
+        width: 100%;
+        margin-top: 0;
+        font-size: g.$font-size-sm;
+      }
 
-			@at-root #{$item}:has([data-name='your-contact']) & {
-				margin-top: 0;
+      @at-root #{$item}:has([data-name="your-contact"]) & {
+        margin-top: 0;
 
-				&::after {
-					content: '*';
-					// position: relative;
-					// top: 4px;
-					display: inline-block;
-					margin-left: 5px;
-					color: #c11313;
-					font-size: g.$font-size-md;
-				}
-			}
+        &::after {
+          content: "*";
+          // position: relative;
+          // top: 4px;
+          display: inline-block;
+          margin-left: 5px;
+          color: #c11313;
+          font-size: g.$font-size-md;
+        }
+      }
 
-			@at-root #{$item}:has([aria-required='true']) & {
-				&::after {
-					content: '*';
-					// position: relative;
-					// top: 4px;
-					display: inline-block;
-					margin-left: 5px;
-					color: #c11313;
-					font-size: g.$font-size-md;
-				}
-			}
-		}
+      @at-root #{$item}:has([aria-required="true"]) & {
+        &::after {
+          content: "*";
+          // position: relative;
+          // top: 4px;
+          display: inline-block;
+          margin-left: 5px;
+          color: #c11313;
+          font-size: g.$font-size-md;
+        }
+      }
+    }
 
-		&__control {
-			width: 80%;
+    &__control {
+      width: 80%;
 
-			@include g.mq(md) {
-				width: 100%;
-				margin-top: 10px;
-			}
+      @include g.mq(md) {
+        width: 100%;
+        margin-top: 10px;
+      }
 
-			input[type='text'],
-			input[type='email'],
-			input[type='tel'],
-			textarea {
-				width: 100%;
-				background-color: #f8f8f8;
-				padding-top: 20px;
-				padding-right: 30px;
-				padding-bottom: 20px;
-				padding-left: 30px;
-				font-size: g.$font-size-md;
-				letter-spacing: 0.05em;
-				border-radius: 4px;
-				border: none;
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      textarea {
+        width: 100%;
+        background-color: #f8f8f8;
+        padding-top: 20px;
+        padding-right: 30px;
+        padding-bottom: 20px;
+        padding-left: 30px;
+        font-size: g.$font-size-md;
+        letter-spacing: 0.05em;
+        border-radius: 4px;
+        border: none;
 
-				@include g.mq(md) {
-					padding-top: 15px;
-					padding-right: 20px;
-					padding-bottom: 15px;
-					padding-left: 20px;
-					background-color: #ffffff;
-					font-size: g.$font-size-md;
-				}
-			}
+        @include g.mq(md) {
+          //   padding-top: 15px;
+          //   padding-right: 20px;
+          //   padding-bottom: 15px;
+          //   padding-left: 20px;
+          background-color: #ffffff;
+          font-size: g.$font-size-xs;
+          padding: 12px 19px;
+        }
+      }
 
-			span[data-name='your-contact'] {
-				display: flex;
-				align-items: center;
-				height: 100%;
-			}
+      span[data-name="your-contact"] {
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
 
-			&-radio {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-				font-weight: 500;
+      &-radio {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
 
-				&:not(:has(:checked)) {
-					font-weight: 300;
-					opacity: 0.5;
-				}
-			}
-		}
-	}
+        &:not(:has(:checked)) {
+          font-weight: 300;
+          opacity: 0.5;
+        }
+      }
+    }
+  }
 
-	&__submit {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		@include g.clamp(margin-top, 60, 30);
+  &__submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include g.clamp(margin-top, 60, 30);
 
-		button {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			min-width: 300px;
-			padding-top: 20px;
-			padding-bottom: 20px;
-			background-color: #403a29;
-			border: none;
-			color: #ffffff;
-			transition: all 0.5s;
-			opacity: 1;
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 300px;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background-color: #403a29;
+      border: none;
+      color: #ffffff;
+      transition: all 0.5s;
+      opacity: 1;
 
-			&:hover {
-				// background-color: #2b271b;
-				opacity: 0.8;
-			}
-		}
+      &:hover {
+        // background-color: #2b271b;
+        opacity: 0.8;
+      }
+    }
 
-		span {
-			color: #ffffff;
-			font-size: 18px;
-			letter-spacing: 0.1em;
-		}
-	}
+    span {
+      color: #ffffff;
+      font-size: 18px;
+      letter-spacing: 0.1em;
+    }
+  }
 }

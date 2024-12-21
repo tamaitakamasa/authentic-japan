@@ -80,10 +80,10 @@
         & > a {
           font-weight: 700;
           letter-spacing: 0.15em;
-          font-size: g.$font-size-xs;
+          font-size: g.$font-size-2xs;
 
           @include g.mq(md) {
-            font-size: g.$font-size-2xs;
+            font-size: g.$font-size-3xs;
           }
         }
       }
