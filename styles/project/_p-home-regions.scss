@@ -140,7 +140,7 @@
       padding-bottom: 60px !important;
 
       @include g.mq(md) {
-        padding-top: 30px !important;
+        padding-top: 60px !important;
         padding-bottom: 30px !important;
       }
 
@@ -274,7 +274,7 @@
           letter-spacing: 0.15em;
 
           @include g.mq(md) {
-            font-size: g.$font-size-md;
+            font-size: g.$font-size-xl;
           }
         }
       }

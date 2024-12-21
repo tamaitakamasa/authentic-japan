@@ -8,7 +8,7 @@
   @include g.clamp(padding-bottom, 120, 80);
 
   &__copy {
-    @include g.clamp(margin-top, 80, 60);
+    @include g.clamp(margin-top, 200, 60);
     font-family: g.$font-garamond;
     font-weight: 400;
     @include g.font-clamp("8xl", "7xl");

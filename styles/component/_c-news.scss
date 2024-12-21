@@ -36,7 +36,7 @@
 
   &__date {
     font-family: g.$font-noto-sans;
-    @include g.font-clamp("sm", "2xs");
+    @include g.font-clamp("sm", "3xs");
     font-weight: 700;
     color: g.$palette-gray;
     letter-spacing: 0.15em;

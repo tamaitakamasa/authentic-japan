@@ -1,80 +1,86 @@
 // layout/_l-contents.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .l-contents {
-	$this: &;
+  $this: &;
 
-	@include g.clamp(padding-top, 60, 40);
+  @include g.clamp(padding-top, 60, 40);
 
-	&:has(.p-home) {
-		padding-top: 0;
-	}
+  &:has(.p-home) {
+    padding-top: 0;
+  }
 
-	&__header {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		@include g.clamp(padding-bottom, 80, 60);
-		// border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    // align-items: flex-start;
+    align-items: center;
+    @include g.clamp(padding-bottom, 80, 60);
+    // border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
 
-		@include g.mq(md) {
-			flex-direction: column;
-			gap: 24px;
-			padding-bottom: 16px;
-		}
-	}
+    @include g.mq(md) {
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 16px;
+      align-items: flex-start;
+    }
+  }
 
-	&__title {
-		font-family: g.$font-garamond;
-		font-weight: 400;
-		@include g.font-clamp('7xl', '6xl');
-		color: g.$color-main;
-		line-height: 1;
+  &__title {
+    font-family: g.$font-garamond;
+    font-weight: 400;
+    @include g.font-clamp("7xl", "6xl");
+    color: g.$color-main;
+    line-height: 1;
 
-		@include g.mq(md) {
-			font-size: g.$font-size-5xl;
-		}
-	}
+    @include g.mq(md) {
+      font-size: g.$font-size-4xl;
+    }
+  }
 
-	&__breadcrumb {
-		display: flex;
-		align-items: center;
-		gap: 12px;
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 
-		& > li {
-			display: flex;
-			align-items: center;
-			font-family: g.$font-montserrat;
-			font-size: g.$font-size-xs;
-			font-weight: 700;
-			color: g.$color-main;
-			letter-spacing: 0.1em;
+    & > li {
+      display: flex;
+      align-items: center;
+      font-family: g.$font-montserrat;
+      font-size: g.$font-size-xs;
+      font-weight: 700;
+      color: g.$color-main;
+      letter-spacing: 0.1em;
 
-			&::after {
-				content: '';
-				position: relative;
-				display: block;
-				width:5px;
-				height: 5px;
-				margin-left: 12px;
-				background-color: g.$color-main;
-				border-radius: calc(infinity * 1px);
-				opacity: 0.5;
-			}
+      @include g.mq(md) {
+        font-size: g.$font-size-2xs;
+      }
 
-			&:last-of-type::after {
-				display: none;
-			}
+      &::after {
+        content: "";
+        position: relative;
+        display: block;
+        width: 5px;
+        height: 5px;
+        margin-left: 12px;
+        background-color: g.$color-main;
+        border-radius: calc(infinity * 1px);
+        opacity: 0.5;
+      }
 
-			& > a {
-				opacity: 0.5;
-			}
-		}
-	}
+      &:last-of-type::after {
+        display: none;
+      }
 
-	&__body {
-		// @include g.clamp(padding-top, 60, 40);
-		@include g.clamp(padding-bottom, 120, 80);
-	}
+      & > a {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &__body {
+    // @include g.clamp(padding-top, 60, 40);
+    @include g.clamp(padding-bottom, 120, 80);
+  }
 }

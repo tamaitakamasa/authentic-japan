@@ -1,46 +1,47 @@
 // component/_c-lang-switcher.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .c-lang-switcher {
-	$this: &;
+  $this: &;
 
-	display: flex;
-	gap: 4px;
+  display: flex;
+  gap: 4px;
 
-	&__item {
-		display: flex;
-		align-items: center;
-		padding: 4px;
-		font-family: g.$font-montserrat;
-		font-weight: 700;
-		text-decoration: none;
-		// color: g.$color-main;
-		color: rgba($color: g.$color-main, $alpha: 0.3);
-		// opacity: 0.3;
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    font-family: g.$font-montserrat;
+    font-size: g.$font-size-sm;
+    font-weight: 700;
+    text-decoration: none;
+    // color: g.$color-main;
+    color: rgba($color: g.$color-main, $alpha: 0.3);
+    // opacity: 0.3;
 
-		&.is-active {
-			pointer-events: none;
-			color: g.$color-main;
-			// opacity: 1;
-		}
+    &.is-active {
+      pointer-events: none;
+      color: g.$color-main;
+      // opacity: 1;
+    }
 
-		&:hover {
-			// background-color: g.$color-bg-hover;
-		}
+    &:hover {
+      // background-color: g.$color-bg-hover;
+    }
 
-		&::after {
-			content: '';
-			display: block;
-			width: 1px;
-			height: 12px;
-			margin-left: 12px;
-			background-color: g.$color-main;
-			// opacity: 0.3;
-		}
+    &::after {
+      content: "";
+      display: block;
+      width: 1px;
+      height: 12px;
+      margin-left: 12px;
+      background-color: g.$color-main;
+      // opacity: 0.3;
+    }
 
-		&:last-of-type::after {
-			display: none;
-		}
-	}
+    &:last-of-type::after {
+      display: none;
+    }
+  }
 }

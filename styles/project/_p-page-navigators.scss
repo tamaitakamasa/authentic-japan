@@ -1,50 +1,54 @@
 // project/_p-page-navigators.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .p-page-navigators {
-	$this: &;
+  $this: &;
 
-	&__header {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
+  &__header {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
 
-		@include g.mq(md) {
-			grid-template-columns: 1fr;
-			gap: 24px;
-		}
-	}
+    @include g.mq(md) {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
 
-	&__description {
-		@include g.font-clamp('md', 'sm');
-		font-weight: 500;
-		text-align: right;
-		line-height: 3;
+  &__description {
+    @include g.font-clamp("md", "sm");
+    font-weight: 500;
+    text-align: right;
+    line-height: 3;
 
-		@include g.mq(md) {
-			text-align: left;
-		}
-	}
+    @include g.mq(md) {
+      text-align: left;
+    }
+  }
 
-	&__items {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-		justify-content: center;
-		gap: min(60px, 4vi);
-		@include g.clamp(margin-top, 80, 60);
-		padding-inline: 4vi;
-	}
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    justify-content: center;
+    gap: min(60px, 4vi);
+    @include g.clamp(margin-top, 100, 60);
+    padding-inline: 4vi;
 
-		// &__items {
-	// 	--max-inline-size: 1024px;
-	// 	--column-min-size: 16.5rem;
-	// 	--gap: max(16px, 2.5%);
+    @include g.mq(md) {
+      gap: 60px 0;
+    }
+  }
 
-	// 	display: grid;
-	// 	grid-template-columns: repeat(auto-fill, minmax(min(var(--column-min-size), 100%), 1fr));
-	// 	gap: var(--gap);
-	// 	max-inline-size: var(--max-inline-size);
-	// 	margin-inline: auto;
-	// 	@include g.clamp(margin-top, 40, 20);
+  // &__items {
+  // 	--max-inline-size: 1024px;
+  // 	--column-min-size: 16.5rem;
+  // 	--gap: max(16px, 2.5%);
+
+  // 	display: grid;
+  // 	grid-template-columns: repeat(auto-fill, minmax(min(var(--column-min-size), 100%), 1fr));
+  // 	gap: var(--gap);
+  // 	max-inline-size: var(--max-inline-size);
+  // 	margin-inline: auto;
+  // 	@include g.clamp(margin-top, 40, 20);
   // }
 }

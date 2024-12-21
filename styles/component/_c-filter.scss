@@ -1,45 +1,67 @@
 // component/_c-filter.scss
 
-@use '../global' as g;
+@use "../global" as g;
 
 .c-filter {
-	$this: &;
+  $this: &;
 
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
+  display: flex;
+  flex-direction: column;
+  //   gap: 16px;
+  gap: 30px 0;
 
-	& * {
-		font-family: g.$font-noto-sans;
-	}
+  @include g.mq(md) {
+    gap: 15px 0;
+  }
 
-	&-group {
-		&__label {
-			font-weight: 700;
-			color: g.$color-accent;
-			letter-spacing: 0.1em;
-		}
+  & * {
+    font-family: g.$font-noto-sans;
+  }
 
-		&__buttons {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 12px;
-			margin-top: 8px;
-		}
+  &-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-		&__button {
-			cursor: pointer;
-			padding: 4px 12px;
-			border: none;
-			border-radius: 8px;
-			background-color: #ffffff;
-			font-size: g.$font-size-sm;
-			transition: all 0.3s ease;
+    &__label {
+      font-weight: 700;
+      color: g.$color-accent;
+      letter-spacing: 0.1em;
 
-			&.is-active {
-				background-color: g.$color-text;
-				color: #ffffff;
-			}
-		}
-	}
+      @include g.mq(md) {
+        font-size: g.$font-size-2xs;
+      }
+    }
+
+    &__buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+
+      @include g.mq(md) {
+        justify-content: center;
+        gap: 6px;
+      }
+    }
+
+    &__button {
+      cursor: pointer;
+      padding: 4px 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ffffff;
+      font-size: g.$font-size-sm;
+      transition: all 0.3s ease;
+
+      @include g.mq(md) {
+        font-size: g.$font-size-xs;
+      }
+
+      &.is-active {
+        background-color: g.$color-text;
+        color: #ffffff;
+      }
+    }
+  }
 }

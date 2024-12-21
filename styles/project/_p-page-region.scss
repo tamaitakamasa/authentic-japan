@@ -1,92 +1,113 @@
 // project/_p-page-region.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .p-page-region {
-	$this: &;
+  $this: &;
 
-	padding-bottom: 0;
+  padding-bottom: 0;
 
-	&__index {
-		// display: grid;
-		// place-content: center;
-		// grid-template-columns: repeat(2, 1fr);
-		// align-items: center;
-		width: 100%;
-		min-height: 500px;
-		@include g.clamp(padding-bottom, 120, 80);
-	}
+  &__index {
+    // display: grid;
+    // place-content: center;
+    // grid-template-columns: repeat(2, 1fr);
+    // align-items: center;
+    width: 100%;
+    min-height: 500px;
+    @include g.clamp(padding-bottom, 120, 80);
 
-	&__map {
-		position: absolute;
-		right: 0;
-		aspect-ratio: 590 / 478;
-		width: 30vi;
-	}
+    @include g.mq(md) {
+      min-height: 240px;
+    }
+  }
 
-	&__list {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		@include g.clamp(gap, 48, 32);
-		@include g.clamp(padding-top, 48, 32);
+  &__map {
+    position: absolute;
+    right: 0;
+    aspect-ratio: 590 / 478;
+    width: 30vi;
 
-		& > li {
+    @include g.mq(md) {
+      width: 70%;
+      opacity: 0.8;
+    }
+  }
 
-			& > a {
-				position: relative;
-				display: flex;
-				align-items: center;
-				gap: 4px;
-				padding-bottom: 20px;
-				border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
-				font-family: g.$font-noto-sans;
-				letter-spacing: 0.15em;
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    @include g.clamp(gap, 48, 10);
+    @include g.clamp(padding-top, 48, 10);
 
-				& > i {
-					width: 20px;
-					background-color: g.$color-text;
-				}
-			}
-		}
-	}
+    @include g.mq(md) {
+      grid-template-columns: repeat(2, 1fr);
+      font-size: g.$font-size-xs;
+    }
 
-	&__items {
-		display: flex;
-		flex-direction: column;
-		@include g.clamp(gap, 120, 80);
-		padding-right: g.$base-spacing;
-		@include g.clamp(padding-bottom, 120, 80);
-		padding-left: g.$base-spacing;
-		// background-color: g.$color-main;
-	}
+    & > li {
+      & > a {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
+        font-family: g.$font-noto-sans;
+        letter-spacing: 0.15em;
 
-	&-slider {
-		&__slide {
-			position: relative;
-			aspect-ratio: 16 / 9;
-			width: 100%;
-		}
+        @include g.mq(md) {
+          padding-bottom: 10px;
+        }
 
-		&__navi {
-			@include g.clamp(margin-top, 24, 16);
-		}
+        & > i {
+          width: 20px;
+          background-color: g.$color-text;
 
-		&__navi-items {
-			display: flex;
-			gap: 10px;
-		}
+          @include g.mq(md) {
+            width: 14px;
+          }
+        }
+      }
+    }
+  }
 
-		&__navi-item {
-			position: relative;
-			aspect-ratio: 1 / 1;
-			width: 70px;
-			border: none;
-		}
-	}
+  &__items {
+    display: flex;
+    flex-direction: column;
+    @include g.clamp(gap, 120, 80);
+    padding-right: g.$base-spacing;
+    @include g.clamp(padding-bottom, 120, 80);
+    padding-left: g.$base-spacing;
+    // background-color: g.$color-main;
+  }
 
-	&__mv {
-		position: relative;
-		aspect-ratio: 16 / 9;
-		width: 100%;
-	}
+  &-slider {
+    &__slide {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+    }
+
+    &__navi {
+      @include g.clamp(margin-top, 24, 16);
+    }
+
+    &__navi-items {
+      display: flex;
+      gap: 10px;
+    }
+
+    &__navi-item {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 70px;
+      border: none;
+    }
+  }
+
+  &__mv {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+  }
 }
