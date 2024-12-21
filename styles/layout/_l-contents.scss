@@ -30,13 +30,9 @@
   &__title {
     font-family: g.$font-garamond;
     font-weight: 400;
-    @include g.font-clamp("7xl", "6xl");
+    @include g.font-clamp("7xl", "3xl");
     color: g.$color-main;
     line-height: 1;
-
-    @include g.mq(md) {
-      font-size: g.$font-size-4xl;
-    }
   }
 
   &__breadcrumb {
