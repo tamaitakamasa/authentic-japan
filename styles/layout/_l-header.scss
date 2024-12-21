@@ -10,7 +10,7 @@
 
 	@include g.mq(md) {
 		height: auto;
-		padding-block: 24px;
+		padding-block: 5px;
 	}
 
 	& * {
@@ -31,7 +31,7 @@
 			top: auto;
 			left: auto;
 			transform: none;
-			width: 240px;
+			width: 200px;
 		}
 	}
 

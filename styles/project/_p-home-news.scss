@@ -1,59 +1,68 @@
 // project/_p-home-news.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .p-home-news {
-	$this: &;
+  $this: &;
 
-	// padding-top: 0;
-	&__inner {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		column-gap: 60px;
+  // padding-top: 0;
+  &__inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 100px;
 
-		@include g.mq(md) {
-			grid-template-columns: 1fr;
-		}
-	}
+    @include g.mq(md) {
+      grid-template-columns: 1fr;
+    }
+  }
 
-	&__title > h2 {
-		@include g.clamp(margin-top, 120, 80);
-		line-height: 1;
-	}
+  &__title > h2 {
+    // @include g.clamp(margin-top, 120, 80);
+    @include g.clamp(margin-top, 120, 0);
+    line-height: 1;
 
-	&__items {
-		position: relative;
-		z-index: 1;
-		display: flex;
-		flex-direction: column;
-		gap: 60px;
-		margin-right: calc(g.$bleed-width * -1);
-		padding-right: g.$bleed-width;
-		@include g.clamp(padding-top, 120, 80);
-		@include g.clamp(padding-bottom, 120, 80);
+    @include g.mq(md) {
+      font-size: g.$font-size-3xl;
+      margin-bottom: 15px;
+    }
+  }
 
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			left: 100px;
-			background-color: #ffffff;
+  &__items {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+    margin-right: calc(g.$bleed-width * -1);
+    padding-right: g.$bleed-width;
+    @include g.clamp(padding-top, 120, 50);
+    @include g.clamp(padding-bottom, 120, 50);
 
-			@include g.mq(md) {
-				left: 60px;
-			}
-		}
+    @include g.mq(md) {
+      gap: 50px;
+    }
 
-	}
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      left: 100px;
+      background-color: #ffffff;
 
-	&__item {
-		position: relative;
-		z-index: 1;
-	}
+      @include g.mq(md) {
+        left: 60px;
+      }
+    }
+  }
 
-	&__button {
-		display: flex;
-		justify-content: flex-end;
-		@include g.clamp(margin-top, 60, 40);
-	}
+  &__item {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__button {
+    display: flex;
+    justify-content: flex-end;
+    @include g.clamp(margin-top, 60, 40);
+  }
 }

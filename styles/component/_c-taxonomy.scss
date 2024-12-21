@@ -1,15 +1,19 @@
 // component/_c-taxonomy.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .c-taxonomy {
-	$this: &;
+  $this: &;
 
-	font-family: g.$font-noto-sans;
-	// @include g.font-clamp('sm', 'xs');
-	font-size: g.$font-size-xs;
-	// font-weight: 700;
-	font-weight: 400;
-	color: g.$palette-gray;
-	letter-spacing: 0.15em;
+  font-family: g.$font-noto-sans;
+  // @include g.font-clamp('sm', 'xs');
+  font-size: g.$font-size-xs;
+  // font-weight: 700;
+  font-weight: 400;
+  color: g.$palette-gray;
+  letter-spacing: 0.15em;
+
+  @include g.mq(md) {
+    font-size: g.$font-size-3xs;
+  }
 }

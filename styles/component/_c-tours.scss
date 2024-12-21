@@ -7,7 +7,7 @@
 	grid-template-columns: repeat(2, 1fr);
 	gap: 0;
 	@include g.clamp(row-gap, 80, 60);
-	@include g.clamp(margin-top, 80, 60);
+	@include g.clamp(margin-top, 80, 32);
 
 
 	@include g.mq(md) {

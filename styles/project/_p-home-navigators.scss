@@ -1,110 +1,124 @@
 // project/_p-home-navigators.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .p-home-navigators {
-	$this: &;
+  $this: &;
 
-	@include g.clamp(padding-bottom, 120, 80);
+  @include g.clamp(padding-bottom, 120, 80);
 
-	&__copy {
-		@include g.clamp(margin-top, 80, 60);
-		font-family: g.$font-garamond;
-		font-weight: 400;
-		@include g.font-clamp('8xl', '7xl');
-		text-align: center;
-		text-wrap: balance;
+  &__copy {
+    @include g.clamp(margin-top, 80, 60);
+    font-family: g.$font-garamond;
+    font-weight: 400;
+    @include g.font-clamp("8xl", "7xl");
+    text-align: center;
+    text-wrap: balance;
 
-		@include g.mq(md) {
-			font-size: g.$font-size-4xl;
-		}
-	}
+    @include g.mq(md) {
+      font-size: g.$font-size-4xl;
+    }
+  }
 
-	&__text {
-		@include g.clamp(margin-top, 80, 60);
-		@include g.font-clamp('md', 'sm');
-		text-align: center;
-		text-wrap: balance;
-		line-height: 3;
-	}
+  &__text {
+    @include g.clamp(margin-top, 80, 40);
+    @include g.font-clamp("md", "sm");
+    text-align: center;
+    text-wrap: balance;
+    line-height: 3;
 
-	&__slider {
-		@include g.clamp(margin-top, 80, 60);
-		overflow: hidden;
+    @include g.mq(md) {
+      line-height: 2.3;
+      text-align: left;
+      text-wrap: auto;
+      padding-inline: 6vw;
 
-		.swiper {
-			overflow: visible !important;
-			width: 35vi;
-			// width: 33.333vi;
-			// overflow: clip !important;
+      br {
+        display: none;
+      }
+    }
+  }
 
-			@include g.mq(md) {
-				width: 70vi;
-			}
-		}
+  &__slider {
+    @include g.clamp(margin-top, 80, 60);
+    overflow: hidden;
 
+    .swiper {
+      overflow: visible !important;
+      width: 35vi;
+      // width: 33.333vi;
+      // overflow: clip !important;
 
-		// フリーモードでのスムーズなスクロール
-		.swiper-wrapper {
-			// width: 33vw;
-			// width: 400px !important; // スライドの幅を固定
-			transition-timing-function: linear;
-			// overflow: visible !important;
-		}
+      @include g.mq(md) {
+        width: 70vi;
+      }
+    }
 
-		.swiper-slide {
-			// width: 400px !important; // スライドの幅を固定
-			// height: auto; // 高さは内容に応じて自動調整
-		}
-	}
+    // フリーモードでのスムーズなスクロール
+    .swiper-wrapper {
+      // width: 33vw;
+      // width: 400px !important; // スライドの幅を固定
+      transition-timing-function: linear;
+      // overflow: visible !important;
+    }
 
-	&-slider {
-		&__navi {
-			@include g.clamp(margin-top, 60, 40);
+    .swiper-slide {
+      // width: 400px !important; // スライドの幅を固定
+      // height: auto; // 高さは内容に応じて自動調整
+    }
+  }
 
-			&-items {
-				display: flex;
-				@include g.clamp(gap, 32, 16);
-				margin-top: 20px;
-			}
+  &-slider {
+    &__navi {
+      @include g.clamp(margin-top, 60, 40);
 
-			&-item {
-				background: none;
-				border: none;
+      &-items {
+        display: flex;
+        @include g.clamp(gap, 32, 16);
+        margin-top: 20px;
 
-				// &-thumb {
-				// 	position: relative;
-				// 	aspect-ratio: 1 / 1;
-				// 	@include g.clamp(width, 120, 80);
-				// 	height: auto;
-				// 	border-radius: calc(infinity * 1px);
-				// 	overflow: hidden;
-				// }
+        @include g.mq(md) {
+          margin-top: 5px;
+        }
+      }
 
-				// &-name {
-				// 	margin-top: 4px;
-				// 	font-weight: 700;
-				// 	font-size: g.$font-size-xs;
-				// }
+      &-item {
+        background: none;
+        border: none;
 
-				// &-region {
-				// 	font-family: g.$font-noto-sans;
-				// 	font-size: g.$font-size-xs;
-				// 	letter-spacing: 0.15em;
+        // &-thumb {
+        // 	position: relative;
+        // 	aspect-ratio: 1 / 1;
+        // 	@include g.clamp(width, 120, 80);
+        // 	height: auto;
+        // 	border-radius: calc(infinity * 1px);
+        // 	overflow: hidden;
+        // }
 
-				// 	& > i {
-				// 		// width: 20px;
-				// 		display: none;
-				// 	}
-				// }
-			}
-		}
-	}
+        // &-name {
+        // 	margin-top: 4px;
+        // 	font-weight: 700;
+        // 	font-size: g.$font-size-xs;
+        // }
 
-	&__button {
-		display: flex;
-		justify-content: flex-end;
-		// justify-content: center;
-		@include g.clamp(margin-top, 80, 60);
-	}
+        // &-region {
+        // 	font-family: g.$font-noto-sans;
+        // 	font-size: g.$font-size-xs;
+        // 	letter-spacing: 0.15em;
+
+        // 	& > i {
+        // 		// width: 20px;
+        // 		display: none;
+        // 	}
+        // }
+      }
+    }
+  }
+
+  &__button {
+    display: flex;
+    justify-content: flex-end;
+    // justify-content: center;
+    @include g.clamp(margin-top, 80, 60);
+  }
 }

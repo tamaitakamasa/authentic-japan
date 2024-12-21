@@ -1,286 +1,334 @@
 // project/_p-home-regions.scss
 
-@use '../global/' as g;
+@use "../global/" as g;
 
 .p-home-regions {
-	$this: &;
+  $this: &;
 
-	@include g.clamp(padding-top, 180, 120);
-	@include g.clamp(padding-bottom, 180, 120);
-	background-color: g.$color-main;
-	border-image-source: linear-gradient(g.$color-main, g.$color-main);
-	border-image-slice: fill 0;
-	border-image-width: 1;
-	border-image-outset: 0 100vi;
+  @include g.clamp(padding-top, 180, 80);
+  @include g.clamp(padding-bottom, 180, 60);
+  background-color: g.$color-main;
+  border-image-source: linear-gradient(g.$color-main, g.$color-main);
+  border-image-slice: fill 0;
+  border-image-width: 1;
+  border-image-outset: 0 100vi;
 
-	@include g.mq(md) {
-		// display: none;
-	}
+  @include g.mq(md) {
+    // display: none;
+  }
 
-	&__header {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 72px;
-		align-items: center;
-		color: #ffffff;
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 72px;
+    align-items: center;
+    color: #ffffff;
 
-		@include g.mq(md) {
-			gap: 32px;
-		}
-	}
+    @include g.mq(md) {
+      gap: 32px;
+    }
+  }
 
-	&__title {
-		// color: #ffffff;
-	}
+  &__title {
+    // color: #ffffff;
+  }
 
-	&__description {
-		@include g.font-clamp('md', 'sm');
-		font-weight: 700;
-		line-height: 3;
+  &__description {
+    @include g.font-clamp("md", "sm");
+    font-weight: 700;
+    line-height: 3;
 
-		@include g.mq(md) {
-			& > br {
-				display: none;
-			}
-		}
-	}
+    @include g.mq(md) {
+      font-weight: 400;
+      line-height: 2;
 
-	&__items {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 40px;
-		@include g.clamp(margin-top, 80, 60);
-	}
+      & > br {
+        display: none;
+      }
+    }
+  }
 
-	&__slider {
-		@include g.clamp(margin-top, 80, 60);
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    @include g.clamp(margin-top, 80, 60);
+  }
 
-		@include g.mq(md) {
-			// display: none;
-		}
-	}
+  &__slider {
+    @include g.clamp(margin-top, 80, 60);
 
-	&-slider {
-		&__navi {
-			display: grid;
-			grid-template-columns: auto 1fr;
-			@include g.clamp(gap, 80, 60);
+    @include g.mq(md) {
+      // display: none;
+    }
+  }
 
-			@include g.mq(md) {
-				grid-template-columns: 1fr;
-				gap: 16px;
-			}
+  &-slider {
+    &__navi {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      @include g.clamp(gap, 80, 60);
 
-			&-items {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 16px;
+      @include g.mq(md) {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
 
-				@include g.mq(md) {
-					gap: 12px;
-				}
-			}
+      &-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
 
-			&-item {
-				display: flex;
-				align-items: center;
-				background: none;
-				border: none;
-				color: #ffffff;
-				opacity: 0.2;
+        @include g.mq(md) {
+          gap: 12px;
+        }
+      }
 
-				&.is-active {
-					opacity: 1;
-				}
+      &-item {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: #ffffff;
+        opacity: 0.2;
 
-				& > i {
-					display: block;
-					aspect-ratio: 1 / 1;
-					width: 20px;
-					height: auto;
-					background-image: url('/icon-pin_light.svg');
-					background-repeat: no-repeat;
-					background-position: center;
-					background-size: contain;
+        &.is-active {
+          opacity: 1;
+        }
 
-					@include g.mq(md) {
-						width: 16px;
-					}
-				}
+        & > i {
+          display: block;
+          aspect-ratio: 1 / 1;
+          width: 20px;
+          height: auto;
+          background-image: url("/icon-pin_light.svg");
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
 
-				& > span {
-					font-family: g.$font-noto-sans;
-					@include g.font-clamp('md', 'sm');
-					font-weight: 700;
-					line-height: 1;
-					letter-spacing: 0.15em;
+          @include g.mq(md) {
+            width: 16px;
+          }
+        }
 
-					@include g.mq(md) {
-						font-size: g.$font-size-xs;
-					}
-				}
-			}
-		}
+        & > span {
+          font-family: g.$font-noto-sans;
+          @include g.font-clamp("md", "sm");
+          font-weight: 700;
+          line-height: 1;
+          letter-spacing: 0.15em;
 
-		&__content {
-			// @include g.clamp(margin-top, 80, 60);
-			margin-top: 120px;
+          @include g.mq(md) {
+            font-size: g.$font-size-xs;
+          }
+        }
+      }
+    }
 
-			@include g.mq(md) {
-				margin-top: 0px;
-			}
-		}
+    &__content {
+      // @include g.clamp(margin-top, 80, 60);
+      margin-top: 120px;
 
-		&__slider {
-			overflow: visible !important;
-			padding-top: 60px !important;
-			padding-bottom: 60px !important;
+      @include g.mq(md) {
+        margin-top: 0px;
+      }
+    }
 
-			&::after {
-				content: '';
-				position: absolute;
-				inset: 0;
-				top: -60px;
-				// bottom: -60px;
-				left: calc(g.$bleed-width * 1);
-				right: calc(g.$bleed-width * -1);
-				display: block;
-				background-color: rgba($color: #ffffff, $alpha: 0.04);
-			}
+    &__slider {
+      overflow: visible !important;
+      padding-top: 60px !important;
+      padding-bottom: 60px !important;
 
-			.swiper-pagination-progressbar {
-				height: 2px !important;
-				background-color: rgba($color: #ffffff, $alpha: 0.3) !important;
-			}
-			.swiper-pagination-progressbar-fill {
-				background-color: #ffffff !important;
-			}
-		}
-	}
+      @include g.mq(md) {
+        padding-top: 30px !important;
+        padding-bottom: 30px !important;
+      }
 
-	&-slider-slide {
-		& > div {
-			position: relative;
-			z-index: 1;
-		}
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        top: -60px;
+        // bottom: -60px;
+        left: calc(g.$bleed-width * 1);
+        right: calc(g.$bleed-width * -1);
+        display: block;
+        background-color: rgba($color: #ffffff, $alpha: 0.04);
 
-		&__top {
-			display: grid;
-			grid-template-columns: auto 1fr;
-			grid-template-rows: repeat(2, 1fr);
-			grid-column-gap: 0px;
-			grid-row-gap: 0px;
+        @include g.mq(md) {
+          top: 120px;
+        }
+      }
 
-			@include g.mq(md) {
-				display: block;
-				// grid-template-columns: 1fr 1fr 1fr;
-				// grid-template-rows: repeat(3, 1fr);
-				// grid-template-rows: auto 1fr;
-			}
-		}
+      .swiper-pagination-progressbar {
+        height: 2px !important;
+        background-color: rgba($color: #ffffff, $alpha: 0.3) !important;
+      }
+      .swiper-pagination-progressbar-fill {
+        background-color: #ffffff !important;
+      }
+    }
+  }
 
-		&__mv {
-			position: relative;
-			grid-area: 1 / 1 / 3 / 2;
-			aspect-ratio: 16 / 9;
-			width: 100%;
-			height: auto;
-			overflow: hidden;
+  &-slider-slide {
+    & > div {
+      position: relative;
+      z-index: 1;
 
-			& > img {
-				transform: scale(1);
-				@at-root #{$this} .swiper .swiper-slide.swiper-slide-active & {
-					animation: zoomout 6s linear forwards;
-				}
-			}
+      @include g.mq(md) {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+    }
 
-			@keyframes zoomout {
-				0% {
-					transform: scale(1.1);
-				}
-				100% {
-					transform: scale(1); // 縮小の割合を調整
-				}
-			}
-		}
+    &__top {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: repeat(2, 1fr);
+      grid-column-gap: 0px;
+      grid-row-gap: 0px;
 
-		&__map {
-			grid-area: 1 / 2 / 2 / 3;
-			display: grid;
-			place-content: center;
-		}
+      @include g.mq(md) {
+        display: block;
+        // grid-template-columns: 1fr 1fr 1fr;
+        // grid-template-rows: repeat(3, 1fr);
+        // grid-template-rows: auto 1fr;
+      }
+    }
 
-		&__label {
-			grid-area: 2 / 2 / 3 / 3;
-			display: grid;
-			place-content: center;
+    &__mv {
+      position: relative;
+      grid-area: 1 / 1 / 3 / 2;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      height: auto;
+      overflow: hidden;
 
-			& > div {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 12px;
-				i {
-					width: 50px;
-				}
-				span {
-					font-family: g.$font-noto-sans;
-					font-size: 40px;
-					font-weight: 700;
-					line-height: 1;
-					color: #ffffff;
-					letter-spacing: 0.15em;
+      @include g.mq(md) {
+        margin-bottom: 20px;
+      }
 
-					@include g.mq(md) {
-						font-size: g.$font-size-lg;
-					}
-				}
-			}
-		}
+      & > img {
+        transform: scale(1);
+        @at-root #{$this} .swiper .swiper-slide.swiper-slide-active & {
+          animation: zoomout 6s linear forwards;
+        }
+      }
 
-		&__bottom {
-			// pointer-events: none;
-			display: grid;
-			grid-template-columns: auto 1fr;
-			// align-items: center;
-			margin-left: 12vi;
-			margin-top: 32px;
+      @keyframes zoomout {
+        0% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1); // 縮小の割合を調整
+        }
+      }
+    }
 
-			@include g.mq(md) {
-				display: block;
-				margin-left: 0;
-				margin-top: 16px;
-			}
-		}
+    &__map {
+      grid-area: 1 / 2 / 2 / 3;
+      display: grid;
+      place-content: center;
 
-		&__description {
-			margin-left: 5vi;
-			padding-left: 5vi;
-			border-left: 1px solid #ffffff;
-			color: #ffffff;
-			font-weight: 500;
+      @include g.mq(md) {
+        width: 50%;
+        max-width: 80px;
+        order: 3;
+      }
+    }
 
-			--limit: 5;
+    &__label {
+      grid-area: 2 / 2 / 3 / 3;
+      display: grid;
+      place-content: center;
 
-			display: -webkit-box;
-			block-size: min(100%, calc(1lh * var(--limit)));
-			overflow: clip;
-			text-overflow: ellipsis;
-			-webkit-box-orient: block-axis;
-			-webkit-line-clamp: var(--limit);
-			line-clamp: var(--limit);
+      @include g.mq(md) {
+        order: 2;
+        width: 50%;
+      }
 
-			@include g.mq(md) {
-				--limit: 3;
-				font-size: g.$font-size-xs;
-			}
-		}
-	}
+      & > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
 
-	&__button {
-		display: flex;
-		justify-content: flex-end;
-		// justify-content: center;
-		@include g.clamp(margin-top, 80, 60);
-	}
+        @include g.mq(md) {
+          gap: 6px;
+        }
+
+        i {
+          width: 50px;
+
+          @include g.mq(md) {
+            width: 25px;
+          }
+        }
+        span {
+          font-family: g.$font-noto-sans;
+          font-size: 40px;
+          font-weight: 700;
+          line-height: 1;
+          color: #ffffff;
+          letter-spacing: 0.15em;
+
+          @include g.mq(md) {
+            font-size: g.$font-size-md;
+          }
+        }
+      }
+    }
+
+    &__bottom {
+      // pointer-events: none;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      margin-left: 12vi;
+      margin-top: 32px;
+
+      @include g.mq(md) {
+        display: block;
+        margin-left: 0;
+        margin-top: 16px;
+      }
+    }
+    &__button {
+      @include g.mq(md) {
+        order: 2;
+      }
+    }
+    &__description {
+      margin-left: 5vi;
+      padding-left: 5vi;
+      border-left: 1px solid #ffffff;
+      color: #ffffff;
+      font-weight: 500;
+
+      --limit: 5;
+
+      display: -webkit-box;
+      block-size: min(100%, calc(1lh * var(--limit)));
+      overflow: clip;
+      text-overflow: ellipsis;
+      -webkit-box-orient: block-axis;
+      -webkit-line-clamp: var(--limit);
+      line-clamp: var(--limit);
+
+      @include g.mq(md) {
+        --limit: 3;
+        font-size: g.$font-size-xs;
+        order: 1;
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  &__button {
+    display: flex;
+    justify-content: flex-end;
+    // justify-content: center;
+    @include g.clamp(margin-top, 80, 60);
+  }
 }

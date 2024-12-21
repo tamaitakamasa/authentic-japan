@@ -1,36 +1,49 @@
 // component/_c-navigator-info.scss
 
-@use '../global' as g;
+@use "../global" as g;
 
 .c-navigator-info {
-	$this: &;
+  $this: &;
 
-	display: grid;
-	grid-template-columns: auto 1fr;
-	align-items: center;
-	gap: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
 
-	&__photo {
-		position: relative;
-		aspect-ratio: 1 / 1;
-		width: 70px;
-		height: auto;
-		border-radius: calc(infinity * 1px);
-		overflow: hidden;
-	}
+  &__photo {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 70px;
+    height: auto;
+    border-radius: calc(infinity * 1px);
+    overflow: hidden;
 
-	&__name {
-		font-size: g.$font-size-sm;
-		font-weight: 700;
-	}
+    @include g.mq(md) {
+      width: 46px;
+    }
+  }
 
-	&__title {
-		margin-top: 4px;
-		font-family: g.$font-noto-sans;
-		font-size: g.$font-size-sm;
-		font-weight: 700;
-		color: g.$palette-gray;
-		letter-spacing: 0.15em;
-		line-height: 1;
-	}
+  &__name {
+    font-size: g.$font-size-sm;
+    font-weight: 700;
+
+    @include g.mq(md) {
+      font-size: g.$font-size-xs;
+    }
+  }
+
+  &__title {
+    margin-top: 4px;
+    font-family: g.$font-noto-sans;
+    font-size: g.$font-size-xs;
+    font-weight: 700;
+    color: g.$palette-gray;
+    letter-spacing: 0.15em;
+    line-height: 1;
+
+    @include g.mq(md) {
+      font-size: g.$font-size-2xs;
+      margin-top: 0;
+    }
+  }
 }

@@ -72,6 +72,12 @@
 				padding-inline: 8vi;
 				@include g.clamp(padding-bottom, 72, 48);
 				background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+
+				@include g.mq(md) {
+					display:block;
+					height: auto;
+					padding-bottom: 30px;
+				}
 			}
 
 			&__title {
@@ -79,16 +85,26 @@
 				color: #ffffff;
 				text-shadow: g.$text-shadow;
 
+				@include g.mq(md) {
+					max-width: 100vw;
+					margin-bottom: 15px;
+				}
+
 				& > h3 {
 					font-family: g.$font-noto-sans;
-					@include g.font-clamp('md', 'sm');
+					@include g.font-clamp('md', '2xs');
 					font-weight: 500;
 				}
 
 				& > h2 {
 					margin-top: 20px;
-					@include g.font-clamp('5xl', '4xl');
+					@include g.font-clamp('5xl', '2xl');
 					font-weight: 500;
+
+					@include g.mq(md) {
+						margin-top: 5px;
+					}
+
 				}
 			}
 

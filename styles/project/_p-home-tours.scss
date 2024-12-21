@@ -15,7 +15,7 @@
 	&__total {
 		display: flex;
 		justify-content: center;
-		@include g.clamp(margin-top, 80, 60);
+		@include g.clamp(margin-top, 80, 32);
 	}
 
 	&__items {
@@ -45,6 +45,6 @@
 		display: flex;
 		justify-content: flex-end;
 		// justify-content: center;
-		@include g.clamp(margin-top, 120, 80);
+		@include g.clamp(margin-top, 120, 60);
 	}
 }

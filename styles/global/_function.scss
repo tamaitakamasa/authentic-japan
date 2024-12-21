@@ -4,5 +4,9 @@
 
 // 文字列から数値を抽出する
 @function strip-unit($value) {
+  @if $value == null {
+    @warn "strip-unit function received a null value.";
+    @return 0; // デフォルト値を返す
+  }
   @return math.div($value, $value * 0 + 1);
 }

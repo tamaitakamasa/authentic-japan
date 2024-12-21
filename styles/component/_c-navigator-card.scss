@@ -1,157 +1,179 @@
 // component/_c-navigator.scss
 
-@use '../global' as g;
+@use "../global" as g;
 
 .c-navigator-card {
-	$this: &;
+  $this: &;
 
-	position: relative;
-	aspect-ratio: 3 / 4;
-	display: block;
-	width: 100%;
-	height: auto;
-	max-height: 100dvh;
-	overflow: hidden;
+  position: relative;
+  aspect-ratio: 3 / 4;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100dvh;
+  overflow: hidden;
 
-	&::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		width: 0;
-		background: rgba(255, 255, 255, 0.1);
-		transition: all 0.3s ease-in-out;
-	}
-	@media (any-hover: hover) {
-		&:hover {
-			opacity: 1;
-			#{$this}__image {
-				transform: scale(1.04);
-			}
-			&::after {
-				width: 100%;
-			}
-		}
-	}
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 0;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+  @media (any-hover: hover) {
+    &:hover {
+      opacity: 1;
+      #{$this}__image {
+        transform: scale(1.04);
+      }
+      &::after {
+        width: 100%;
+      }
+    }
+  }
 
-	& * {
-		color: #ffffff;
-	}
+  & * {
+    color: #ffffff;
+  }
 
-	&__image {
-		position: absolute;
-		inset: 0;
-		margin: 0;
-		transition: all 0.3s ease-in-out;
+  &__image {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    transition: all 0.3s ease-in-out;
 
-		&::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: rgba(0, 0, 0, 0.2);
-		}
-	}
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
 
-	&__inner {
-		position: absolute;
-		z-index: 1;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		// padding: 2vi;
-		@include g.clamp(padding, 48, 32);
-		background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
-	}
+  &__inner {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    // padding: 2vi;
+    @include g.clamp(padding, 48, 18);
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0.3)
+    );
+  }
 
-	&__copy {
-		@include g.clamp(margin-bottom, 32, 20);
-		@include g.font-clamp('4xl', '3xl');
-		font-weight: 500;
-	}
+  &__copy {
+    @include g.clamp(margin-bottom, 32, 10);
+    @include g.font-clamp("4xl", "xl");
+    font-weight: 500;
+  }
 
-	&__cols {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		align-items: center;
-		// grid-template-columns: 1fr auto;
-		gap: 16px;
-		@include g.clamp(margin-top, 20, 12);
-	}
+  &__cols {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    // grid-template-columns: 1fr auto;
+    gap: 16px;
+    @include g.clamp(margin-top, 20, 6);
+  }
 
-	&__photo {
-		position: relative;
-		aspect-ratio: 1 / 1;
-		width: 100px;
-		border-radius: calc(infinity * 1px);
-		border: 2px solid rgba($color: #ffffff, $alpha: 0.95);
-		overflow: hidden;
+  &__photo {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100px;
+    border-radius: calc(infinity * 1px);
+    border: 2px solid rgba($color: #ffffff, $alpha: 0.95);
+    overflow: hidden;
 
-		&::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: rgba(0, 0, 0, 0.2);
-		}
-	}
+    @include g.mq(md) {
+      width: 50px;
+    }
 
-	&__region {
-		display: flex;
-		align-items: center;
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
 
-		& > i {
-			width: 15px;
-			margin-right: 4px;
-		}
+  &__region {
+    display: flex;
+    align-items: center;
 
-		& > span {
-			font-family: g.$font-noto-sans;
-			@include g.font-clamp('md', 'sm');
-			font-weight: 700;
-			letter-spacing: 0.15em;
-		}
-	}
+    & > i {
+      width: 15px;
+      margin-right: 4px;
+    }
 
-	&__name {
-		// margin-top: 8px;
-		@include g.font-clamp('2xl', 'xl');
-		font-weight: 700;
-	}
+    & > span {
+      font-family: g.$font-noto-sans;
+      @include g.font-clamp("md", "xs");
+      font-weight: 700;
+      letter-spacing: 0.15em;
+    }
+  }
 
-	&__title {
-		margin-top: 4px;
-		font-family: g.$font-noto-sans;
-		@include g.font-clamp('sm', 'xs');
-		font-weight: 700;
-	}
+  &__name {
+    // margin-top: 8px;
+    @include g.font-clamp("2xl", "sm");
+    font-weight: 700;
+  }
 
-	&__tags {
-		display: flex;
-		flex-wrap: wrap;
-		// justify-content: center;
-		gap: 8px;
-		margin-top: 24px;
-	}
+  &__title {
+    margin-top: 4px;
+    font-family: g.$font-noto-sans;
+    @include g.font-clamp("sm", "2xs");
+    font-weight: 700;
 
-	&__tag {
-		font-family: g.$font-noto-sans;
-		font-size: g.$font-size-sm;
-		font-weight: 500;
-	}
+    @include g.mq(md) {
+      margin-top: 1px;
+      line-height: 1.25;
+    }
+  }
 
-	&__button {
-		@include g.clamp(margin-top, 20, 12);
-	}
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    // justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
 
-	// &__summary {
-	// 	--limit: 3;
+    @include g.mq(md) {
+      gap: 6px;
+    }
+  }
 
-	// 	display: -webkit-box;
-	// 	block-size: min(100%, calc(1lh * var(--limit)));
-	// 	overflow: clip;
-	// 	@include g.clamp(margin-top, 20, 12);
-	// 	text-overflow: ellipsis;
-	// 	-webkit-box-orient: block-axis;
-	// 	-webkit-line-clamp: var(--limit);
-	// 	line-clamp: var(--limit);
-	// 	@include g.font-clamp('sm', 'xs');
-	// }
+  &__tag {
+    font-family: g.$font-noto-sans;
+    font-size: g.$font-size-sm;
+    font-weight: 500;
+
+    @include g.mq(md) {
+      font-size: g.$font-size-2xs;
+      line-height: 1.4;
+    }
+  }
+
+  &__button {
+    @include g.clamp(margin-top, 20, 12);
+  }
+
+  // &__summary {
+  // 	--limit: 3;
+
+  // 	display: -webkit-box;
+  // 	block-size: min(100%, calc(1lh * var(--limit)));
+  // 	overflow: clip;
+  // 	@include g.clamp(margin-top, 20, 12);
+  // 	text-overflow: ellipsis;
+  // 	-webkit-box-orient: block-axis;
+  // 	-webkit-line-clamp: var(--limit);
+  // 	line-clamp: var(--limit);
+  // 	@include g.font-clamp('sm', 'xs');
+  // }
 }

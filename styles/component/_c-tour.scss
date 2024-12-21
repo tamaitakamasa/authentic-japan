@@ -1,238 +1,297 @@
 // component/_c-tour.scss
 
-@use '../global' as g;
+@use "../global" as g;
 
 .c-tour {
-	$this: &;
+  $this: &;
 
-	position: relative;
-	overflow: hidden;
+  position: relative;
+  overflow: hidden;
 
-	&__title {
-		@include g.clamp(margin-top, 12, 8);
-		@include g.font-clamp('2xl', 'xl');
-		font-weight: 500;
-		line-height: 1.6;
-	}
+  &__title {
+    @include g.clamp(margin-top, 12, 8);
+    @include g.font-clamp("2xl", "lg");
+    font-weight: 500;
+    line-height: 1.6;
 
-	&__regions {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
+    @include g.mq(md) {
+      font-weight: 400;
+      margin-top: 0;
+    }
+  }
 
-	&__region {
-		display: flex;
-		align-items: center;
-		gap: 2px;
+  &__regions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-		& > i {
-			width: 20px;
-			background-color: g.$color-accent;
-		}
+  &__region {
+    display: flex;
+    align-items: center;
+    gap: 2px;
 
-		& > span {
-			font-family: g.$font-noto-sans;
-			@include g.font-clamp('md', 'sm');
-			font-weight: 700;
-			color: g.$color-accent;
-			letter-spacing: 0.1em;
-		}
-	}
+    & > i {
+      width: 20px;
+      background-color: g.$color-accent;
 
-	&__header {
-		position: relative;
-		aspect-ratio: 4 / 3;
-		width: 100%;
-		height: auto;
-		margin-top: 28px;
-		overflow: hidden;
+      @include g.mq(md) {
+        width: 14px;
+      }
+    }
 
-		&-inner {
-			pointer-events: none;
-			position: absolute;
-			z-index: 1;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			display: flex;
-			flex-direction: column;
-			align-items: flex-end;
-			gap: 12px;
-			padding: 2vi;
-			background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+    & > span {
+      font-family: g.$font-noto-sans;
+      @include g.font-clamp("md", "xs");
+      font-weight: 700;
+      color: g.$color-accent;
+      letter-spacing: 0.1em;
+    }
+  }
 
-			& * {
-				font-family: g.$font-noto-sans;
-				color: #ffffff;
-			}
-		}
-	}
+  &__header {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    height: auto;
+    margin-top: 28px;
+    overflow: hidden;
 
-	&__price {
-		@include g.font-clamp('3xl', '2xl');
-		font-weight: 700;
-		letter-spacing: 0.1em;
-		line-height: 1;
+    @include g.mq(md) {
+      margin-top: 10px;
+    }
 
-		& > span {
-			margin-left: 4px;
-			font-size: 0.7em;
-			// font-weight: 400;
-		}
-	}
+    &-inner {
+      pointer-events: none;
+      position: absolute;
+      z-index: 1;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      padding: 2vi;
+      background-image: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0.3)
+      );
 
-	&__duration {
-		@include g.font-clamp('2xl', 'xl');
-		font-weight: 700;
-		letter-spacing: 0.1em;
-		line-height: 1;
-	}
+      @include g.mq(md) {
+        padding: 5vi;
+        gap: 7px;
+      }
 
-	&__image {
-		position: relative;
-		aspect-ratio: 4 / 3;
-		width: 100%;
-		height: auto;
-		transition: all 0.5s ease-in-out;
+      & * {
+        font-family: g.$font-noto-sans;
+        color: #ffffff;
+      }
+    }
+  }
 
-		&::after {
-			content: '';
-			pointer-events: none;
-			position: absolute;
-			inset: 0;
-			width: 0;
-			background: rgba(255, 255, 255, 0.1);
-			transition: all 0.3s ease-in-out;
-		}
-		@media (any-hover: hover) {
-			&:hover {
-				opacity: 1;
-				transform: scale(1.04);
-				// }
-				&::after {
-					width: 100%;
-				}
-			}
-		}
-	}
+  &__price {
+    @include g.font-clamp("3xl", "md");
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1;
 
-	&__summary {
-		--limit: 2;
+    & > span {
+      margin-left: 4px;
+      font-size: 0.7em;
+      // font-weight: 400;
+    }
+  }
 
-		display: -webkit-box;
-		block-size: min(100%, calc(1lh * var(--limit)));
-		overflow: clip;
-		@include g.clamp(margin-top, 28, 20);
-		text-overflow: ellipsis;
-		-webkit-box-orient: block-axis;
-		-webkit-line-clamp: var(--limit);
-		line-clamp: var(--limit);
-		font-weight: 500;
-	}
+  &__duration {
+    @include g.font-clamp("2xl", "sm");
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
 
-	&__tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		@include g.clamp(margin-top, 28, 20);
-	}
+  &__image {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    height: auto;
+    transition: all 0.5s ease-in-out;
 
-	&__tag {
-		display: block;
-		padding: 6px 8px;
-		border-radius: 4px;
-		background-color: #ffffff;
-		font-family: g.$font-noto-sans;
-		@include g.font-clamp('sm', 'xs');
-		line-height: 1;
-	}
+    &::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      width: 0;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease-in-out;
+    }
+    @media (any-hover: hover) {
+      &:hover {
+        opacity: 1;
+        transform: scale(1.04);
+        // }
+        &::after {
+          width: 100%;
+        }
+      }
+    }
+  }
 
-	&__guides {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		@include g.clamp(margin-top, 28, 20);
-	}
+  &__summary {
+    --limit: 2;
 
-	&__guide {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		align-items: center;
-		gap: 12px;
+    display: -webkit-box;
+    block-size: min(100%, calc(1lh * var(--limit)));
+    overflow: clip;
+    @include g.clamp(margin-top, 28, 10);
+    text-overflow: ellipsis;
+    -webkit-box-orient: block-axis;
+    -webkit-line-clamp: var(--limit);
+    line-clamp: var(--limit);
+    font-weight: 500;
 
-		&-image {
-			position: relative;
-			aspect-ratio: 1 / 1;
-			width: 80px;
-			height: auto;
-			border-radius: calc(infinity * 1px);
-			overflow: hidden;
-		}
+    @include g.mq(md) {
+      font-weight: 400;
+      font-size: 0.75rem;
+    }
+  }
 
-		&-info {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			line-height: 1;
-			// @include g.font-clamp('sm', 'xs');
-		}
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    @include g.clamp(margin-top, 28, 20);
+  }
 
-		&-name {
-			font-size: g.$font-size-sm;
-			font-weight: 500;
-		}
+  &__tag {
+    display: block;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-family: g.$font-noto-sans;
+    @include g.font-clamp("sm", "xs");
+    line-height: 1;
 
-		&-title {
-			font-family: g.$font-noto-sans;
-			font-size: g.$font-size-sm;
-			font-weight: 700;
-			color: #939393;
-			letter-spacing: 0.15em;
-			line-height: 1;
-		}
-	}
+    @include g.mq(md) {
+      font-size: g.$font-size-2xs;
+      padding: 4px 6px;
+    }
+  }
 
-	&__button {
-		display: flex;
-		justify-content: center;
-		@include g.clamp(margin-top, 40, 20);
-	}
+  &__guides {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    @include g.clamp(margin-top, 28, 20);
+  }
 
-	&-button {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		border: none;
-		background: none;
+  &__guide {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 12px;
 
-		&__label {
-			font-family: g.$font-montserrat;
-			@include g.font-clamp('sm', 'xs');
-			font-weight: 700;
-			color: g.$color-text;
-			line-height: 1;
-		}
+    &-image {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 80px;
+      height: auto;
+      border-radius: calc(infinity * 1px);
+      overflow: hidden;
 
-		&__circle {
-			position: relative;
-			display: grid;
-			place-items: center;
-			aspect-ratio: 1 / 1;
-			width: 88px;
-			border: 1px solid g.$color-text;
-			border-radius: calc(infinity * 1px);
-		}
+      @include g.mq(md) {
+        width: 70px;
+      }
+    }
 
-		&__icon {
-			aspect-ratio: 1 / 1;
-			width: 20px;
-			height: auto;
-			mask-image: url('/icon-arrow.svg');
-			mask-size: contain;
-			mask-repeat: no-repeat;
-			mask-position: center;
-			background-color: g.$color-text;
-		}
-	}
+    &-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      line-height: 1;
+      // @include g.font-clamp('sm', 'xs');
+    }
+
+    &-name {
+      font-size: g.$font-size-sm;
+      font-weight: 500;
+    }
+
+    &-title {
+      font-family: g.$font-noto-sans;
+      font-size: g.$font-size-sm;
+      font-weight: 700;
+      color: #939393;
+      letter-spacing: 0.15em;
+      line-height: 1;
+
+      @include g.mq(md) {
+        font-size: g.$font-size-2xs;
+      }
+    }
+  }
+
+  &__button {
+    display: flex;
+    justify-content: center;
+    @include g.clamp(margin-top, 40, 20);
+
+    @include g.mq(md) {
+      justify-content: flex-end;
+    }
+  }
+
+  &-button {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: none;
+    background: none;
+
+    @include g.mq(md) {
+      gap: 8px;
+    }
+    &__label {
+      font-family: g.$font-montserrat;
+      @include g.font-clamp("sm", "xs");
+      font-weight: 700;
+      color: g.$color-text;
+      line-height: 1;
+
+      @include g.mq(md) {
+        font-size: g.$font-size-2xs;
+      }
+    }
+
+    &__circle {
+      position: relative;
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1 / 1;
+      width: 88px;
+      border: 1px solid g.$color-text;
+      border-radius: calc(infinity * 1px);
+
+      @include g.mq(md) {
+        width: 53px;
+      }
+    }
+
+    &__icon {
+      aspect-ratio: 1 / 1;
+      width: 20px;
+      height: auto;
+      mask-image: url("/icon-arrow.svg");
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+      background-color: g.$color-text;
+
+      @include g.mq(md) {
+        width: 15px;
+      }
+    }
+  }
 }
