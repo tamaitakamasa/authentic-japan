@@ -9,6 +9,7 @@ import Script from 'next/script';
 import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 
 export const metadata: Metadata = {
@@ -59,6 +60,7 @@ export default async function RootLayout({ children, params: { lang } }: { child
 	return (
 		<html lang={lang} className={`${notoSansJP.variable} ${notoSerifJP.variable} ${ebGaramond.variable} ${montserrat.variable}`}>
 			<body className='l-body'>
+				<GoogleAnalytics gaId="G-1GTCTFWHNM" />
 				<ScrollBarWidthManager />
 				<Header lang={lang} />
 				<main className="l-contents">
