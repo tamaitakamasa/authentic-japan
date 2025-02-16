@@ -18,7 +18,8 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	&:lang(en) {
+	&:lang(en),
+	&:lang(fr) {
 		letter-spacing: 0;
 	}
 }
