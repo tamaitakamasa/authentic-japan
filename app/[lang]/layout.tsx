@@ -1,6 +1,3 @@
-// 'use server'
-export const runtime = 'edge';
-
 import { Noto_Sans_JP, Noto_Serif_JP, EB_Garamond, Montserrat } from 'next/font/google';
 import type { Metadata } from 'next';
 import '@/styles/style.scss';
@@ -11,6 +8,7 @@ import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import { GoogleAnalytics } from '@next/third-parties/google';
 
+export const runtime = 'edge';
 
 export const metadata: Metadata = {
 	title: SITE_TITLE,
@@ -56,7 +54,6 @@ const montserrat = Montserrat({
 });
 
 export default async function RootLayout({ children, params: { lang } }: { children: React.ReactNode; params: { lang: Locale } }) {
-	// console.log('RootLayout:', lang);
 	return (
 		<html lang={lang} className={`${notoSansJP.variable} ${notoSerifJP.variable} ${ebGaramond.variable} ${montserrat.variable}`}>
 			<body className='l-body'>

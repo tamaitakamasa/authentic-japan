@@ -23,7 +23,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-
+	console.log('activities:', activities);
 
 	const allTags = Array.from(new Set(activities.flatMap((activity) => activity.tags || []))).map((tag) => ({
 		id: tag.id,
