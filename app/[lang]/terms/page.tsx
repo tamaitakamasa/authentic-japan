@@ -5,10 +5,10 @@ import { Locale } from '@/constants/site';
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
 	return (
 		<>
-			<ContentHeader title="PRIVACY POLICY" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'PRIVACY POLICY' }]} lang={lang} />
+			<ContentHeader title="TERMS OF USE" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TERMS OF USE' }]} lang={lang} />
 			<div className="l-contents__body p-page p-page-privacy">
 				<div className="p-page-privacy__content c-article">
-					<h1>Authentic Japan利用規約</h1>
+					<h1 className='text-4xl'>Authentic Japan利用規約</h1>
 
 					<section>
 						<h2>第1章 総則</h2>

@@ -36,7 +36,7 @@ export default async function Footer({ lang }: { lang: Locale }) {
 						<Link href={`${INSTAGRAM_URL}`} target='_blank'>INSTAGRAM</Link>
 					</li>
 					<li>
-						<Link href={`/${lang}/privacy`}>PRIVACY POLICY</Link>
+						<Link href={`/${lang}/terms`}>TERMS OF USE</Link>
 					</li>
 				</ul>
 			</nav>
