@@ -1,6 +1,7 @@
 import { Noto_Sans_JP, Noto_Serif_JP, EB_Garamond, Montserrat } from 'next/font/google';
 import type { Metadata } from 'next';
 import '@/styles/style.scss';
+import './global.css';
 import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
 import Script from 'next/script';
 import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';

@@ -1,6 +1,7 @@
 // import Image from 'next/image';
 import ContactForm from '@/components/Contact/ContactForm';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { Button } from '@/components/ui/button';
 import { Locale } from '@/constants/site';
 
 export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
@@ -10,6 +11,7 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 			<div className="l-contents__body p-page-contact">
 				<ContactForm lang={lang} />
 			</div>
+			<Button href="/" className="p-page-contact__back">hoge</Button>
 		</>
 	);
 }

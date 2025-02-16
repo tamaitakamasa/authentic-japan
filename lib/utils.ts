@@ -1,3 +1,5 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import { DEFAULT_LOCALE, Locale } from '@/constants/site';
 import { Guide, Activity, Region, News, WPMediaItem } from '@/types';
 import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPMediaItem, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
@@ -56,7 +58,7 @@ export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Prom
 					slug: tag.slug
 				})),
 				values: guide.acf.values ?? [],
-				sns: guide.acf.sns,
+				sns: guide.acf.sns
 			};
 		})
 	);
@@ -176,7 +178,7 @@ export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promi
 }
 
 export function getGuidesByRegion(guides: Guide[], regionId: number): Guide[] {
-  return guides.filter(guide => guide.regionIds?.includes(regionId));
+	return guides.filter((guide) => guide.regionIds?.includes(regionId));
 }
 
 function formatDuration(weeks: number, days: number, hours: number): string {
@@ -211,4 +213,8 @@ export function extractVideoID(url: string): string | null {
 	const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
 	const match = url.match(regExp);
 	return match && match[2].length === 11 ? match[2] : null;
+}
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
 }
