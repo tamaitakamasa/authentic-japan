@@ -1,0 +1,114 @@
+
+
+## 技術スタック
+
+- フロントエンド
+  - Next.js 14 (App Router)
+  - TypeScript
+  - TailwindCSS
+  - Framer Motion (アニメーション)
+- バックエンド
+  - WordPress REST API
+- テスト
+  - Jest
+  - React Testing Library
+- フォーマッター
+  - Prettier
+  - ESLint
+
+## ディレクトリ構造
+
+```
+src/
+├── app/                   # App Router pages
+│   ├── layout.tsx        # Root layout
+│   ├── page.tsx          # Home page
+│   └── [section]/        # Dynamic routes
+├── components/           # React components
+│   ├── ui/              # Shared UI components
+│   └── [feature]/       # Feature specific components
+├── lib/                  # Utility functions
+│   ├── api/             # API related functions
+│   └── utils/           # General utilities
+├── hooks/               # Custom React hooks
+├── types/               # TypeScript type definitions
+└── styles/              # Global styles
+```
+
+## コンポーネント設計ルール
+
+### Server Components vs Client Components
+
+1. デフォルトでServer Componentsを使用
+   - データフェッチが必要な場合
+   - SEOが重要な場合
+   - ユーザーインタラクションが不要な場合
+   - 可能な限りPPR（Partial Pre-Rendering）を利用
+
+2. Client Componentsの使用ケース ('use client' directive)
+   - useState/useEffectが必要な場合
+   - ブラウザAPIを使用する場合
+   - イベントリスナーが必要な場合
+   - クライアントサイドのライブラリを使用する場合
+
+### コンポーネントの命名規則
+
+```typescript
+// ページコンポーネント
+export default function Page() {
+  // ...
+}
+
+// 機能コンポーネント
+export function FeatureComponent() {
+  // ...
+}
+
+// UIコンポーネント
+export function Button({ children, ...props }: ButtonProps) {
+  // ...
+}
+```
+
+
+## コミットメッセージ規約
+
+### 基本構造
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+### Type
+
+- `feat`: 新機能
+- `fix`: バグ修正
+- `docs`: ドキュメントの変更
+- `style`: コードスタイルの変更
+- `refactor`: リファクタリング
+- `test`: テストの追加・修正
+- `chore`: ビルドプロセス・開発環境の変更
+
+### 注意事項
+
+- 1つのコミットでは1つの論理的な変更のみを含める
+- 複数の変更がある場合は複数のコミットに分割する
+- コミットメッセージは日本語で記述可能
+
+### 例
+
+```
+feat(blog): 記事一覧ページの実装
+
+- WordPressからの記事取得機能を実装
+- 記事一覧の表示コンポーネントを作成
+- ページネーション機能を追加
+
+Refs: #123
+```
+`
+}
