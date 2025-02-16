@@ -11,7 +11,7 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 			<div className="l-contents__body p-page-contact">
 				<ContactForm lang={lang} />
 			</div>
-			<Button href="/" className="p-page-contact__back">hoge</Button>
+			<Button className="p-page-contact__back">HogeHoge</Button>
 		</>
 	);
 }
