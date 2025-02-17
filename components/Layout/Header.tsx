@@ -7,7 +7,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Image from 'next/image';
 import clsx from 'clsx';
 import { ArrowUpRight } from 'lucide-react';
-import treeImage from "@/public/header/tree.webp";
+import treeImage from '@/public/header/tree.webp';
 
 // import { getFormattedRegionData } from '@/lib/utils';
 // import { usePathname } from 'next/navigation';
@@ -64,12 +64,15 @@ export default function Header({ lang }: { lang: Locale }) {
 				</div>
 			</header>
 			<div className={clsx('l-drawer', { 'is-open': isOpen })}>
-			<div className='l-drawer__image'>
-					<Image src={treeImage} alt='tree' fill className='object-cover' />
+				<div className="l-drawer__image">
+					<Image src={treeImage} alt="tree" fill className="object-cover" />
 				</div>
 				<div className="l-drawer__content">
 					<nav className="l-drawer__navi">
 						<ul>
+							<li>
+								<Link href={`/${lang}}`}>HOME</Link>
+							</li>
 							{NAVI_ITEMS.map((item, index) => (
 								<li key={index}>
 									<Link href={`/${lang}${item.href}`} onClick={toggleDrawer}>
@@ -98,7 +101,6 @@ export default function Header({ lang }: { lang: Locale }) {
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</>
 	);

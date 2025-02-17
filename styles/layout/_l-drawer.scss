@@ -16,7 +16,7 @@
 	transition: all 0.2s ease-in-out;
 
 	@include g.mq(md) {
-		display: block;
+		// display: block;
 	}
 
 	& * {
@@ -50,6 +50,11 @@
 		background-color: g.$color-main;
 		// transition: all 0.2s ease-in-out;
 
+		@include g.mq(md) {
+			display: block;
+			padding-inline: 24px;
+		}
+
 		& * {
 			color: #ffffff;
 		}
@@ -62,7 +67,7 @@
 			gap: 36px;
 
 			@include g.mq(md) {
-				gap: 24px;
+				gap: 12px;
 			}
 
 			& > li {
@@ -71,7 +76,7 @@
 				font-size: g.$font-size-sm;
 
 				@include g.mq(md) {
-					font-size: g.$font-size-xs;
+					// font-size: g.$font-size-xs;
 				}
 			}
 		}
@@ -86,14 +91,21 @@
 
 		@include g.mq(md) {
 			flex-direction: column;
-			gap: 0;
+			gap: 48px;
+			margin-top: 48px;
+			padding-top: 48px;
 		}
-
 
 		ul {
 			display: flex;
 			align-items: center;
 			gap: 20px;
+
+			@include g.mq(md) {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 12px;
+			}
 
 			li {
 				line-height: 1;
@@ -120,6 +132,13 @@
 					font-size: g.$font-size-xs;
 				}
 			}
+		}
+	}
+
+	&__lang {
+		@include g.mq(md) {
+			display: flex;
+			justify-content: flex-end;
 		}
 	}
 }
