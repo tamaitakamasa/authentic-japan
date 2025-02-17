@@ -49,7 +49,7 @@ export default function Header({ lang }: { lang: Locale }) {
 							))}
 						</ul>
 					</div>
-					<div className="l-header__langSwitcher">
+					<div className="l-header__lang">
 						<LanguageSwitcher currentLang={lang} />
 					</div>
 				</div>

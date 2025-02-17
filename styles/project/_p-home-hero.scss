@@ -100,6 +100,7 @@
 					margin-top: 20px;
 					@include g.font-clamp('5xl', '2xl');
 					font-weight: 500;
+					line-height: 1.4;
 
 					@include g.mq(md) {
 						margin-top: 5px;

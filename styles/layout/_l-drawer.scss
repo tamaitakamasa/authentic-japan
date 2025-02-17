@@ -15,6 +15,10 @@
 	opacity: 0;
 	transition: all 0.2s ease-in-out;
 
+	@include g.mq(md) {
+		display: block;
+	}
+
 	& * {
 		font-family: g.$font-montserrat;
 		color: #ffffff;
@@ -30,31 +34,25 @@
 		position: relative;
 		width: 100%;
 		height: 100vh;
-		// background-image: url('../images/drawer.jpg');
 		background-color: rgba($color: #000000, $alpha: 0.1);
 		background-size: cover;
 		background-position: center;
+
+		@include g.mq(md) {
+			// display: none;
+		}
 	}
 
 	&__content {
-		// position: absolute;
-		// top: 0;
-		// bottom: 0;
-		// left: -50dvi;
 		z-index: 1;
 		display: grid;
 		place-content: center;
-		// width: 50dvi;
 		background-color: g.$color-main;
 		// transition: all 0.2s ease-in-out;
 
 		& * {
 			color: #ffffff;
 		}
-
-		// @at-root #{$this}.is-open & {
-		// 	left: 0;
-		// }
 	}
 
 	&__navi {
@@ -62,6 +60,10 @@
 			display: flex;
 			flex-direction: column;
 			gap: 36px;
+
+			@include g.mq(md) {
+				gap: 24px;
+			}
 
 			& > li {
 				font-weight: 700;
@@ -81,6 +83,11 @@
 		margin-top: 60px;
 		padding-top: 60px;
 		border-top: 1px solid #ffffff;
+
+		@include g.mq(md) {
+			flex-direction: column;
+			gap: 0;
+		}
 
 
 		ul {

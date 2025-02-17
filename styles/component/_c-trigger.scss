@@ -14,16 +14,18 @@ $drawer: '.l-drawer';
 	// width: 100%;
 	// height: 100%;
 	width: 60px;
+	padding: 12px;
 	aspect-ratio: 1 / 1;
 	background-color: g.$color-main;
 	border: 1px solid g.$color-main;
-	// border: none;
 	border-radius: calc(infinity * 1px);
 	transition: all 0.3s;
 	opacity: 1;
 
-	padding: 12px;
-	// display: none;
+	@include g.mq(md) {
+		width: 40px;
+		padding: 8px;
+	}
 
 	@at-root body:has(#{$drawer}.is-open) & {
 		border-color: #ffffff;
