@@ -2,29 +2,58 @@ import { Noto_Sans_JP, Noto_Serif_JP, EB_Garamond, Montserrat } from 'next/font/
 import type { Metadata } from 'next';
 import '@/styles/style.scss';
 import './global.css';
-import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
+import { Locale } from '@/constants/site';
 import Script from 'next/script';
 import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { METADATA } from '@/constants/metadata';
 
 export const runtime = 'edge';
 
-export const metadata: Metadata = {
-	title: SITE_TITLE,
-	description: SITE_DESCRIPTION,
-	icons: {
-		// 基本favicon
-		icon: [
-			// { url: '/favicon.svg', type: 'image/svg+xml' },
-			{ url: '/favicon.ico' }, // フォールバック用
-			{ url: '/icon.png', type: 'image/png' } // フォールバック用
-		],
-		// Apple Touch Icon
-		apple: [{ url: '/apple-icon.png' }],
-	}
+type Props = {
+  params: { lang: Locale }
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const metadata = METADATA[params.lang];
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    keywords: metadata.keywords,
+    icons: {
+      icon: [
+        { url: '/favicon.ico' },
+        { url: '/icon.png', type: 'image/png' }
+      ],
+      apple: [
+        { url: '/apple-icon.png' }
+      ],
+    },
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      locale: params.lang,
+      type: 'website',
+      siteName: metadata.title,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: metadata.title,
+      description: metadata.description,
+    },
+    alternates: {
+      canonical: `https://authentic-japan.com/${params.lang}`,
+      languages: {
+        'en': '/en',
+        'ja': '/ja',
+        'fr': '/fr',
+      },
+    },
+  };
+}
 
 const notoSansJP = Noto_Sans_JP({
 	weight: ['400', '500', '700'],
