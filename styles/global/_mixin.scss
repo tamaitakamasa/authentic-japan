@@ -20,7 +20,8 @@
 @mixin z-index($key) {
   $layer: (
     logo: 20,
-    trigger: 20,
+    trigger: 100,
+		drawer: 30,
     nav: 10,
     default: 1
   );

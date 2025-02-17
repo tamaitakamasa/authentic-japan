@@ -70,12 +70,11 @@
 	}
 
 	&__trigger {
-		display: none;
+		position: fixed;
+		top: 50px;
+		right: 50px;
+		@include g.z-index(trigger);
+		// z-index: 100;
 
-		@include g.mq(md) {
-			position: relative;
-			z-index: 100;
-			display: block;
-		}
 	}
 }

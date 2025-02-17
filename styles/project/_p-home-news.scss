@@ -38,6 +38,10 @@
     @include g.clamp(padding-top, 120, 50);
     @include g.clamp(padding-bottom, 120, 50);
 
+		& > p {
+			z-index: 1;
+		}
+
     @include g.mq(md) {
       gap: 50px;
     }

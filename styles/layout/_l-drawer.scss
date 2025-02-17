@@ -1,0 +1,118 @@
+// layout/_l-drawer.scss
+
+@use '../global/' as g;
+
+.l-drawer {
+	$this: &;
+
+	pointer-events: none;
+	position: fixed;
+	inset: 0;
+	@include g.z-index(drawer);
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	width: 100%;
+	opacity: 0;
+	transition: all 0.2s ease-in-out;
+
+	& * {
+		font-family: g.$font-montserrat;
+		color: #ffffff;
+	}
+
+	&.is-open {
+		pointer-events: auto;
+		display: grid;
+		opacity: 1;
+	}
+
+	&__image {
+		position: relative;
+		width: 100%;
+		height: 100vh;
+		// background-image: url('../images/drawer.jpg');
+		background-color: rgba($color: #000000, $alpha: 0.1);
+		background-size: cover;
+		background-position: center;
+	}
+
+	&__content {
+		// position: absolute;
+		// top: 0;
+		// bottom: 0;
+		// left: -50dvi;
+		z-index: 1;
+		display: grid;
+		place-content: center;
+		// width: 50dvi;
+		background-color: g.$color-main;
+		// transition: all 0.2s ease-in-out;
+
+		& * {
+			color: #ffffff;
+		}
+
+		// @at-root #{$this}.is-open & {
+		// 	left: 0;
+		// }
+	}
+
+	&__navi {
+		& > ul {
+			display: flex;
+			flex-direction: column;
+			gap: 36px;
+
+			& > li {
+				font-weight: 700;
+				letter-spacing: 0.15em;
+				font-size: g.$font-size-sm;
+
+				@include g.mq(md) {
+					font-size: g.$font-size-xs;
+				}
+			}
+		}
+	}
+
+	&__footer {
+		display: flex;
+		gap: 120px;
+		margin-top: 60px;
+		padding-top: 60px;
+		border-top: 1px solid #ffffff;
+
+
+		ul {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+
+			li {
+				line-height: 1;
+			}
+
+			a:has(svg) {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+
+				& > svg {
+					width: 16px;
+					height: 16px;
+				}
+			}
+
+			span {
+				font-weight: 700;
+				letter-spacing: 0.15em;
+				font-size: g.$font-size-2xs;
+				// line-height: 1;
+
+				@include g.mq(md) {
+					font-size: g.$font-size-xs;
+				}
+			}
+		}
+	}
+}
