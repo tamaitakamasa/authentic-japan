@@ -105,7 +105,7 @@ export default function ClientFilterComponent({ guides, regions, currentFilters,
 	const selectedRegionCount = currentFilters?.regions?.length || 0;
 
 	return (
-		<Card className="fixed z-50 bottom-4 md:relative md:bottom-auto">
+		<Card className="fixed z-50 bottom-4 md:relative md:bottom-auto font-[Noto_Sans_JP]">
 			<CardContent className="p-4">
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div className={`flex ${isSmallScreen ? 'flex-col' : 'flex-row'} gap-2 justify-start`}>
@@ -122,7 +122,7 @@ export default function ClientFilterComponent({ guides, regions, currentFilters,
 										{selectedGuideCount > 0 && ` (${selectedGuideCount})`}
 									</Button>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent align="start" className="w-56">
+								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
 									{guides.map((guide) => (
 										<DropdownMenuCheckboxItem key={guide.id} checked={currentFilters?.guides?.includes(String(guide.id))} onCheckedChange={() => updateFilters('guides', String(guide.id))}>
 											{guide.name}
@@ -143,7 +143,7 @@ export default function ClientFilterComponent({ guides, regions, currentFilters,
 										{selectedRegionCount > 0 && ` (${selectedRegionCount})`}
 									</Button>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent align="start" className="w-56">
+								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
 									{regions.map((region) => (
 										<DropdownMenuCheckboxItem key={region.id} checked={currentFilters?.regions?.includes(String(region.id))} onCheckedChange={() => updateFilters('regions', String(region.id))}>
 											{region.name}
