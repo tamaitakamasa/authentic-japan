@@ -4109,7 +4109,7 @@ export default async function TourList({ lang, filters }: TourListProps) {
 	}, lang);
 
 	const filteredActivities = filterActivitiesByQuery(activities, filters);
-	console.log('activities:', activities);
+	// console.log('activities:', activities);
 	console.log('filteredActivities:', filteredActivities);
 	return (
 		<div>
@@ -5300,36 +5300,37 @@ export function formatNumber(num: number): string {
 }
 
 export function filterActivitiesByQuery(activities: Activity[], filters?: ActivityFilters): Activity[] {
-	if (!filters) return activities;
+  if (!filters) return activities;
 
-	return activities.filter((activity) => {
-		// ガイドでフィルタリング
-		if (filters.guides?.length) {
-			const guideIds = filters.guides.map(Number);
-			if (!activity.guides?.some(guide => guideIds.includes(guide.id))) {
-				return false;
-			}
-		}
+  return activities.filter((activity) => {
+    // ガイドでフィルタリング
+    if (filters.guides?.length) {
+      const filterGuideIds = filters.guides.map(Number);
+      if (!activity.guideIds?.some(id => filterGuideIds.includes(id))) {
+        return false;
+      }
+    }
 
-		// 地域でフィルタリング
-		if (filters.regions?.length) {
-			if (!activity.regions?.some(region => filters.regions?.includes(region))) {
-				return false;
-			}
-		}
+    // 地域でフィルタリング
+    if (filters.regions?.length) {
+      const filterRegionIds = filters.regions.map(Number);
+      if (!activity.regionIds?.some(id => filterRegionIds.includes(id))) {
+        return false;
+      }
+    }
 
-		// テキスト検索
-		if (filters.search) {
-			const searchLower = filters.search.toLowerCase();
-			const titleMatch = activity.title.toLowerCase().includes(searchLower);
-			const excerptMatch = activity.excerpt?.toLowerCase().includes(searchLower) ?? false;
-			if (!titleMatch && !excerptMatch) {
-				return false;
-			}
-		}
+    // テキスト検索（変更なし）
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      const titleMatch = activity.title.toLowerCase().includes(searchLower);
+      const excerptMatch = activity.excerpt?.toLowerCase().includes(searchLower) ?? false;
+      if (!titleMatch && !excerptMatch) {
+        return false;
+      }
+    }
 
-		return true;
-	});
+    return true;
+  });
 }
 
 export function filterActivities(activities: Activity[], filters: { guideId: number | null; regionId: number | null; tagIds: number[] }, guides: Guide[], regions: Region[]): Activity[] {
