@@ -105,7 +105,7 @@ export default function ClientFilterComponent({ guides, regions, currentFilters,
 	const selectedRegionCount = currentFilters?.regions?.length || 0;
 
 	return (
-		<Card className="fixed z-50 bottom-4 md:relative md:bottom-auto font-[Noto_Sans_JP]">
+		<Card className="fixed z-10 bottom-4 md:relative md:bottom-auto font-[Noto_Sans_JP]">
 			<CardContent className="p-4">
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div className={`flex ${isSmallScreen ? 'flex-col' : 'flex-row'} gap-2 justify-start`}>
