@@ -1,5 +1,5 @@
 // import { Suspense } from 'react';
-import { TourItem } from '@/components/Tour/TourItem';
+// import { TourItem } from '@/components/Tour/TourItem';
 import { Button } from '@/components/Button';
 import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
 import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
@@ -8,24 +8,21 @@ import { VideoPlayer } from '@/components/VideoPlayer';
 import { INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
-import { getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
+import { getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
 // import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import Image from 'next/image';
 import NewsItem from '@/components/News/NewsItem';
 import InstagramFeed from '@/components/InstagramFeed';
 import Link from 'next/link';
-import TourList from '@/components/Tour/TourList';
 import { Suspense } from 'react';
 import HomeTourSection from '@/components/Home/HomeTourSection';
+import HomeNavigatorSection from '@/components/Home/HomeNavigatorSection';
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const siteOptions = await getWPSiteOptions(lang);
-	// const videoId = siteOptions.home_about_video ? siteOptions.home_about_video.split('v=')[1] : '';
-	// const videoId = siteOptions.home_about_video;
-	// console.log('videoId:', videoId);
-	const guides = await getFormattedGuideData(lang);
+	// const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	// const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
 	// const newsArticles = await fetchNewsArticles(lang);
@@ -39,7 +36,10 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					<HomeHeroSlider lang={lang} slides={siteOptions.home_slider} />
 				</div>
 
-				<div className="p-home-navigators">
+				<Suspense fallback={<p>Loading...</p>}>
+						<HomeNavigatorSection lang={lang} siteOptions={siteOptions} />
+					</Suspense>
+				{/* <div className="p-home-navigators">
 					<h2 className="p-home-navigators__copy">{siteOptions.navigators_title}</h2>
 					<p className="p-home-navigators__text" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
 					<div className="p-home-navigators__slider u-full-bleed">
@@ -48,7 +48,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					<div className="p-home-navigators__button">
 						<Button href={`/${lang}/navigator`} label="VIEW ALL NAVIGATORS" />
 					</div>
-				</div>
+				</div> */}
 
 				<div className="p-home-regions">
 					<div className="p-home-regions__header">
