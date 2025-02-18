@@ -3,6 +3,7 @@ import { getFormattedActivities, filterActivitiesByQuery, getFormattedGuideData,
 import { ActivityFilters } from '@/types/activity';
 import ClientFilterComponent from './ClientFilterComponent';
 import { TourItem } from './TourItem';
+import { useTranslations } from '@/lib/i18n';
 
 interface TourListProps {
 	lang: Locale;
@@ -10,10 +11,7 @@ interface TourListProps {
 }
 
 export default async function TourList({ lang, filters }: TourListProps) {
-	// const activities = await getFormattedActivities({
-	// 	page: 1,
-	// 	pageSize: 10
-	// }, lang);
+	const t = useTranslations(lang);
 	const [activities, guides, regions] = await Promise.all([
 		getFormattedActivities(
 			{
@@ -34,11 +32,19 @@ export default async function TourList({ lang, filters }: TourListProps) {
 			<div>
 				<ClientFilterComponent lang={lang} guides={guides} regions={regions} currentFilters={filters} />
 			</div>
-			<div className='c-tours'>
+			<div className="c-tours">
 				{filteredActivities.length > 0 ? (
-					filteredActivities.map((activity) => <TourItem className='c-tours__tour' key={activity.id} activity={activity} />)
+					filteredActivities.map((activity) => <TourItem className="c-tours__tour" key={activity.id} activity={activity} />)
 				) : (
-					<p>No activities found.</p>
+					// <p>No activities found.</p>
+					<p>
+						{' '}
+						{t({
+							ja: 'ツアーが見つかりません。',
+							en: 'No activities found.',
+							fr: 'Aucune activité trouvée.'
+						})}
+					</p>
 				)}
 			</div>
 		</>

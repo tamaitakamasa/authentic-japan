@@ -12,7 +12,7 @@ export const DEFAULT_LOCALE = 'ja' as Locale;
 
 export const NAVI_ITEMS = [
 	{ label: 'NAVIGATORS', href: `/navigator` },
-	{ label: 'TOURS', href: `/tour` },
+	{ label: 'TOURS', href: `/tours` },
 	{ label: 'REGIONS', href: `/region` },
 	{ label: 'NEWS', href: `/news` },
 	{ label: 'ABOUT US', href: `/about` },
@@ -24,7 +24,7 @@ export const FOOTER_NAVI_ITEMS = [
 	{ label: 'NAVIGATORS', href: `/navigator` },
 	{ label: 'REGIONS', href: `/region` },
 	{ label: 'ABOUT US', href: `/about` },
-	{ label: 'TOURS', href: `/tour` },
+	{ label: 'TOURS', href: `/tours` },
 	{ label: 'NEWS', href: `/news` },
 	{ label: 'CONTACT', href: `/contact` }
 ];
