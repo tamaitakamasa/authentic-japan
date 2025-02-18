@@ -2,7 +2,7 @@
 // import { TourItem } from '@/components/Tour/TourItem';
 import { Button } from '@/components/Button';
 import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
-import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
+// import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
 import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { INSTAGRAM_URL, Locale } from '@/constants/site';
@@ -37,8 +37,8 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 				</div>
 
 				<Suspense fallback={<p>Loading...</p>}>
-						<HomeNavigatorSection lang={lang} siteOptions={siteOptions} />
-					</Suspense>
+					<HomeNavigatorSection lang={lang} siteOptions={siteOptions} />
+				</Suspense>
 				{/* <div className="p-home-navigators">
 					<h2 className="p-home-navigators__copy">{siteOptions.navigators_title}</h2>
 					<p className="p-home-navigators__text" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
