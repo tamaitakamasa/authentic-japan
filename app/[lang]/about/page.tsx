@@ -1,11 +1,9 @@
-// import { Metadata } from 'next';
 import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
-// import { METADATA } from '@/constants/metadata';
 import { Metadata } from 'next';
 
 type Props = {

@@ -1,6 +1,12 @@
 import type { Guide } from '@/types';
 // import type { BokunActivity } from '@/types';
 
+export interface ActivityFilters {
+	guides?: string[];
+	regions?: string[];
+	search?: string;
+}
+
 export interface Activity {
 	id: number;
 	title: string;
