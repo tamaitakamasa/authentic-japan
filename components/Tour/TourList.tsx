@@ -31,7 +31,7 @@ export default async function TourList({ lang, filters }: TourListProps) {
 	return (
 		<>
 			<div>
-				<ClientFilterComponent lang={lang} guides={guides} regions={regions} />
+				<ClientFilterComponent lang={lang} guides={guides} regions={regions} currentFilters={filters} />
 			</div>
 			<div>
 				{filteredActivities.map((activity) => (
