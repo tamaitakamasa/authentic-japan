@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { DEFAULT_LOCALE, Locale } from '@/constants/site';
-import { Guide, Activity, Region, News, WPMediaItem } from '@/types';
+import { Guide, Activity, Region, News, WPMediaItem, ActivityFilters } from '@/types';
 import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPMediaItem, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
 import { formatDate } from './formatDate';
 
@@ -91,8 +91,9 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 				const guideIds = wpTour?.acf.guide || [];
 				const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
 
-				// guides から regions を抽出
+				// guides から regions と regionIds を抽出
 				const regions = Array.from(new Set(guides.flatMap((guide) => guide.regions))).filter((region): region is string => region !== undefined);
+				const regionIds = Array.from(new Set(guides.flatMap((guide) => guide.regionIds || []))).filter((id): id is number => id !== undefined);
 
 				// キャッシュからタグ情報を取得
 				const tags = wpTour?.tags
@@ -118,6 +119,7 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 					price: item.price,
 					formattedPrice: formatNumber(item.price),
 					regions: regions,
+					regionIds: regionIds,
 					duration: formattedDuration,
 					durationDays: totalDays,
 					durationHours: totalDays > 0 ? 0 : item.fields.durationHours || 0,
@@ -195,6 +197,40 @@ function formatDuration(weeks: number, days: number, hours: number): string {
 
 export function formatNumber(num: number): string {
 	return num.toLocaleString('ja-JP');
+}
+
+export function filterActivitiesByQuery(activities: Activity[], filters?: ActivityFilters): Activity[] {
+  if (!filters) return activities;
+
+  return activities.filter((activity) => {
+    // ガイドでフィルタリング
+    if (filters.guides?.length) {
+      const filterGuideIds = filters.guides.map(Number);
+      if (!activity.guideIds?.some(id => filterGuideIds.includes(id))) {
+        return false;
+      }
+    }
+
+    // 地域でフィルタリング
+    if (filters.regions?.length) {
+      const filterRegionIds = filters.regions.map(Number);
+      if (!activity.regionIds?.some(id => filterRegionIds.includes(id))) {
+        return false;
+      }
+    }
+
+    // テキスト検索（変更なし）
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      const titleMatch = activity.title.toLowerCase().includes(searchLower);
+      const excerptMatch = activity.excerpt?.toLowerCase().includes(searchLower) ?? false;
+      if (!titleMatch && !excerptMatch) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 }
 
 export function filterActivities(activities: Activity[], filters: { guideId: number | null; regionId: number | null; tagIds: number[] }, guides: Guide[], regions: Region[]): Activity[] {

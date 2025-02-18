@@ -22,6 +22,7 @@ export interface Activity {
 	price: number;
 	formattedPrice: string;
 	regions?: string[];
+	regionIds?: number[];
 	duration: string;
 	durationDays: number;
 	durationHours: number;

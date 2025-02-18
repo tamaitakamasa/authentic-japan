@@ -14,6 +14,8 @@
     - guide.ts
   - app/
     - [lang]/
+      - tours/
+        - page.tsx
       - contact/
         - page.tsx
       - global.css
@@ -41,6 +43,7 @@
   - postcss.config.mjs
   - constants/
     - site.ts
+    - metadata.ts
   - next.config.mjs
   - .next/
   - README.md
@@ -75,6 +78,7 @@
     - Tour/
       - ClientFilteredActivities.tsx
       - TourButton.tsx
+      - TourList.tsx
       - FilterComponent.tsx
       - TourItem.tsx
     - VideoPlayer.tsx
@@ -467,6 +471,12 @@ export interface WPSiteContent {
 import type { Guide } from '@/types';
 // import type { BokunActivity } from '@/types';
 
+export interface ActivityFilters {
+	guides?: string[];
+	regions?: string[];
+	search?: string;
+}
+
 export interface Activity {
 	id: number;
 	title: string;
@@ -482,6 +492,7 @@ export interface Activity {
 	price: number;
 	formattedPrice: string;
 	regions?: string[];
+	regionIds?: number[];
 	duration: string;
 	durationDays: number;
 	durationHours: number;
@@ -663,6 +674,72 @@ export interface Guide {
 		website?: string;
 		note?: string;
 	};
+}
+
+```
+
+### app/[lang]/tours/page.tsx
+
+```
+import { Locale } from '@/constants/site';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+import { getWPSiteOptions } from '@/lib/fetchData';
+import Image from 'next/image';
+import { Suspense } from 'react';
+import TourList from '@/components/Tour/TourList';
+import { ActivityFilters } from '@/types/activity';
+
+function parseQueryParam(value: string | string[] | undefined): string[] {
+	if (!value) return [];
+	if (Array.isArray(value)) return value;
+	return value.split(',').filter(Boolean);
+}
+
+function parseSearchParam(value: string | string[] | undefined): string | undefined {
+	if (!value) return undefined;
+	if (Array.isArray(value)) return value[0];
+	return value;
+}
+
+export default async function Page({
+	params: { lang },
+	searchParams,
+}: {
+	params: { lang: Locale };
+	searchParams: { [key: string]: string | string[] | undefined };
+}) {
+
+	const filters: ActivityFilters = {
+		guides: parseQueryParam(searchParams.guides),
+		regions: parseQueryParam(searchParams.regions),
+		search: parseSearchParam(searchParams.search)
+	};
+	console.log('filters:', filters);
+
+	const siteOptions = await getWPSiteOptions(lang);
+
+	return (
+		<>
+			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
+			<div className="l-contents__body p-page p-page-tours">
+				<div className="p-page__header u-full-bleed">
+					{siteOptions.tours_mv && (
+						<figure className="p-page__mv">
+							<Image src={siteOptions.tours_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+				</div>
+				<div className="p-page-tours__tours c-tours">
+					<Suspense fallback={<p>Loading...</p>}>
+						<TourList
+							lang={lang}
+							filters={filters}
+						/>
+					</Suspense>
+				</div>
+			</div>
+		</>
+	);
 }
 
 ```
@@ -1420,15 +1497,37 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 ### app/[lang]/about/page.tsx
 
 ```
-// import Image from 'next/image';
+import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
-import Image from 'next/image';
+import { Metadata } from 'next';
 
-export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
+type Props = {
+  params: { lang: Locale }
+}
+
+export async function generateMetadata({ params: { lang } }: Props): Promise<Metadata> {
+  return {
+    // タイトルだけをオーバーライド
+    // layout.tsxで設定したテンプレートが適用される
+    title: {
+      ja: "Authentic Japanについて",
+      en: "About Authentic Japan",
+      fr: "À propos d'Authentic Japan",
+    }[lang],
+    // 特定のページ用の説明文をオーバーライド
+    description: {
+      ja: "ページ固有の説明",
+      en: "Page specific description",
+      fr: "Description spécifique à la page",
+    }[lang],
+  };
+}
+
+export default async function AboutPage({ params: { lang } }: { params: { lang: Locale } }) {
 	const siteOptions = await getWPSiteOptions(lang);
 
 	return (
@@ -1735,29 +1834,61 @@ import { Noto_Sans_JP, Noto_Serif_JP, EB_Garamond, Montserrat } from 'next/font/
 import type { Metadata } from 'next';
 import '@/styles/style.scss';
 import './global.css';
-import { SITE_TITLE, SITE_DESCRIPTION, Locale } from '@/constants/site';
+import { Locale } from '@/constants/site';
 import Script from 'next/script';
 import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { METADATA } from '@/constants/metadata';
 
 export const runtime = 'edge';
 
-export const metadata: Metadata = {
-	title: SITE_TITLE,
-	description: SITE_DESCRIPTION,
-	icons: {
-		// 基本favicon
-		icon: [
-			// { url: '/favicon.svg', type: 'image/svg+xml' },
-			{ url: '/favicon.ico' }, // フォールバック用
-			{ url: '/icon.png', type: 'image/png' } // フォールバック用
-		],
-		// Apple Touch Icon
-		apple: [{ url: '/apple-icon.png' }],
-	}
+type Props = {
+  params: { lang: Locale }
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const metadata = METADATA[params.lang];
+
+  return {
+    title: {
+      template: `%s ${metadata.separator} ${metadata.title}`,
+      default: metadata.title,  // テンプレートを使用しない場合のデフォルト値
+    },
+    description: metadata.description,
+    keywords: metadata.keywords,
+    icons: {
+      icon: [
+        { url: '/favicon.ico' },
+        { url: '/icon.png', type: 'image/png' }
+      ],
+      apple: [
+        { url: '/apple-icon.png' }
+      ],
+    },
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      locale: params.lang,
+      type: 'website',
+      siteName: metadata.title,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: metadata.title,
+      description: metadata.description,
+    },
+    alternates: {
+      canonical: `https://authentic-japan.com/${params.lang}`,
+      languages: {
+        'en': '/en',
+        'ja': '/ja',
+        'fr': '/fr',
+      },
+    },
+  };
+}
 
 const notoSansJP = Noto_Sans_JP({
 	weight: ['400', '500', '700'],
@@ -2130,7 +2261,6 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
 	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-	console.log('activities:', activities);
 
 	const allTags = Array.from(new Set(activities.flatMap((activity) => activity.tags || []))).map((tag) => ({
 		id: tag.id,
@@ -2363,6 +2493,42 @@ export const FOOTER_NAVI_ITEMS = [
 	{ label: 'NEWS', href: `/news` },
 	{ label: 'CONTACT', href: `/contact` }
 ];
+
+```
+
+### constants/metadata.ts
+
+```
+// constants/metadata.ts
+import { Locale } from '@/constants/site';
+
+type MetadataType = {
+  title: string;
+  separator: string;
+  description: string;
+  keywords: string;
+};
+
+export const METADATA: Record<Locale, MetadataType> = {
+  ja: {
+    title: "Authentic Japan - 心に響く本物の旅",
+    separator: " | ",
+    description: "地域に根ざしたナビゲーターと共に、日本各地の本質的な体験を提供します。文化や伝統に深く触れる旅をご案内します。",
+    keywords: "日本旅行, 文化体験, 伝統文化, ローカルガイド, 体験ツアー",
+  },
+  en: {
+    title: "Authentic Japan - Transformative Travel Experiences",
+    separator: " | ",
+    description: "Discover authentic Japanese experiences with local navigators. Immerse yourself in cultural journeys across Japan's diverse regions.",
+    keywords: "Japan travel, authentic experience, cultural tours, local guides, Japanese culture",
+  },
+  fr: {
+    title: "Authentic Japan - Expériences de Voyage Transformatives",
+    separator: " | ",
+    description: "Découvrez des expériences japonaises authentiques avec des navigateurs locaux. Immergez-vous dans des voyages culturels à travers les diverses régions du Japon.",
+    keywords: "voyage au Japon, expérience authentique, visites culturelles, guides locaux, culture japonaise",
+  },
+};
 
 ```
 
@@ -3470,13 +3636,16 @@ export default async function Footer({ lang }: { lang: Locale }) {
 ```
 'use client';
 
-import { Locale, NAVI_ITEMS, SITE_TITLE } from '@/constants/site';
+import { INSTAGRAM_URL, Locale, NAVI_ITEMS, SITE_TITLE } from '@/constants/site';
 import Link from 'next/link';
 import React, { useRef, useState } from 'react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Image from 'next/image';
 import clsx from 'clsx';
-import { getFormattedRegionData } from '@/lib/utils';
+import { ArrowUpRight } from 'lucide-react';
+import treeImage from '@/public/header/tree.webp';
+
+// import { getFormattedRegionData } from '@/lib/utils';
 // import { usePathname } from 'next/navigation';
 
 export default function Header({ lang }: { lang: Locale }) {
@@ -3484,8 +3653,8 @@ export default function Header({ lang }: { lang: Locale }) {
 	const [isOpen, setIsOpen] = useState(false);
 	// const [isAfterMarker, setIsAfterMarker] = useState(false);
 	const headerRef = useRef<HTMLElement>(null);
-	const regions = getFormattedRegionData(lang);
-	console.log('regions:', regions);
+	// const regions = getFormattedRegionData(lang);
+	// console.log('regions:', regions);
 
 	// ヘッダーのクラス制御
 	// const getHeaderClasses = useCallback(() => {
@@ -3516,33 +3685,58 @@ export default function Header({ lang }: { lang: Locale }) {
 							))}
 						</ul>
 					</div>
-					<div className="l-header__langSwitcher">
+					<div className="l-header__lang">
 						<LanguageSwitcher currentLang={lang} />
 					</div>
 				</div>
 				<div className="l-header__trigger">
 					<button className={clsx('c-trigger', { 'is-open': isOpen })} aria-label="menu" aria-expanded={isOpen} aria-controls="navigation-drawer" onClick={toggleDrawer}>
-						{/* <div className="c-trigger__inner">
+						<div className="c-trigger__inner">
 							<span className="c-trigger__line"></span>
 							<span className="c-trigger__line"></span>
-						</div> */}
-						Menu
+						</div>
+						{/* Menu */}
 					</button>
 				</div>
 			</header>
 			<div className={clsx('l-drawer', { 'is-open': isOpen })}>
-				<div className="l-drawer__backdrop" onClick={toggleDrawer}></div>
-				<nav className="l-drawer__navi">
-					<ul>
-						{NAVI_ITEMS.map((item, index) => (
-							<li key={index}>
-								<Link href={`/${lang}${item.href}`} onClick={toggleDrawer}>
-									{item.label}
+				<div className="l-drawer__image">
+					<Image src={treeImage} alt="tree" fill className="object-cover" />
+				</div>
+				<div className="l-drawer__content">
+					<nav className="l-drawer__navi">
+						<ul>
+							<li>
+								<Link href={`/${lang}}`}>HOME</Link>
+							</li>
+							{NAVI_ITEMS.map((item, index) => (
+								<li key={index}>
+									<Link href={`/${lang}${item.href}`} onClick={toggleDrawer}>
+										{item.label}
+									</Link>
+								</li>
+							))}
+						</ul>
+					</nav>
+					<div className="l-drawer__footer">
+						<ul>
+							<li>
+								<Link href={INSTAGRAM_URL} target="_blank" onClick={toggleDrawer}>
+									<span>INSTAGRAM</span>
+									<ArrowUpRight />
 								</Link>
 							</li>
-						))}
-					</ul>
-				</nav>
+							<li>
+								<Link href={`/${lang}/terms`} onClick={toggleDrawer}>
+									<span>TERMS OF USE</span>
+								</Link>
+							</li>
+						</ul>
+						<div className="l-drawer__lang">
+							<LanguageSwitcher currentLang={lang} />
+						</div>
+					</div>
+				</div>
 			</div>
 		</>
 	);
@@ -3892,6 +4086,41 @@ export default function TourButton({ tourId, children, className }: TourButtonPr
 			{children}
 		</button>
 	);
+}
+
+```
+
+### components/Tour/TourList.tsx
+
+```
+import { Locale } from "@/constants/site";
+import { getFormattedActivities, filterActivitiesByQuery } from "@/lib/utils";
+import { ActivityFilters } from "@/types/activity";
+
+interface TourListProps {
+	lang: Locale;
+	filters?: ActivityFilters;
+}
+
+export default async function TourList({ lang, filters }: TourListProps) {
+	const activities = await getFormattedActivities({
+		page: 1,
+		pageSize: 10
+	}, lang);
+
+	const filteredActivities = filterActivitiesByQuery(activities, filters);
+	console.log('activities:', activities);
+	console.log('filteredActivities:', filteredActivities);
+	return (
+		<div>
+			{filteredActivities.map((activity) => (
+				<div key={activity.id}>
+					<h2>{activity.title}</h2>
+					{/* <p>{activity.content}</p> */}
+				</div>
+			))}
+		</div>
+	)
 }
 
 ```
@@ -4872,7 +5101,7 @@ export type { BokunSearchParams };
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { DEFAULT_LOCALE, Locale } from '@/constants/site';
-import { Guide, Activity, Region, News, WPMediaItem } from '@/types';
+import { Guide, Activity, Region, News, WPMediaItem, ActivityFilters } from '@/types';
 import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPMediaItem, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
 import { formatDate } from './formatDate';
 
@@ -4962,8 +5191,9 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 				const guideIds = wpTour?.acf.guide || [];
 				const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
 
-				// guides から regions を抽出
+				// guides から regions と regionIds を抽出
 				const regions = Array.from(new Set(guides.flatMap((guide) => guide.regions))).filter((region): region is string => region !== undefined);
+				const regionIds = Array.from(new Set(guides.flatMap((guide) => guide.regionIds || []))).filter((id): id is number => id !== undefined);
 
 				// キャッシュからタグ情報を取得
 				const tags = wpTour?.tags
@@ -4989,6 +5219,7 @@ export async function getFormattedActivities(searchParams: BokunSearchParams, la
 					price: item.price,
 					formattedPrice: formatNumber(item.price),
 					regions: regions,
+					regionIds: regionIds,
 					duration: formattedDuration,
 					durationDays: totalDays,
 					durationHours: totalDays > 0 ? 0 : item.fields.durationHours || 0,
@@ -5066,6 +5297,39 @@ function formatDuration(weeks: number, days: number, hours: number): string {
 
 export function formatNumber(num: number): string {
 	return num.toLocaleString('ja-JP');
+}
+
+export function filterActivitiesByQuery(activities: Activity[], filters?: ActivityFilters): Activity[] {
+	if (!filters) return activities;
+
+	return activities.filter((activity) => {
+		// ガイドでフィルタリング
+		if (filters.guides?.length) {
+			const guideIds = filters.guides.map(Number);
+			if (!activity.guides?.some(guide => guideIds.includes(guide.id))) {
+				return false;
+			}
+		}
+
+		// 地域でフィルタリング
+		if (filters.regions?.length) {
+			if (!activity.regions?.some(region => filters.regions?.includes(region))) {
+				return false;
+			}
+		}
+
+		// テキスト検索
+		if (filters.search) {
+			const searchLower = filters.search.toLowerCase();
+			const titleMatch = activity.title.toLowerCase().includes(searchLower);
+			const excerptMatch = activity.excerpt?.toLowerCase().includes(searchLower) ?? false;
+			if (!titleMatch && !excerptMatch) {
+				return false;
+			}
+		}
+
+		return true;
+	});
 }
 
 export function filterActivities(activities: Activity[], filters: { guideId: number | null; regionId: number | null; tagIds: number[] }, guides: Guide[], regions: Region[]): Activity[] {

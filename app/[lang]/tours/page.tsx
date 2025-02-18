@@ -6,17 +6,34 @@ import { Suspense } from 'react';
 import TourList from '@/components/Tour/TourList';
 import { ActivityFilters } from '@/types/activity';
 
+function parseQueryParam(value: string | string[] | undefined): string[] {
+	if (!value) return [];
+	if (Array.isArray(value)) return value;
+	return value.split(',').filter(Boolean);
+}
+
+function parseSearchParam(value: string | string[] | undefined): string | undefined {
+	if (!value) return undefined;
+	if (Array.isArray(value)) return value[0];
+	return value;
+}
+
 export default async function Page({
 	params: { lang },
 	searchParams,
 }: {
 	params: { lang: Locale };
-	searchParams: ActivityFilters;
+	searchParams: { [key: string]: string | string[] | undefined };
 }) {
 
-	const siteOptions = await getWPSiteOptions(lang);
-	console.log('searchParams:', searchParams);
+	const filters: ActivityFilters = {
+		guides: parseQueryParam(searchParams.guides),
+		regions: parseQueryParam(searchParams.regions),
+		search: parseSearchParam(searchParams.search)
+	};
+	console.log('filters:', filters);
 
+	const siteOptions = await getWPSiteOptions(lang);
 
 	return (
 		<>
@@ -33,11 +50,7 @@ export default async function Page({
 					<Suspense fallback={<p>Loading...</p>}>
 						<TourList
 							lang={lang}
-							filters={{
-								guides: searchParams.guides,
-								regions: searchParams.regions,
-								search: searchParams.search
-							}}
+							filters={filters}
 						/>
 					</Suspense>
 				</div>
