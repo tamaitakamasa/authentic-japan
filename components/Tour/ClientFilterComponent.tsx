@@ -112,7 +112,7 @@ export default function ClientFilterComponent({
   const selectedRegionCount = currentFilters?.regions?.length || 0;
 
   return (
-    <Card>
+    <Card className='overflow-hidden'>
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className={`flex ${isSmallScreen ? "flex-col" : "flex-row"} gap-2 items-center`}>

@@ -2,6 +2,7 @@ import { Locale } from '@/constants/site';
 import { getFormattedActivities, filterActivitiesByQuery, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
 import { ActivityFilters } from '@/types/activity';
 import ClientFilterComponent from './ClientFilterComponent';
+import { TourItem } from './TourItem';
 
 interface TourListProps {
 	lang: Locale;
@@ -17,7 +18,7 @@ export default async function TourList({ lang, filters }: TourListProps) {
 		getFormattedActivities(
 			{
 				page: 1,
-				pageSize: 10
+				pageSize: 100
 			},
 			lang
 		),
@@ -27,19 +28,18 @@ export default async function TourList({ lang, filters }: TourListProps) {
 
 	const filteredActivities = filterActivitiesByQuery(activities, filters);
 	// console.log('activities:', activities);
-	console.log('filteredActivities:', filteredActivities);
+	// console.log('filteredActivities:', filteredActivities);
 	return (
 		<>
 			<div>
 				<ClientFilterComponent lang={lang} guides={guides} regions={regions} currentFilters={filters} />
 			</div>
-			<div>
-				{filteredActivities.map((activity) => (
-					<div key={activity.id}>
-						<h2>{activity.title}</h2>
-						{/* <p>{activity.content}</p> */}
-					</div>
-				))}
+			<div className='c-tours'>
+				{filteredActivities.length > 0 ? (
+					filteredActivities.map((activity) => <TourItem className='c-tours__tour' key={activity.id} activity={activity} />)
+				) : (
+					<p>No activities found.</p>
+				)}
 			</div>
 		</>
 	);
