@@ -50,8 +50,10 @@ export default function ClientFilterComponent({
       searchParams.delete(type);
     }
 
-    // URLを更新
-    router.push(`/${lang}/tours?${searchParams.toString()}`);
+    // URLを更新（scrollオプションを追加）
+    router.push(`/${lang}/tours?${searchParams.toString()}`, {
+      scroll: false
+    });
   }, [currentFilters, lang, router]);
 
   return (
