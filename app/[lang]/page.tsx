@@ -1,15 +1,10 @@
-// import { Suspense } from 'react';
-// import { TourItem } from '@/components/Tour/TourItem';
 import { Button } from '@/components/Button';
 import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
-// import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
-import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
-import { getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
-// import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
+import { getFormattedNewsData } from '@/lib/utils';
 import Image from 'next/image';
 import NewsItem from '@/components/News/NewsItem';
 import InstagramFeed from '@/components/InstagramFeed';
@@ -17,15 +12,12 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import HomeTourSection from '@/components/Home/HomeTourSection';
 import HomeNavigatorSection from '@/components/Home/HomeNavigatorSection';
+import HomeRegionSection from '@/components/Home/HomeRegionSection';
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const siteOptions = await getWPSiteOptions(lang);
-	// const guides = await getFormattedGuideData(lang);
-	const regions = await getFormattedRegionData(lang);
-	// const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-	// const newsArticles = await fetchNewsArticles(lang);
 	const newsArticles = await getFormattedNewsData(lang);
 	// console.log('newsArticles:', newsArticles);
 
@@ -39,31 +31,10 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 				<Suspense fallback={<p>Loading...</p>}>
 					<HomeNavigatorSection lang={lang} siteOptions={siteOptions} />
 				</Suspense>
-				{/* <div className="p-home-navigators">
-					<h2 className="p-home-navigators__copy">{siteOptions.navigators_title}</h2>
-					<p className="p-home-navigators__text" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
-					<div className="p-home-navigators__slider u-full-bleed">
-						<HomeNavigatorSlider lang={lang} guides={guides} />
-					</div>
-					<div className="p-home-navigators__button">
-						<Button href={`/${lang}/navigator`} label="VIEW ALL NAVIGATORS" />
-					</div>
-				</div> */}
 
-				<div className="p-home-regions">
-					<div className="p-home-regions__header">
-						<div className="p-home-regions__title">
-							<h2 className="c-heading">REGIONS</h2>
-						</div>
-						<h3 className="p-home-regions__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_regions_description || '' }} />
-					</div>
-					<div className="p-home-regions__slider">
-						<HomeRegionSlider lang={lang} regions={regions} />
-					</div>
-					<div className="p-home-regions__button">
-						<Button href={`/${lang}/region`} label="VIEW ALL REGIONS" color="light" />
-					</div>
-				</div>
+				<Suspense fallback={<p>Loading...</p>}>
+					<HomeRegionSection lang={lang} siteOptions={siteOptions} />
+				</Suspense>
 
 				<div className="p-home-video">
 					<div className="p-home-video__inner u-full-bleed">
