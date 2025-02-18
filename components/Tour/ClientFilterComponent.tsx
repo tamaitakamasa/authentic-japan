@@ -1,20 +1,25 @@
-'use client';
+"use client";
 
 import { Guide, Region, ActivityFilters } from '@/types';
 import { useTranslations } from '@/lib/i18n';
 import { Locale } from '@/constants/site';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
-
-// interface FilterOption {
-//   id: number;
-//   name: string;
-// }
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { X, Filter } from "lucide-react";
 
 interface FilterComponentProps {
   guides: Guide[];
   regions: Region[];
-  // tags: FilterOption[];
   currentFilters?: ActivityFilters;
   lang: Locale;
 }
@@ -22,116 +27,159 @@ interface FilterComponentProps {
 export default function ClientFilterComponent({
   guides,
   regions,
-  // tags,
   currentFilters,
   lang
 }: FilterComponentProps) {
   const t = useTranslations(lang);
   const router = useRouter();
 
+  // 選択状態をチェックする関数
+  const isGuideSelected = useCallback((guideId: number) => {
+    return currentFilters?.guides?.includes(String(guideId)) ?? false;
+  }, [currentFilters?.guides]);
+
+  const isRegionSelected = useCallback((regionId: number) => {
+    return currentFilters?.regions?.includes(String(regionId)) ?? false;
+  }, [currentFilters?.regions]);
+
   const handleFilterChange = useCallback((type: keyof ActivityFilters, value: string) => {
     const searchParams = new URLSearchParams();
 
-    // 現在のフィルターを全て設定
-    if (currentFilters?.guides?.length) {
-      searchParams.set('guides', currentFilters.guides.join(','));
+    // 現在の選択状態に応じてフィルターを更新
+    if (type === 'guides') {
+      const currentGuides = new Set(currentFilters?.guides || []);
+      if (currentGuides.has(value)) {
+        currentGuides.delete(value);
+      } else {
+        currentGuides.add(value);
+      }
+      if (currentGuides.size > 0) {
+        searchParams.set('guides', Array.from(currentGuides).join(','));
+      }
+    } else if (type === 'regions') {
+      const currentRegions = new Set(currentFilters?.regions || []);
+      if (currentRegions.has(value)) {
+        currentRegions.delete(value);
+      } else {
+        currentRegions.add(value);
+      }
+      if (currentRegions.size > 0) {
+        searchParams.set('regions', Array.from(currentRegions).join(','));
+      }
     }
-    if (currentFilters?.regions?.length) {
-      searchParams.set('regions', currentFilters.regions.join(','));
-    }
+
+    // 検索パラメータが存在する場合は維持
     if (currentFilters?.search) {
       searchParams.set('search', currentFilters.search);
     }
 
-    // 新しい値を設定
-    if (value) {
-      searchParams.set(type, value);
-    } else {
-      searchParams.delete(type);
-    }
-
-    // URLを更新（scrollオプションを追加）
+    // URLを更新
     router.push(`/${lang}/tours?${searchParams.toString()}`, {
       scroll: false
     });
   }, [currentFilters, lang, router]);
 
+  // フィルターをクリアする関数
+  const handleClearFilters = useCallback(() => {
+    router.push(`/${lang}/tours`, { scroll: false });
+  }, [lang, router]);
+
+  // アクティブなフィルターの数を計算
+  const activeFilterCount =
+    (currentFilters?.guides?.length || 0) +
+    (currentFilters?.regions?.length || 0);
+
   return (
-    <div className="c-filter">
-      <div className="c-filter__section">
-        <h3 className="c-filter__title">
-          {t({
-            ja: 'ガイド',
-            en: 'Guide',
-            fr: 'Guide'
-          })}
-        </h3>
-        <div className="c-filter__items">
-          {guides.map((guide) => (
-            <button
-              key={guide.id}
-              className={`c-filter__item ${
-                currentFilters?.guides?.includes(String(guide.id))
-                  ? 'is-active'
-                  : ''
-              }`}
-              onClick={() => handleFilterChange('guides', String(guide.id))}
-            >
-              {guide.name}
-            </button>
-          ))}
-        </div>
-      </div>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Filter className="h-5 w-5" />
+          <span>
+            {t({
+              ja: 'フィルター',
+              en: 'Filters',
+              fr: 'Filtres'
+            })}
+          </span>
+          {activeFilterCount > 0 && (
+            <Badge variant="secondary" className="ml-2">
+              {activeFilterCount}
+            </Badge>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* ガイドフィルター */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">
+              {t({
+                ja: 'ガイド',
+                en: 'Guide',
+                fr: 'Guide'
+              })}
+            </h3>
+            <ScrollArea className="h-[180px] rounded-md border p-4">
+              <div className="space-y-2">
+                {guides.map((guide) => (
+                  <Button
+                    key={guide.id}
+                    variant={isGuideSelected(guide.id) ? "default" : "outline"}
+                    className={`w-full justify-start ${
+                      isGuideSelected(guide.id) ? "bg-primary text-primary-foreground" : ""
+                    }`}
+                    onClick={() => handleFilterChange('guides', String(guide.id))}
+                  >
+                    {guide.name}
+                  </Button>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
 
-      <div className="c-filter__section">
-        <h3 className="c-filter__title">
-          {t({
-            ja: '地域',
-            en: 'Region',
-            fr: 'Région'
-          })}
-        </h3>
-        <div className="c-filter__items">
-          {regions.map((region) => (
-            <button
-              key={region.id}
-              className={`c-filter__item ${
-                currentFilters?.regions?.includes(String(region.id))
-                  ? 'is-active'
-                  : ''
-              }`}
-              onClick={() => handleFilterChange('regions', String(region.id))}
-            >
-              {region.name}
-            </button>
-          ))}
+          {/* 地域フィルター */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">
+              {t({
+                ja: '地域',
+                en: 'Region',
+                fr: 'Région'
+              })}
+            </h3>
+            <ScrollArea className="h-[180px] rounded-md border p-4">
+              <div className="space-y-2">
+                {regions.map((region) => (
+                  <Button
+                    key={region.id}
+                    variant={isRegionSelected(region.id) ? "default" : "outline"}
+                    className={`w-full justify-start ${
+                      isRegionSelected(region.id) ? "bg-primary text-primary-foreground" : ""
+                    }`}
+                    onClick={() => handleFilterChange('regions', String(region.id))}
+                  >
+                    {region.name}
+                  </Button>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
         </div>
-      </div>
-
-      {/* <div className="c-filter__section">
-        <h3 className="c-filter__title">
+      </CardContent>
+      <CardFooter>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleClearFilters}
+          disabled={activeFilterCount === 0}
+        >
+          <X className="mr-2 h-4 w-4" />
           {t({
-            ja: 'タグ',
-            en: 'Tags',
-            fr: 'Tags'
+            ja: 'フィルターをクリア',
+            en: 'Clear Filters',
+            fr: 'Effacer les filtres'
           })}
-        </h3>
-        <div className="c-filter__items">
-          {tags.map((tag) => (
-            <button
-              key={tag.id}
-              className={`c-filter__item ${
-                currentFilters?.tags?.includes(String(tag.id))
-                  ? 'is-active'
-                  : ''
-              }`}
-              onClick={() => handleFilterChange('tags', String(tag.id))}
-            >
-              {tag.name}
-            </button>
-          ))}
-        </div>
-      </div> */}
-    </div>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

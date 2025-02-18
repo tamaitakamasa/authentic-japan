@@ -18,14 +18,7 @@ function parseSearchParam(value: string | string[] | undefined): string | undefi
 	return value;
 }
 
-export default async function Page({
-	params: { lang },
-	searchParams,
-}: {
-	params: { lang: Locale };
-	searchParams: { [key: string]: string | string[] | undefined };
-}) {
-
+export default async function Page({ params: { lang }, searchParams }: { params: { lang: Locale }; searchParams: { [key: string]: string | string[] | undefined } }) {
 	const filters: ActivityFilters = {
 		guides: parseQueryParam(searchParams.guides),
 		regions: parseQueryParam(searchParams.regions),
@@ -46,14 +39,9 @@ export default async function Page({
 						</figure>
 					)}
 				</div>
-				<div className="p-page-tours__tours c-tours">
-					<Suspense fallback={<p>Loading...</p>}>
-						<TourList
-							lang={lang}
-							filters={filters}
-						/>
-					</Suspense>
-				</div>
+				<Suspense fallback={<p>Loading...</p>}>
+					<TourList lang={lang} filters={filters} />
+				</Suspense>
 			</div>
 		</>
 	);
