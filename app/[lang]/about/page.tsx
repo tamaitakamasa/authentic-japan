@@ -1,45 +1,33 @@
-import { Metadata } from 'next';
+// import { Metadata } from 'next';
 import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
+// import { METADATA } from '@/constants/metadata';
+import { Metadata } from 'next';
 
 type Props = {
   params: { lang: Locale }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { lang } = params
-
-  const metadata = {
-    ja: {
-      title: 'Authentic Japan について | オーセンティック・ジャパン',
-      description: '淡路島の魅力を発信するプラットフォーム、Authentic Japanについてご紹介します。地元ガイドと共に、本物の淡路島体験を提供しています。',
-    },
-    en: {
-      title: 'About Authentic Japan | Authentic Japan',
-      description: 'Discover Authentic Japan, your gateway to genuine Awaji Island experiences. We connect you with local guides for authentic adventures.',
-    },
-    fr: {
-      title: 'À propos d\'Authentic Japan | Authentic Japan',
-      description: 'Découvrez Authentic Japan, votre passerelle vers des expériences authentiques sur l\'île d\'Awaji. Nous vous connectons avec des guides locaux pour des aventures uniques.',
-    },
-  } as const;
-
+export async function generateMetadata({ params: { lang } }: Props): Promise<Metadata> {
   return {
-    title: metadata[lang].title,
-    description: metadata[lang].description,
-    alternates: {
-      canonical: `https://authentic-japan.com/${lang}/about`,
-      languages: {
-        ja: 'https://authentic-japan.com/ja/about',
-        en: 'https://authentic-japan.com/en/about',
-        fr: 'https://authentic-japan.com/fr/about',
-      },
-    },
-  }
+    // タイトルだけをオーバーライド
+    // layout.tsxで設定したテンプレートが適用される
+    title: {
+      ja: "Authentic Japanについて",
+      en: "About Authentic Japan",
+      fr: "À propos d'Authentic Japan",
+    }[lang],
+    // 特定のページ用の説明文をオーバーライド
+    description: {
+      ja: "ページ固有の説明",
+      en: "Page specific description",
+      fr: "Description spécifique à la page",
+    }[lang],
+  };
 }
 
 export default async function AboutPage({ params: { lang } }: { params: { lang: Locale } }) {

@@ -20,7 +20,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const metadata = METADATA[params.lang];
 
   return {
-    title: metadata.title,
+    title: {
+      template: `%s ${metadata.separator} ${metadata.title}`,
+      default: metadata.title,  // テンプレートを使用しない場合のデフォルト値
+    },
     description: metadata.description,
     keywords: metadata.keywords,
     icons: {
