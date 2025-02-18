@@ -25,8 +25,6 @@ export default async function TourList({ lang, filters }: TourListProps) {
 	]);
 
 	const filteredActivities = filterActivitiesByQuery(activities, filters);
-	// console.log('activities:', activities);
-	// console.log('filteredActivities:', filteredActivities);
 	return (
 		<>
 			<div>
@@ -36,7 +34,6 @@ export default async function TourList({ lang, filters }: TourListProps) {
 				{filteredActivities.length > 0 ? (
 					filteredActivities.map((activity) => <TourItem className="c-tours__tour" key={activity.id} activity={activity} />)
 				) : (
-					// <p>No activities found.</p>
 					<p>
 						{' '}
 						{t({

@@ -8,12 +8,15 @@ import { VideoPlayer } from '@/components/VideoPlayer';
 import { INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 // import { useTranslations } from '@/lib/i18n';
-import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
+import { getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
 // import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
 import Image from 'next/image';
 import NewsItem from '@/components/News/NewsItem';
 import InstagramFeed from '@/components/InstagramFeed';
 import Link from 'next/link';
+import TourList from '@/components/Tour/TourList';
+import { Suspense } from 'react';
+import HomeTourSection from '@/components/Home/HomeTourSection';
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
@@ -24,7 +27,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	// console.log('videoId:', videoId);
 	const guides = await getFormattedGuideData(lang);
 	const regions = await getFormattedRegionData(lang);
-	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+	// const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
 	// const newsArticles = await fetchNewsArticles(lang);
 	const newsArticles = await getFormattedNewsData(lang);
 	// console.log('newsArticles:', newsArticles);
@@ -80,10 +83,9 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 							<h3 className="p-home-video__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_about_description || '' }} />
 							{siteOptions.home_about_video && (
 								<div className="p-home-video__button1">
-								<Button href={siteOptions.home_about_video} target='_blank' label="CONCEPT MOVIE" color="light" />
-							</div>
+									<Button href={siteOptions.home_about_video} target="_blank" label="CONCEPT MOVIE" color="light" />
+								</div>
 							)}
-
 						</div>
 					</div>
 					<div className="p-home-video__footer">
@@ -97,15 +99,11 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					<div className="p-home-tours__title">
 						<h2 className="c-heading">TOURS</h2>
 					</div>
-					<div className="p-home-tours__total">
-						<div className="c-total">
-							<div className="c-total__label">ALL TOURS</div>
-							<span className="c-total__count">{activities.length}</span>
-						</div>
-					</div>
-					<div className="p-home-tours__tours c-tours">{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}</div>
+					<Suspense fallback={<p>Loading...</p>}>
+						<HomeTourSection lang={lang} />
+					</Suspense>
 					<div className="p-home-tours__button">
-						<Button href={`/${lang}/tour`} label="VIEW ALL TOURS" />
+						<Button href={`/${lang}/tours`} label="VIEW ALL TOURS" />
 					</div>
 				</div>
 

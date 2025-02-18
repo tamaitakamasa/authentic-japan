@@ -8,6 +8,7 @@
 	font-family: g.$font-garamond;
 	font-weight: 400;
 	@include g.font-clamp('8xl', '6xl');
+	line-height: 1.2;
 
 	@include g.mq(md) {
 		font-size: g.$font-size-4xl;
