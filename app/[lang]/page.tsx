@@ -1,10 +1,10 @@
 import { Button } from '@/components/Button';
 import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
-import { VideoPlayer } from '@/components/VideoPlayer';
+// import { VideoPlayer } from '@/components/VideoPlayer';
 import { INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 import { getFormattedNewsData } from '@/lib/utils';
-import Image from 'next/image';
+// import Image from 'next/image';
 import NewsItem from '@/components/News/NewsItem';
 import InstagramFeed from '@/components/InstagramFeed';
 import Link from 'next/link';
