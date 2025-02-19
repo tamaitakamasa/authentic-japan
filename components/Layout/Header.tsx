@@ -8,6 +8,7 @@ import Image from 'next/image';
 import clsx from 'clsx';
 import { ArrowUpRight } from 'lucide-react';
 import treeImage from '@/public/header/tree.webp';
+import logo from '@/public/logo.svg';
 
 // import { getFormattedRegionData } from '@/lib/utils';
 // import { usePathname } from 'next/navigation';
@@ -36,7 +37,7 @@ export default function Header({ lang }: { lang: Locale }) {
 			<header ref={headerRef} className={`l-header`}>
 				<h1 className="l-header__title">
 					<Link href={`/${lang}`}>
-						<Image src="/logo.svg" alt={SITE_TITLE} unoptimized fill />
+						<Image src={logo} alt={SITE_TITLE} unoptimized />
 					</Link>
 				</h1>
 				<div className="l-header__inner">

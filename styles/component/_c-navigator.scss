@@ -41,10 +41,11 @@
     bottom: 0;
     // @include g.clamp(padding, 32, 24);
     @include g.clamp(padding-inline, 24, 16);
-    @include g.clamp(padding-block, 32, 24);
+    @include g.clamp(padding-block, 48, 32);
     @include g.font-clamp("2xl", "xl");
     font-weight: 500;
     color: #ffffff;
+		line-height: 1.4;
     background-image: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0),

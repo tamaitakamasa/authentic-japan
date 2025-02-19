@@ -24,10 +24,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 	return (
 		<>
 			<div className="l-contents__body p-home">
-				<div className="p-home-hero u-full-bleed">
-					<HomeHeroSlider lang={lang} slides={siteOptions.home_slider} />
-				</div>
-
+				<HomeHeroSlider lang={lang} slides={siteOptions.home_slider} />
 				<Suspense fallback={<p>Loading...</p>}>
 					<HomeNavigatorSection lang={lang} siteOptions={siteOptions} />
 				</Suspense>
