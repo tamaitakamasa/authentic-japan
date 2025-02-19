@@ -1,10 +1,10 @@
 import { Locale } from '@/constants/site';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
-import Image from 'next/image';
 import { Suspense } from 'react';
 import TourList from '@/components/Tour/TourList';
 import { ActivityFilters } from '@/types/activity';
+import { PageHeader } from '@/components/Layout/PageHeader';
 
 function parseQueryParam(value: string | string[] | undefined): string[] {
 	if (!value) return [];
@@ -24,7 +24,7 @@ export default async function Page({ params: { lang }, searchParams }: { params:
 		regions: parseQueryParam(searchParams.regions),
 		search: parseSearchParam(searchParams.search)
 	};
-	console.log('filters:', filters);
+	// console.log('filters:', filters);
 
 	const siteOptions = await getWPSiteOptions(lang);
 
@@ -32,13 +32,7 @@ export default async function Page({ params: { lang }, searchParams }: { params:
 		<>
 			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
 			<div className="l-contents__body p-page p-page-tours">
-				<div className="p-page__header u-full-bleed">
-					{siteOptions.tours_mv && (
-						<figure className="p-page__mv">
-							<Image src={siteOptions.tours_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
-						</figure>
-					)}
-				</div>
+				<PageHeader mv={siteOptions.tours_mv} />
 				<Suspense fallback={<p>Loading...</p>}>
 					<TourList lang={lang} filters={filters} />
 				</Suspense>

@@ -7,28 +7,19 @@ import { getWPSiteOptions } from '@/lib/fetchData';
 import { Button } from '@/components/Button';
 import { RegionSlider } from '@/components/Region/RegionSlider';
 import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
+import { PageHeader } from '@/components/Layout/PageHeader';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const regions = await getFormattedRegionData(lang);
 	const siteOptions = await getWPSiteOptions(lang);
 	const guides = await getFormattedGuideData(lang);
-	// const regionsPage = siteOptions.regions;
-	// console.log('regions:', regions);
+
 	return (
 		<>
 			<ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} />
 			<div className="l-contents__body p-page p-page-region">
-				<div className="p-page__header u-full-bleed">
-					<div className="p-page__inner c-container">
-						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.regions_description || '' }} />
-					</div>
-					{siteOptions.regions_mv && (
-						<figure className="p-page__mv">
-							<Image src={siteOptions.regions_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
-						</figure>
-					)}
-				</div>
+				<PageHeader description={siteOptions.regions_description} mv={siteOptions.regions_mv} />
 				<div className="p-page-region__index">
 					<figure className="p-page-region__map">
 						<Image src="/region/map.svg" alt="" fill unoptimized />
