@@ -13,6 +13,7 @@ import { Suspense } from 'react';
 import HomeTourSection from '@/components/Home/HomeTourSection';
 import HomeNavigatorSection from '@/components/Home/HomeNavigatorSection';
 import HomeRegionSection from '@/components/Home/HomeRegionSection';
+import * as motion from "motion/react-client"
 // import Link from 'next/link';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
@@ -35,14 +36,14 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 
 				<div className="p-home-video">
 					<div className="p-home-video__inner u-full-bleed">
-						<div className="p-home-video__bg">
+						<motion.div className="p-home-video__bg">
 							{siteOptions.home_about_mv && (
 								<figure className="p-home-video__mv">
 									<Image src={siteOptions.home_about_mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
 								</figure>
 							)}
 							{siteOptions.home_about_video && <VideoPlayer videoUrl={siteOptions.home_about_video} />}
-						</div>
+						</motion.div>
 						<div className="p-home-video__content c-container">
 							<h2 className="p-home-video__title c-heading">
 								Authentic <br />
