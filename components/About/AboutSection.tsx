@@ -91,7 +91,7 @@ export default function AboutSection({ siteOptions }: AboutSectionProps) {
 							opacity: activeImageIndex === index ? 1 : 0,
 							transition: 'opacity 0.5s ease-in-out'
 						}}>
-						<Image src={`/about/about${index === 0 ? '_all' : index}.svg`} alt="" fill unoptimized />
+						<Image src={`/about/about${index === 0 ? '_all' : index}.png`} alt="" fill unoptimized />
 					</figure>
 				))}
 			</div>
