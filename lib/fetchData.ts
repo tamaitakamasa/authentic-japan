@@ -118,7 +118,7 @@ export async function fetchWPRegions(lang: Locale = DEFAULT_LOCALE): Promise<WPR
 }
 
 export async function fetchWPTours(lang: Locale = DEFAULT_LOCALE): Promise<WPTour[]> {
-	const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(lang)}&acf_format=standard&status=publish`;
 	return cachedFetch(`tours-${lang}`, () => fetchWithErrorHandling<WPTour[]>(url));
 }
 

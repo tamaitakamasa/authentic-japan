@@ -1,10 +1,11 @@
-import Image from 'next/image';
+// import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 import { Metadata } from 'next';
+import AboutSection from '@/components/About/AboutSection';
 
 type Props = {
   params: { lang: Locale }
@@ -42,7 +43,9 @@ export default async function AboutPage({ params: { lang } }: { params: { lang: 
 					</div>
 				)}
 
-				<div className="p-page-about-section">
+				<AboutSection siteOptions={siteOptions} />
+
+				{/* <div className="p-page-about-section">
 					<div className="p-page-about-section__cols">
 						<div className="p-page-about-section__col-left">
 							<div className="p-page-about-section__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_section0_description || '' }} />
@@ -98,7 +101,7 @@ export default async function AboutPage({ params: { lang } }: { params: { lang: 
 							</figure>
 						</div>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</>
 	);
