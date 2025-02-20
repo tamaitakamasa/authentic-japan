@@ -3,7 +3,7 @@
 import { WPSiteContent } from '@/types';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface AboutSectionItemProps {
 	number: string;
