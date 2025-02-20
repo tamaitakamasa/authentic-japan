@@ -30,13 +30,13 @@
           - page.tsx
           - not-found.tsx
         - page.tsx
+      - _tour/
+        - page.tsx
       - layout.tsx
       - navigator/
         - [id]/
           - page.tsx
           - not-found.tsx
-        - page.tsx
-      - tour/
         - page.tsx
       - page.tsx
   - bun.lockb (binary file)
@@ -50,15 +50,23 @@
   - components/
     - InstagramFeed.tsx
     - ui/
+      - card.tsx
+      - scroll-area.tsx
       - label.tsx
+      - badge.tsx
       - button.tsx
       - checkbox.tsx
+      - dropdown-menu.tsx
       - textarea.tsx
       - input.tsx
       - form.tsx
     - Home/
+      - HomeRegionSection.tsx
       - HomeNavigatorSlider.tsx
       - HomeRegionSlider.tsx
+      - HomeNavigatorSection.tsx
+      - HomeVideo.tsx
+      - HomeTourSection.tsx
       - HomeHeroSlider.tsx
     - Contact/
       - ContactForm.tsx
@@ -67,6 +75,8 @@
       - ContentHeader.tsx
       - Footer.tsx
       - Header.tsx
+    - About/
+      - AboutSection.tsx
     - Region/
       - RegionSlider.tsx
     - News/
@@ -80,6 +90,7 @@
       - ClientFilterComponent.tsx
       - TourButton.tsx
       - TourList.tsx
+      - ClientFilterComponent copy.tsx
       - FilterComponent.tsx
       - TourItem.tsx
     - VideoPlayer.tsx
@@ -685,10 +696,10 @@ export interface Guide {
 import { Locale } from '@/constants/site';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getWPSiteOptions } from '@/lib/fetchData';
-import Image from 'next/image';
 import { Suspense } from 'react';
 import TourList from '@/components/Tour/TourList';
 import { ActivityFilters } from '@/types/activity';
+import { PageHeader } from '@/components/Layout/PageHeader';
 
 function parseQueryParam(value: string | string[] | undefined): string[] {
 	if (!value) return [];
@@ -708,7 +719,7 @@ export default async function Page({ params: { lang }, searchParams }: { params:
 		regions: parseQueryParam(searchParams.regions),
 		search: parseSearchParam(searchParams.search)
 	};
-	console.log('filters:', filters);
+	// console.log('filters:', filters);
 
 	const siteOptions = await getWPSiteOptions(lang);
 
@@ -716,13 +727,7 @@ export default async function Page({ params: { lang }, searchParams }: { params:
 		<>
 			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
 			<div className="l-contents__body p-page p-page-tours">
-				<div className="p-page__header u-full-bleed">
-					{siteOptions.tours_mv && (
-						<figure className="p-page__mv">
-							<Image src={siteOptions.tours_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
-						</figure>
-					)}
-				</div>
+				<PageHeader mv={siteOptions.tours_mv} />
 				<Suspense fallback={<p>Loading...</p>}>
 					<TourList lang={lang} filters={filters} />
 				</Suspense>
@@ -764,99 +769,103 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(240 10% 3.9%);
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(240 10% 3.9%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(240 10% 3.9%);
-  --primary: hsl(240 5.9% 10%);
-  --primary-foreground: hsl(0 0% 98%);
-  --secondary: hsl(240 4.8% 95.9%);
-  --secondary-foreground: hsl(240 5.9% 10%);
-  --muted: hsl(240 4.8% 95.9%);
-  --muted-foreground: hsl(240 3.8% 46.1%);
-  --accent: hsl(240 4.8% 95.9%);
-  --accent-foreground: hsl(240 5.9% 10%);
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 5.9% 90%);
-  --input: hsl(240 5.9% 90%);
-  --ring: hsl(240 10% 3.9%);
-  --chart-1: hsl(12 76% 61%);
-  --chart-2: hsl(173 58% 39%);
-  --chart-3: hsl(197 37% 24%);
-  --chart-4: hsl(43 74% 66%);
-  --chart-5: hsl(27 87% 67%);
-  --radius: 0.6rem;
+	--background: hsl(0 0% 100%);
+	--foreground: hsl(240 10% 3.9%);
+	--card: hsl(0 0% 100%);
+	--card-foreground: hsl(240 10% 3.9%);
+	--popover: hsl(0 0% 100%);
+	--popover-foreground: hsl(240 10% 3.9%);
+	--primary: hsl(240 5.9% 10%);
+	--primary-foreground: hsl(0 0% 98%);
+	--secondary: hsl(240 4.8% 95.9%);
+	--secondary-foreground: hsl(240 5.9% 10%);
+	--muted: hsl(240 4.8% 95.9%);
+	--muted-foreground: hsl(240 3.8% 46.1%);
+	--accent: hsl(240 4.8% 95.9%);
+	--accent-foreground: hsl(240 5.9% 10%);
+	--destructive: hsl(0 84.2% 60.2%);
+	--destructive-foreground: hsl(0 0% 98%);
+	--border: hsl(240 5.9% 90%);
+	--input: hsl(240 5.9% 90%);
+	--ring: hsl(240 10% 3.9%);
+	--chart-1: hsl(12 76% 61%);
+	--chart-2: hsl(173 58% 39%);
+	--chart-3: hsl(197 37% 24%);
+	--chart-4: hsl(43 74% 66%);
+	--chart-5: hsl(27 87% 67%);
+	--radius: 0.6rem;
 }
 
 .dark {
-  --background: hsl(240 10% 3.9%);
-  --foreground: hsl(0 0% 98%);
-  --card: hsl(240 10% 3.9%);
-  --card-foreground: hsl(0 0% 98%);
-  --popover: hsl(240 10% 3.9%);
-  --popover-foreground: hsl(0 0% 98%);
-  --primary: hsl(0 0% 98%);
-  --primary-foreground: hsl(240 5.9% 10%);
-  --secondary: hsl(240 3.7% 15.9%);
-  --secondary-foreground: hsl(0 0% 98%);
-  --muted: hsl(240 3.7% 15.9%);
-  --muted-foreground: hsl(240 5% 64.9%);
-  --accent: hsl(240 3.7% 15.9%);
-  --accent-foreground: hsl(0 0% 98%);
-  --destructive: hsl(0 62.8% 30.6%);
-  --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 3.7% 15.9%);
-  --input: hsl(240 3.7% 15.9%);
-  --ring: hsl(240 4.9% 83.9%);
-  --chart-1: hsl(220 70% 50%);
-  --chart-2: hsl(160 60% 45%);
-  --chart-3: hsl(30 80% 55%);
-  --chart-4: hsl(280 65% 60%);
-  --chart-5: hsl(340 75% 55%);
+	--background: hsl(240 10% 3.9%);
+	--foreground: hsl(0 0% 98%);
+	--card: hsl(240 10% 3.9%);
+	--card-foreground: hsl(0 0% 98%);
+	--popover: hsl(240 10% 3.9%);
+	--popover-foreground: hsl(0 0% 98%);
+	--primary: hsl(0 0% 98%);
+	--primary-foreground: hsl(240 5.9% 10%);
+	--secondary: hsl(240 3.7% 15.9%);
+	--secondary-foreground: hsl(0 0% 98%);
+	--muted: hsl(240 3.7% 15.9%);
+	--muted-foreground: hsl(240 5% 64.9%);
+	--accent: hsl(240 3.7% 15.9%);
+	--accent-foreground: hsl(0 0% 98%);
+	--destructive: hsl(0 62.8% 30.6%);
+	--destructive-foreground: hsl(0 0% 98%);
+	--border: hsl(240 3.7% 15.9%);
+	--input: hsl(240 3.7% 15.9%);
+	--ring: hsl(240 4.9% 83.9%);
+	--chart-1: hsl(220 70% 50%);
+	--chart-2: hsl(160 60% 45%);
+	--chart-3: hsl(30 80% 55%);
+	--chart-4: hsl(280 65% 60%);
+	--chart-5: hsl(340 75% 55%);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
 }
+
+/* @theme {
+	--font-display: 'Noto Sans JP', 'sans-serif';
+} */
 
 ```
 
@@ -1486,13 +1495,14 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 ### app/[lang]/about/page.tsx
 
 ```
-import Image from 'next/image';
+// import Image from 'next/image';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
 import { Metadata } from 'next';
+import AboutSection from '@/components/About/AboutSection';
 
 type Props = {
   params: { lang: Locale }
@@ -1530,7 +1540,9 @@ export default async function AboutPage({ params: { lang } }: { params: { lang: 
 					</div>
 				)}
 
-				<div className="p-page-about-section">
+				<AboutSection siteOptions={siteOptions} />
+
+				{/* <div className="p-page-about-section">
 					<div className="p-page-about-section__cols">
 						<div className="p-page-about-section__col-left">
 							<div className="p-page-about-section__description" dangerouslySetInnerHTML={{ __html: siteOptions.about_section0_description || '' }} />
@@ -1586,7 +1598,7 @@ export default async function AboutPage({ params: { lang } }: { params: { lang: 
 							</figure>
 						</div>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</>
 	);
@@ -1606,28 +1618,19 @@ import { getWPSiteOptions } from '@/lib/fetchData';
 import { Button } from '@/components/Button';
 import { RegionSlider } from '@/components/Region/RegionSlider';
 import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
+import { PageHeader } from '@/components/Layout/PageHeader';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const regions = await getFormattedRegionData(lang);
 	const siteOptions = await getWPSiteOptions(lang);
 	const guides = await getFormattedGuideData(lang);
-	// const regionsPage = siteOptions.regions;
-	// console.log('regions:', regions);
+
 	return (
 		<>
 			<ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} />
 			<div className="l-contents__body p-page p-page-region">
-				<div className="p-page__header u-full-bleed">
-					<div className="p-page__inner c-container">
-						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.regions_description || '' }} />
-					</div>
-					{siteOptions.regions_mv && (
-						<figure className="p-page__mv">
-							<Image src={siteOptions.regions_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
-						</figure>
-					)}
-				</div>
+				<PageHeader description={siteOptions.regions_description} mv={siteOptions.regions_mv} />
 				<div className="p-page-region__index">
 					<figure className="p-page-region__map">
 						<Image src="/region/map.svg" alt="" fill unoptimized />
@@ -1810,6 +1813,65 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 				</div>
 			</div>
 			{/* <TestLink /> */}
+		</>
+	);
+}
+
+```
+
+### app/[lang]/_tour/page.tsx
+
+```
+// 'use client';
+
+// import Image from 'next/image';
+import { Locale } from '@/constants/site';
+// import { TourItem } from '@/components/Tour/TourItem';
+import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
+import { ContentHeader } from '@/components/Layout/ContentHeader';
+// import { FilterComponent } from '@/components/FilterComponent';
+import { ClientFilteredActivities } from '@/components/Tour/ClientFilteredActivities';
+import { getWPSiteOptions } from '@/lib/fetchData';
+import Image from 'next/image';
+
+export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
+
+	// const [siteOptions, guides, regions, activities] = await Promise.all([
+  //   getWPSiteOptions(lang),
+  //   getFormattedGuideData(lang),
+  //   getFormattedRegionData(lang),
+  //   getFormattedActivities({ page: 1, pageSize: 10 }, lang)
+  // ]);
+
+	const siteOptions = await getWPSiteOptions(lang);
+	const guides = await getFormattedGuideData(lang);
+	const regions = await getFormattedRegionData(lang);
+	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
+
+	const allTags = Array.from(new Set(activities.flatMap((activity) => activity.tags || []))).map((tag) => ({
+		id: tag.id,
+		name: tag.name,
+		slug: tag.slug
+	}));
+	// console.log(activities);
+
+	return (
+		<>
+			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
+			<div className="l-contents__body p-page p-page-tours">
+				<div className="p-page__header u-full-bleed">
+					{/* <div className="p-page__inner c-container">
+						<h2 className="p-page__title">{siteOptions.navigators_title}</h2>
+						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
+					</div> */}
+					{siteOptions.tours_mv && (
+						<figure className="p-page__mv">
+							<Image src={siteOptions.tours_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+						</figure>
+					)}
+				</div>
+				<ClientFilteredActivities lang={lang} initialActivities={activities} guides={guides} regions={regions} tags={allTags} />
+			</div>
 		</>
 	);
 }
@@ -2222,142 +2284,54 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 
 ```
 
-### app/[lang]/tour/page.tsx
-
-```
-// 'use client';
-
-// import Image from 'next/image';
-import { Locale } from '@/constants/site';
-// import { TourItem } from '@/components/Tour/TourItem';
-import { getFormattedActivities, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-// import { FilterComponent } from '@/components/FilterComponent';
-import { ClientFilteredActivities } from '@/components/Tour/ClientFilteredActivities';
-import { getWPSiteOptions } from '@/lib/fetchData';
-import Image from 'next/image';
-
-export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
-
-	// const [siteOptions, guides, regions, activities] = await Promise.all([
-  //   getWPSiteOptions(lang),
-  //   getFormattedGuideData(lang),
-  //   getFormattedRegionData(lang),
-  //   getFormattedActivities({ page: 1, pageSize: 10 }, lang)
-  // ]);
-
-	const siteOptions = await getWPSiteOptions(lang);
-	const guides = await getFormattedGuideData(lang);
-	const regions = await getFormattedRegionData(lang);
-	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-
-	const allTags = Array.from(new Set(activities.flatMap((activity) => activity.tags || []))).map((tag) => ({
-		id: tag.id,
-		name: tag.name,
-		slug: tag.slug
-	}));
-	// console.log(activities);
-
-	return (
-		<>
-			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
-			<div className="l-contents__body p-page p-page-tours">
-				<div className="p-page__header u-full-bleed">
-					{/* <div className="p-page__inner c-container">
-						<h2 className="p-page__title">{siteOptions.navigators_title}</h2>
-						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
-					</div> */}
-					{siteOptions.tours_mv && (
-						<figure className="p-page__mv">
-							<Image src={siteOptions.tours_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
-						</figure>
-					)}
-				</div>
-				<ClientFilteredActivities lang={lang} initialActivities={activities} guides={guides} regions={regions} tags={allTags} />
-			</div>
-		</>
-	);
-}
-
-```
-
 ### app/[lang]/page.tsx
 
 ```
-// import { Suspense } from 'react';
-import { TourItem } from '@/components/Tour/TourItem';
 import { Button } from '@/components/Button';
 import { HomeHeroSlider } from '@/components/Home/HomeHeroSlider';
-import { HomeNavigatorSlider } from '@/components/Home/HomeNavigatorSlider';
-import { HomeRegionSlider } from '@/components/Home/HomeRegionSlider';
-import { VideoPlayer } from '@/components/VideoPlayer';
+// import { VideoPlayer } from '@/components/VideoPlayer';
 import { INSTAGRAM_URL, Locale } from '@/constants/site';
 import { getWPSiteOptions } from '@/lib/fetchData';
-// import { useTranslations } from '@/lib/i18n';
-import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData, getFormattedRegionData } from '@/lib/utils';
-// import { getFormattedActivities, getFormattedGuideData } from '@/lib/utils';
-import Image from 'next/image';
+import { getFormattedNewsData } from '@/lib/utils';
+// import Image from 'next/image';
 import NewsItem from '@/components/News/NewsItem';
 import InstagramFeed from '@/components/InstagramFeed';
 import Link from 'next/link';
-// import Link from 'next/link';
+import { Suspense } from 'react';
+import HomeTourSection from '@/components/Home/HomeTourSection';
+import HomeNavigatorSection from '@/components/Home/HomeNavigatorSection';
+import HomeRegionSection from '@/components/Home/HomeRegionSection';
+import HomeVideo from '@/components/Home/HomeVideo';
 
 export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
 	// const t = useTranslations(lang);
 	const siteOptions = await getWPSiteOptions(lang);
-	// const videoId = siteOptions.home_about_video ? siteOptions.home_about_video.split('v=')[1] : '';
-	// const videoId = siteOptions.home_about_video;
-	// console.log('videoId:', videoId);
-	const guides = await getFormattedGuideData(lang);
-	const regions = await getFormattedRegionData(lang);
-	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-	// const newsArticles = await fetchNewsArticles(lang);
 	const newsArticles = await getFormattedNewsData(lang);
 	// console.log('newsArticles:', newsArticles);
 
 	return (
 		<>
 			<div className="l-contents__body p-home">
-				<div className="p-home-hero u-full-bleed">
-					<HomeHeroSlider lang={lang} slides={siteOptions.home_slider} />
-				</div>
+				<HomeHeroSlider lang={lang} slides={siteOptions.home_slider} />
+				<Suspense fallback={<p>Loading...</p>}>
+					<HomeNavigatorSection lang={lang} siteOptions={siteOptions} />
+				</Suspense>
 
-				<div className="p-home-navigators">
-					<h2 className="p-home-navigators__copy">{siteOptions.navigators_title}</h2>
-					<p className="p-home-navigators__text" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
-					<div className="p-home-navigators__slider u-full-bleed">
-						<HomeNavigatorSlider lang={lang} guides={guides} />
-					</div>
-					<div className="p-home-navigators__button">
-						<Button href={`/${lang}/navigator`} label="VIEW ALL NAVIGATORS" />
-					</div>
-				</div>
-
-				<div className="p-home-regions">
-					<div className="p-home-regions__header">
-						<div className="p-home-regions__title">
-							<h2 className="c-heading">REGIONS</h2>
-						</div>
-						<h3 className="p-home-regions__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_regions_description || '' }} />
-					</div>
-					<div className="p-home-regions__slider">
-						<HomeRegionSlider lang={lang} regions={regions} />
-					</div>
-					<div className="p-home-regions__button">
-						<Button href={`/${lang}/region`} label="VIEW ALL REGIONS" color="light" />
-					</div>
-				</div>
+				<Suspense fallback={<p>Loading...</p>}>
+					<HomeRegionSection lang={lang} siteOptions={siteOptions} />
+				</Suspense>
 
 				<div className="p-home-video">
-					<div className="p-home-video__inner u-full-bleed">
-						<div className="p-home-video__bg">
+					<div className="p-home-video__inner u-full-bleed overflow-hidden">
+						{/* <div className="p-home-video__bg">
 							{siteOptions.home_about_mv && (
 								<figure className="p-home-video__mv">
 									<Image src={siteOptions.home_about_mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
 								</figure>
 							)}
 							{siteOptions.home_about_video && <VideoPlayer videoUrl={siteOptions.home_about_video} />}
-						</div>
+						</div> */}
+						<HomeVideo siteOptions={siteOptions} />
 						<div className="p-home-video__content c-container">
 							<h2 className="p-home-video__title c-heading">
 								Authentic <br />
@@ -2366,10 +2340,9 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 							<h3 className="p-home-video__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_about_description || '' }} />
 							{siteOptions.home_about_video && (
 								<div className="p-home-video__button1">
-								<Button href={siteOptions.home_about_video} target='_blank' label="CONCEPT MOVIE" color="light" />
-							</div>
+									<Button href={siteOptions.home_about_video} target="_blank" label="CONCEPT MOVIE" color="light" />
+								</div>
 							)}
-
 						</div>
 					</div>
 					<div className="p-home-video__footer">
@@ -2383,15 +2356,11 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 					<div className="p-home-tours__title">
 						<h2 className="c-heading">TOURS</h2>
 					</div>
-					<div className="p-home-tours__total">
-						<div className="c-total">
-							<div className="c-total__label">ALL TOURS</div>
-							<span className="c-total__count">{activities.length}</span>
-						</div>
-					</div>
-					<div className="p-home-tours__tours c-tours">{activities.length > 0 ? activities.slice(0, 4).map((activity) => <TourItem key={activity.id} activity={activity} className="c-tours__tour" />) : <p>アクティビティが見つかりません。</p>}</div>
+					<Suspense fallback={<p>Loading...</p>}>
+						<HomeTourSection lang={lang} />
+					</Suspense>
 					<div className="p-home-tours__button">
-						<Button href={`/${lang}/tour`} label="VIEW ALL TOURS" />
+						<Button href={`/${lang}/tours`} label="VIEW ALL TOURS" />
 					</div>
 				</div>
 
@@ -2466,7 +2435,7 @@ export const DEFAULT_LOCALE = 'ja' as Locale;
 
 export const NAVI_ITEMS = [
 	{ label: 'NAVIGATORS', href: `/navigator` },
-	{ label: 'TOURS', href: `/tour` },
+	{ label: 'TOURS', href: `/tours` },
 	{ label: 'REGIONS', href: `/region` },
 	{ label: 'NEWS', href: `/news` },
 	{ label: 'ABOUT US', href: `/about` },
@@ -2478,7 +2447,7 @@ export const FOOTER_NAVI_ITEMS = [
 	{ label: 'NAVIGATORS', href: `/navigator` },
 	{ label: 'REGIONS', href: `/region` },
 	{ label: 'ABOUT US', href: `/about` },
-	{ label: 'TOURS', href: `/tour` },
+	{ label: 'TOURS', href: `/tours` },
 	{ label: 'NEWS', href: `/news` },
 	{ label: 'CONTACT', href: `/contact` }
 ];
@@ -2615,6 +2584,142 @@ export default function InstaFeed() {
 
 ```
 
+### components/ui/card.tsx
+
+```
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-xl border bg-card text-card-foreground shadow",
+      className
+    )}
+    {...props}
+  />
+))
+Card.displayName = "Card"
+
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    {...props}
+  />
+))
+CardHeader.displayName = "CardHeader"
+
+const CardTitle = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("font-semibold leading-none tracking-tight", className)}
+    {...props}
+  />
+))
+CardTitle.displayName = "CardTitle"
+
+const CardDescription = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+))
+CardDescription.displayName = "CardDescription"
+
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
+
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-6 pt-0", className)}
+    {...props}
+  />
+))
+CardFooter.displayName = "CardFooter"
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+
+```
+
+### components/ui/scroll-area.tsx
+
+```
+"use client"
+
+import * as React from "react"
+import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
+
+import { cn } from "@/lib/utils"
+
+const ScrollArea = React.forwardRef<
+  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
+>(({ className, children, ...props }, ref) => (
+  <ScrollAreaPrimitive.Root
+    ref={ref}
+    className={cn("relative overflow-hidden", className)}
+    {...props}
+  >
+    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+      {children}
+    </ScrollAreaPrimitive.Viewport>
+    <ScrollBar />
+    <ScrollAreaPrimitive.Corner />
+  </ScrollAreaPrimitive.Root>
+))
+ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
+
+const ScrollBar = React.forwardRef<
+  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
+>(({ className, orientation = "vertical", ...props }, ref) => (
+  <ScrollAreaPrimitive.ScrollAreaScrollbar
+    ref={ref}
+    orientation={orientation}
+    className={cn(
+      "flex touch-none select-none transition-colors",
+      orientation === "vertical" &&
+        "h-full w-2.5 border-l border-l-transparent p-[1px]",
+      orientation === "horizontal" &&
+        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+      className
+    )}
+    {...props}
+  >
+    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+  </ScrollAreaPrimitive.ScrollAreaScrollbar>
+))
+ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
+
+export { ScrollArea, ScrollBar }
+
+```
+
 ### components/ui/label.tsx
 
 ```
@@ -2644,6 +2749,48 @@ const Label = React.forwardRef<
 Label.displayName = LabelPrimitive.Root.displayName
 
 export { Label }
+
+```
+
+### components/ui/badge.tsx
+
+```
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
+        secondary:
+          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive:
+          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
+        outline: "text-foreground",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
+
+function Badge({ className, variant, ...props }: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+  )
+}
+
+export { Badge, badgeVariants }
 
 ```
 
@@ -2743,6 +2890,213 @@ const Checkbox = React.forwardRef<
 Checkbox.displayName = CheckboxPrimitive.Root.displayName
 
 export { Checkbox }
+
+```
+
+### components/ui/dropdown-menu.tsx
+
+```
+"use client"
+
+import * as React from "react"
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+import { Check, ChevronRight, Circle } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+
+const DropdownMenu = DropdownMenuPrimitive.Root
+
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
+
+const DropdownMenuGroup = DropdownMenuPrimitive.Group
+
+const DropdownMenuPortal = DropdownMenuPrimitive.Portal
+
+const DropdownMenuSub = DropdownMenuPrimitive.Sub
+
+const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
+
+const DropdownMenuSubTrigger = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
+    inset?: boolean
+  }
+>(({ className, inset, children, ...props }, ref) => (
+  <DropdownMenuPrimitive.SubTrigger
+    ref={ref}
+    className={cn(
+      "flex cursor-default gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      inset && "pl-8",
+      className
+    )}
+    {...props}
+  >
+    {children}
+    <ChevronRight className="ml-auto" />
+  </DropdownMenuPrimitive.SubTrigger>
+))
+DropdownMenuSubTrigger.displayName =
+  DropdownMenuPrimitive.SubTrigger.displayName
+
+const DropdownMenuSubContent = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
+>(({ className, ...props }, ref) => (
+  <DropdownMenuPrimitive.SubContent
+    ref={ref}
+    className={cn(
+      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      className
+    )}
+    {...props}
+  />
+))
+DropdownMenuSubContent.displayName =
+  DropdownMenuPrimitive.SubContent.displayName
+
+const DropdownMenuContent = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Content
+      ref={ref}
+      sideOffset={sideOffset}
+      className={cn(
+        "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        className
+      )}
+      {...props}
+    />
+  </DropdownMenuPrimitive.Portal>
+))
+DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
+
+const DropdownMenuItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
+    inset?: boolean
+  }
+>(({ className, inset, ...props }, ref) => (
+  <DropdownMenuPrimitive.Item
+    ref={ref}
+    className={cn(
+      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
+      inset && "pl-8",
+      className
+    )}
+    {...props}
+  />
+))
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
+
+const DropdownMenuCheckboxItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
+>(({ className, children, checked, ...props }, ref) => (
+  <DropdownMenuPrimitive.CheckboxItem
+    ref={ref}
+    className={cn(
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      className
+    )}
+    checked={checked}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <DropdownMenuPrimitive.ItemIndicator>
+        <Check className="h-4 w-4" />
+      </DropdownMenuPrimitive.ItemIndicator>
+    </span>
+    {children}
+  </DropdownMenuPrimitive.CheckboxItem>
+))
+DropdownMenuCheckboxItem.displayName =
+  DropdownMenuPrimitive.CheckboxItem.displayName
+
+const DropdownMenuRadioItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
+>(({ className, children, ...props }, ref) => (
+  <DropdownMenuPrimitive.RadioItem
+    ref={ref}
+    className={cn(
+      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      className
+    )}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <DropdownMenuPrimitive.ItemIndicator>
+        <Circle className="h-2 w-2 fill-current" />
+      </DropdownMenuPrimitive.ItemIndicator>
+    </span>
+    {children}
+  </DropdownMenuPrimitive.RadioItem>
+))
+DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
+
+const DropdownMenuLabel = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
+    inset?: boolean
+  }
+>(({ className, inset, ...props }, ref) => (
+  <DropdownMenuPrimitive.Label
+    ref={ref}
+    className={cn(
+      "px-2 py-1.5 text-sm font-semibold",
+      inset && "pl-8",
+      className
+    )}
+    {...props}
+  />
+))
+DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName
+
+const DropdownMenuSeparator = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+  <DropdownMenuPrimitive.Separator
+    ref={ref}
+    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    {...props}
+  />
+))
+DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
+
+const DropdownMenuShortcut = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
+      {...props}
+    />
+  )
+}
+DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuRadioGroup,
+}
 
 ```
 
@@ -2986,6 +3340,42 @@ export {
 
 ```
 
+### components/Home/HomeRegionSection.tsx
+
+```
+import { Locale } from '@/constants/site';
+import { getFormattedRegionData } from '@/lib/utils';
+import { WPSiteContent } from '@/types';
+import { HomeRegionSlider } from './HomeRegionSlider';
+import { Button } from '../Button';
+
+interface HomeRegionSectionProps {
+	lang: Locale;
+	siteOptions: WPSiteContent;
+}
+
+export default async function HomeRegionSection({ lang, siteOptions }: HomeRegionSectionProps) {
+	const regions = await getFormattedRegionData(lang);
+	return (
+		<div className="p-home-regions">
+			<div className="p-home-regions__header">
+				<div className="p-home-regions__title">
+					<h2 className="c-heading">REGIONS</h2>
+				</div>
+				<h3 className="p-home-regions__description" dangerouslySetInnerHTML={{ __html: siteOptions.home_regions_description || '' }} />
+			</div>
+			<div className="p-home-regions__slider">
+				<HomeRegionSlider lang={lang} regions={regions} />
+			</div>
+			<div className="p-home-regions__button">
+				<Button href={`/${lang}/region`} label="VIEW ALL REGIONS" color="light" />
+			</div>
+		</div>
+	);
+}
+
+```
+
 ### components/Home/HomeNavigatorSlider.tsx
 
 ```
@@ -3195,6 +3585,128 @@ export function HomeRegionSlider({ regions }: { lang: Locale; regions: Region[] 
 
 ```
 
+### components/Home/HomeNavigatorSection.tsx
+
+```
+import { Locale } from '@/constants/site';
+import { getFormattedGuideData } from '@/lib/utils';
+import { WPSiteContent } from '@/types';
+import { HomeNavigatorSlider } from './HomeNavigatorSlider';
+import { Button } from '../Button';
+
+interface HomeNavigatorSectionProps {
+	lang: Locale;
+	siteOptions: WPSiteContent;
+}
+
+export default async function HomeNavigatorSection({ lang, siteOptions }: HomeNavigatorSectionProps) {
+	const guides = await getFormattedGuideData(lang);
+	return (
+		<div className="p-home-navigators">
+			<h2 className="p-home-navigators__copy">{siteOptions.navigators_title}</h2>
+			<p className="p-home-navigators__text" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
+			<div className="p-home-navigators__slider u-full-bleed">
+				<HomeNavigatorSlider lang={lang} guides={guides} />
+			</div>
+			<div className="p-home-navigators__button">
+				<Button href={`/${lang}/navigator`} label="VIEW ALL NAVIGATORS" />
+			</div>
+		</div>
+	);
+}
+
+```
+
+### components/Home/HomeVideo.tsx
+
+```
+'use client';
+
+import { WPSiteContent } from '@/types';
+import Image from 'next/image';
+import { VideoPlayer } from '../VideoPlayer';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { useRef } from 'react';
+
+interface HomeVideoProps {
+	siteOptions: WPSiteContent;
+}
+
+export default function HomeVideo({ siteOptions }: HomeVideoProps) {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const { scrollYProgress } = useScroll({
+		target: containerRef,
+		offset: ['start start', 'end start'] // "ターゲットの上部"が画面の上部に来た時点を0とし、"ターゲットの上部"が画面の下部に来た時点を1とする
+	});
+	console.log('containerRef:', containerRef);
+	// const y = useTransform(scrollYProgress, [0, 1], ['0', `${containerRef.current?.clientHeight}px`]);
+	const y = useTransform(scrollYProgress, [0, 1], ['0', '50vh']);
+	return (
+		<div className="p-home-video__bg relative" ref={containerRef}>
+			<motion.div style={{ y }}>
+				{siteOptions.home_about_mv && (
+					<figure className="p-home-video__mv">
+						<Image src={siteOptions.home_about_mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+					</figure>
+				)}
+				{siteOptions.home_about_video && <VideoPlayer videoUrl={siteOptions.home_about_video} />}
+			</motion.div>
+		</div>
+	);
+}
+
+```
+
+### components/Home/HomeTourSection.tsx
+
+```
+import { Locale } from '@/constants/site';
+import { getFormattedActivities } from '@/lib/utils';
+import { TourItem } from '../Tour/TourItem';
+import { useTranslations } from '@/lib/i18n';
+
+interface HomeTourSectionProps {
+	lang: Locale;
+}
+
+export default async function HomeTourSection({ lang }: HomeTourSectionProps) {
+	const t = useTranslations(lang);
+	const [activities] = await Promise.all([
+		getFormattedActivities(
+			{
+				page: 1,
+				pageSize: 100
+			},
+			lang
+		)
+	]);
+	return (
+		<>
+			<div className="p-home-tours__total">
+				<div className="c-total">
+					<div className="c-total__label">ALL TOURS</div>
+					<span className="c-total__count">{activities.length}</span>
+				</div>
+			</div>
+			<div className="p-home-tours__tours c-tours">
+				{activities.length > 0 ? (
+					activities.slice(0, 4).map((activity) => <TourItem className="c-tours__tour" key={activity.id} activity={activity} />)
+				) : (
+					<p>
+						{t({
+							ja: 'ツアーが見つかりません。',
+							en: 'No activities found.',
+							fr: 'Aucune activité trouvée.'
+						})}
+					</p>
+				)}
+			</div>
+		</>
+	);
+}
+
+```
+
 ### components/Home/HomeHeroSlider.tsx
 
 ```
@@ -3216,51 +3728,46 @@ import { WPSiteContent } from '@/types';
 import { Button } from '@/components/Button';
 
 export function HomeHeroSlider({ slides }: { lang: Locale; slides: WPSiteContent['home_slider'] }) {
-	// const [activeIndex, setActiveIndex] = useState(0);
+
 	const swiperRef = useRef<SwiperType | null>(null);
 
-	// const handleRegionClick = (index: number) => {
-	// 	setActiveIndex(index);
-	// 	if (swiperRef.current) {
-	// 		swiperRef.current.slideTo(index);
-	// 	}
-	// };
-
 	return (
-		<Swiper
-			modules={[EffectFade, Navigation, Autoplay, Pagination, Parallax]}
-			effect="fade"
-			fadeEffect={{ crossFade: true }}
-			// navigation={true}
-			autoplay={{
-				delay: 5000,
-				disableOnInteraction: false
-			}}
-			parallax={true}
-			speed={1000}
-			pagination={{
-				type: 'progressbar'
-			}}
-			onSwiper={(swiper) => (swiperRef.current = swiper)}
-			// onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-			className="p-home-hero-slider__slider">
-			{slides.map((slide, index) => (
-				<SwiperSlide key={index} className="p-home-hero-slider-slide">
-					{slide.mv && (
-						<figure className="p-home-hero-slider-slide__image">
-							<Image src={slide.mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
-						</figure>
-					)}
-					<div className="p-home-hero-slider-slide__inner">
-						<hgroup className="p-home-hero-slider-slide__title">
-							{slide.sub_copy && <h3 data-swiper-parallax="-30">{slide.sub_copy}</h3>}
-							{slide.main_copy && <h2 data-swiper-parallax="-60" dangerouslySetInnerHTML={{ __html: slide.main_copy || '' }} />}
-						</hgroup>
-						{slide.url && <Button href={slide.url} label="LEARN MORE" color="light" className="p-home-hero-slider-slide__button" />}
-					</div>
-				</SwiperSlide>
-			))}
-		</Swiper>
+		<div className="p-home-hero u-full-bleed overflow-hidden relative">
+				<Swiper
+					modules={[EffectFade, Navigation, Autoplay, Pagination, Parallax]}
+					effect="fade"
+					fadeEffect={{ crossFade: true }}
+					// navigation={true}
+					autoplay={{
+						delay: 5000,
+						disableOnInteraction: false
+					}}
+					parallax={true}
+					speed={1000}
+					pagination={{
+						type: 'progressbar'
+					}}
+					onSwiper={(swiper) => (swiperRef.current = swiper)}
+					// onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+					className="p-home-hero-slider__slider">
+					{slides.map((slide, index) => (
+						<SwiperSlide key={index} className="p-home-hero-slider-slide">
+							{slide.mv && (
+								<figure className="p-home-hero-slider-slide__image">
+									<Image src={slide.mv.link} alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+								</figure>
+							)}
+							<div className="p-home-hero-slider-slide__inner">
+								<hgroup className="p-home-hero-slider-slide__title">
+									{slide.sub_copy && <h3 data-swiper-parallax="-30">{slide.sub_copy}</h3>}
+									{slide.main_copy && <h2 data-swiper-parallax="-60" dangerouslySetInnerHTML={{ __html: slide.main_copy || '' }} />}
+								</hgroup>
+								{slide.url && <Button href={slide.url} label="LEARN MORE" color="light" className="p-home-hero-slider-slide__button" />}
+							</div>
+						</SwiperSlide>
+					))}
+				</Swiper>
+		</div>
 	);
 }
 
@@ -3484,46 +3991,44 @@ export default function ContactForm({ lang }: { lang: Locale }) {
 
 import { WPGalleryItem } from '@/types';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
 
 interface PageHeaderProps {
-  title?: string;
-  description?: string;
-  mv?: WPGalleryItem;
+	title?: string;
+	description?: string;
+	mv?: WPGalleryItem;
 }
 
 export function PageHeader({ title, description, mv }: PageHeaderProps) {
-  const [content, setContent] = useState<string | null>(null);
+	const [content, setContent] = useState<string | null>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const { scrollYProgress } = useScroll({
+		target: containerRef,
+		offset: ['start start', 'end start'] // "ターゲットの上部"が画面の上部に来た時点を0とし、"ターゲットの上部"が画面の下部に来た時点を1とする
+	});
+	const y = useTransform(scrollYProgress, [0, 1], ['0', '30vh']);
 
-  useEffect(() => {
-    if (description) {
-      setContent(description);
-    }
-  }, [description]);
+	useEffect(() => {
+		if (description) {
+			setContent(description);
+		}
+	}, [description]);
 
-  return (
-    <div className="p-page__header u-full-bleed">
-      <div className="p-page__inner c-container">
-        {title && <h2 className="p-page__title">{title}</h2>}
-        {content && (
-          <p
-            className="p-page__description"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
-        )}
-      </div>
-      {mv && mv.sizes && mv.sizes['2048x2048'] && (
-        <figure className="p-page__mv">
-          <Image
-            src={mv.sizes['2048x2048']}
-            alt=""
-            fill
-            style={{ objectFit: 'cover' }}
-          />
-        </figure>
-      )}
-    </div>
-  );
+	return (
+		<div className="p-page__header u-full-bleed overflow-y-hidden" ref={containerRef}>
+			<div className="p-page__inner c-container">
+				{title && <h2 className="p-page__title">{title}</h2>}
+				{content && <p className="p-page__description" dangerouslySetInnerHTML={{ __html: content }} />}
+			</div>
+			{mv && mv.sizes && mv.sizes['2048x2048'] && (
+				<motion.figure className="p-page__mv" style={{ y }}>
+					<Image src={mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
+				</motion.figure>
+			)}
+			<p>hoge</p>
+		</div>
+	);
 }
 
 ```
@@ -3633,6 +4138,7 @@ import Image from 'next/image';
 import clsx from 'clsx';
 import { ArrowUpRight } from 'lucide-react';
 import treeImage from '@/public/header/tree.webp';
+import logo from '@/public/logo.svg';
 
 // import { getFormattedRegionData } from '@/lib/utils';
 // import { usePathname } from 'next/navigation';
@@ -3661,7 +4167,7 @@ export default function Header({ lang }: { lang: Locale }) {
 			<header ref={headerRef} className={`l-header`}>
 				<h1 className="l-header__title">
 					<Link href={`/${lang}`}>
-						<Image src="/logo.svg" alt={SITE_TITLE} unoptimized fill />
+						<Image src={logo} alt={SITE_TITLE} unoptimized />
 					</Link>
 				</h1>
 				<div className="l-header__inner">
@@ -3728,6 +4234,102 @@ export default function Header({ lang }: { lang: Locale }) {
 				</div>
 			</div>
 		</>
+	);
+}
+
+```
+
+### components/About/AboutSection.tsx
+
+```
+'use client';
+
+import { WPSiteContent } from '@/types';
+import Image from 'next/image';
+import { motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+
+interface AboutSectionItemProps {
+	number: string;
+	title: string;
+	subtitle: string | undefined;
+	description: string | undefined;
+	color?: string;
+}
+
+interface AboutSectionProps {
+	siteOptions: WPSiteContent;
+}
+
+function AboutSectionItem({ number, title, subtitle, description, color }: AboutSectionItemProps) {
+	return (
+		<motion.div className={`u-${color} p-page-about__section`} initial={{ opacity: 0, x: -100 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}>
+			<hgroup>
+				<motion.h2 initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
+					{number}. {title}
+				</motion.h2>
+				<motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
+					{subtitle}
+				</motion.h3>
+			</hgroup>
+			<motion.p dangerouslySetInnerHTML={{ __html: description || '' }} initial={{ opacity: 0, x: -100 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }} />
+		</motion.div>
+	);
+}
+
+export default function AboutSection({ siteOptions }: AboutSectionProps) {
+	const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+	// Intersection Observer を使用してアクティブなサービスアイテムを検出
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						const index = Number(entry.target.getAttribute('data-index'));
+						setActiveImageIndex(index);
+						// setActiveMenuIndex(index);
+					}
+				});
+			},
+			{
+				threshold: 0.5
+			}
+		);
+
+		const items = document.querySelectorAll('.p-page-about__section');
+		items.forEach((item) => observer.observe(item));
+
+		return () => {
+			items.forEach((item) => observer.unobserve(item));
+		};
+	}, []);
+
+	return (
+		<div className="p-page-about__container">
+			<div className="p-page-about__description">
+				<div>
+					<p dangerouslySetInnerHTML={{ __html: siteOptions.about_section0_description || '' }} />
+				</div>
+				<AboutSectionItem number="01" title="Travelers" subtitle={siteOptions.about_section1_title} description={siteOptions.about_section1_description} color="green" />
+				<AboutSectionItem number="02" title="Authentic Japnan Navigator" subtitle={siteOptions.about_section2_title} description={siteOptions.about_section2_description} color="red" />
+				<AboutSectionItem number="03" title="Local Area" subtitle={siteOptions.about_section3_title} description={siteOptions.about_section3_description} color="blue" />
+			</div>
+			<div className="p-page-about__image">
+				<figure>
+					<Image src="/about/about_all.svg" alt="" fill unoptimized />
+				</figure>
+				<figure>
+					<Image src="/about/about1.svg" alt="" fill unoptimized />
+				</figure>
+				<figure>
+					<Image src="/about/about2.svg" alt="" fill unoptimized />
+				</figure>
+				<figure>
+					<Image src="/about/about3.svg" alt="" fill unoptimized />
+				</figure>
+			</div>
+		</div>
 	);
 }
 
@@ -4064,136 +4666,222 @@ import { Guide, Region, ActivityFilters } from '@/types';
 import { useTranslations } from '@/lib/i18n';
 import { Locale } from '@/constants/site';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
-
-// interface FilterOption {
-//   id: number;
-//   name: string;
-// }
+import { useCallback, useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Search, X } from 'lucide-react';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface FilterComponentProps {
-  guides: Guide[];
-  regions: Region[];
-  // tags: FilterOption[];
-  currentFilters?: ActivityFilters;
-  lang: Locale;
+	guides: Guide[];
+	regions: Region[];
+	currentFilters?: ActivityFilters;
+	lang: Locale;
 }
 
-export default function ClientFilterComponent({
-  guides,
-  regions,
-  // tags,
-  currentFilters,
-  lang
-}: FilterComponentProps) {
-  const t = useTranslations(lang);
-  const router = useRouter();
+export default function ClientFilterComponent({ guides, regions, currentFilters, lang }: FilterComponentProps) {
+	const t = useTranslations(lang);
+	const router = useRouter();
+	const [isSmallScreen, setIsSmallScreen] = useState(false);
+	const [searchKeyword, setSearchKeyword] = useState(currentFilters?.search || '');
 
-  const handleFilterChange = useCallback((type: keyof ActivityFilters, value: string) => {
-    const searchParams = new URLSearchParams();
+	// 画面サイズの監視
+	useEffect(() => {
+		const checkScreenSize = () => {
+			setIsSmallScreen(window.innerWidth < 768);
+		};
+		checkScreenSize();
+		window.addEventListener('resize', checkScreenSize);
+		return () => window.removeEventListener('resize', checkScreenSize);
+	}, []);
 
-    // 現在のフィルターを全て設定
-    if (currentFilters?.guides?.length) {
-      searchParams.set('guides', currentFilters.guides.join(','));
-    }
-    if (currentFilters?.regions?.length) {
-      searchParams.set('regions', currentFilters.regions.join(','));
-    }
-    if (currentFilters?.search) {
-      searchParams.set('search', currentFilters.search);
-    }
+	// フィルター更新のメイン関数
+	const updateFilters = useCallback(
+		(type: keyof ActivityFilters, value: string, isRemoving: boolean = false) => {
+			const searchParams = new URLSearchParams();
 
-    // 新しい値を設定
-    if (value) {
-      searchParams.set(type, value);
-    } else {
-      searchParams.delete(type);
-    }
+			// 現在のフィルターの状態をコピー
+			const currentGuides = new Set(currentFilters?.guides || []);
+			const currentRegions = new Set(currentFilters?.regions || []);
 
-    // URLを更新（scrollオプションを追加）
-    router.push(`/${lang}/tours?${searchParams.toString()}`, {
-      scroll: false
-    });
-  }, [currentFilters, lang, router]);
+			// フィルターの更新
+			if (type === 'guides') {
+				if (isRemoving) {
+					currentGuides.delete(value);
+				} else {
+					if (currentGuides.has(value)) {
+						currentGuides.delete(value);
+					} else {
+						currentGuides.add(value);
+					}
+				}
+			} else if (type === 'regions') {
+				if (isRemoving) {
+					currentRegions.delete(value);
+				} else {
+					if (currentRegions.has(value)) {
+						currentRegions.delete(value);
+					} else {
+						currentRegions.add(value);
+					}
+				}
+			}
 
-  return (
-    <div className="c-filter">
-      <div className="c-filter__section">
-        <h3 className="c-filter__title">
-          {t({
-            ja: 'ガイド',
-            en: 'Guide',
-            fr: 'Guide'
-          })}
-        </h3>
-        <div className="c-filter__items">
-          {guides.map((guide) => (
-            <button
-              key={guide.id}
-              className={`c-filter__item ${
-                currentFilters?.guides?.includes(String(guide.id))
-                  ? 'is-active'
-                  : ''
-              }`}
-              onClick={() => handleFilterChange('guides', String(guide.id))}
-            >
-              {guide.name}
-            </button>
-          ))}
-        </div>
-      </div>
+			// URLパラメータの設定
+			if (currentGuides.size > 0) {
+				searchParams.set('guides', Array.from(currentGuides).join(','));
+			}
+			if (currentRegions.size > 0) {
+				searchParams.set('regions', Array.from(currentRegions).join(','));
+			}
+			if (type === 'search' && value) {
+				searchParams.set('search', value);
+			} else if (currentFilters?.search) {
+				searchParams.set('search', currentFilters.search);
+			}
 
-      <div className="c-filter__section">
-        <h3 className="c-filter__title">
-          {t({
-            ja: '地域',
-            en: 'Region',
-            fr: 'Région'
-          })}
-        </h3>
-        <div className="c-filter__items">
-          {regions.map((region) => (
-            <button
-              key={region.id}
-              className={`c-filter__item ${
-                currentFilters?.regions?.includes(String(region.id))
-                  ? 'is-active'
-                  : ''
-              }`}
-              onClick={() => handleFilterChange('regions', String(region.id))}
-            >
-              {region.name}
-            </button>
-          ))}
-        </div>
-      </div>
+			// URLを更新
+			router.push(`/${lang}/tours?${searchParams.toString()}`, {
+				scroll: false
+			});
+		},
+		[currentFilters, lang, router]
+	);
 
-      {/* <div className="c-filter__section">
-        <h3 className="c-filter__title">
-          {t({
-            ja: 'タグ',
-            en: 'Tags',
-            fr: 'Tags'
-          })}
-        </h3>
-        <div className="c-filter__items">
-          {tags.map((tag) => (
-            <button
-              key={tag.id}
-              className={`c-filter__item ${
-                currentFilters?.tags?.includes(String(tag.id))
-                  ? 'is-active'
-                  : ''
-              }`}
-              onClick={() => handleFilterChange('tags', String(tag.id))}
-            >
-              {tag.name}
-            </button>
-          ))}
-        </div>
-      </div> */}
-    </div>
-  );
+	// 検索フォームのサブミット
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		updateFilters('search', searchKeyword);
+	};
+
+	// フィルターをクリア
+	const handleClearFilters = useCallback(() => {
+		setSearchKeyword('');
+		router.push(`/${lang}/tours`, { scroll: false });
+	}, [lang, router]);
+
+	// 選択されているアイテムの数を取得
+	const selectedGuideCount = currentFilters?.guides?.length || 0;
+	const selectedRegionCount = currentFilters?.regions?.length || 0;
+
+	return (
+		<Card className="fixed z-10 bottom-4 md:relative md:bottom-auto font-[Noto_Sans_JP]">
+			<CardContent className="p-4">
+				<form onSubmit={handleSubmit} className="space-y-4">
+					<div className={`flex ${isSmallScreen ? 'flex-col' : 'flex-row'} gap-2 justify-start`}>
+						<div className="flex gap-2">
+							{/* ガイドフィルター */}
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant="outline">
+										{t({
+											ja: 'ガイド',
+											en: 'Guide',
+											fr: 'Guide'
+										})}
+										{selectedGuideCount > 0 && ` (${selectedGuideCount})`}
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
+									{guides.map((guide) => (
+										<DropdownMenuCheckboxItem key={guide.id} checked={currentFilters?.guides?.includes(String(guide.id))} onCheckedChange={() => updateFilters('guides', String(guide.id))}>
+											{guide.name}
+										</DropdownMenuCheckboxItem>
+									))}
+								</DropdownMenuContent>
+							</DropdownMenu>
+
+							{/* 地域フィルター */}
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant="outline">
+										{t({
+											ja: '地域',
+											en: 'Region',
+											fr: 'Région'
+										})}
+										{selectedRegionCount > 0 && ` (${selectedRegionCount})`}
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
+									{regions.map((region) => (
+										<DropdownMenuCheckboxItem key={region.id} checked={currentFilters?.regions?.includes(String(region.id))} onCheckedChange={() => updateFilters('regions', String(region.id))}>
+											{region.name}
+										</DropdownMenuCheckboxItem>
+									))}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+						<div className="flex gap-2 flex-grow">
+							{/* 検索フィールド */}
+							<div className="relative flex-grow">
+								<Input
+									placeholder={t({
+										ja: 'キーワードで検索',
+										en: 'Search by keyword',
+										fr: 'Rechercher par mot-clé'
+									})}
+									value={searchKeyword}
+									onChange={(e) => setSearchKeyword(e.target.value)}
+									className="pl-10 pr-4 py-2 w-full"
+								/>
+								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+							</div>
+
+							{/* 検索ボタン */}
+							<Button type="submit" variant="default">
+								{t({
+									ja: '検索',
+									en: 'Search',
+									fr: 'Rechercher'
+								})}
+							</Button>
+						</div>
+
+						{/* クリアボタン */}
+						{(selectedGuideCount > 0 || selectedRegionCount > 0 || currentFilters?.search) && (
+							<Button type="button" variant="outline" onClick={handleClearFilters} className="gap-2">
+								<X className="h-4 w-4" />
+								{t({
+									ja: 'クリア',
+									en: 'Clear',
+									fr: 'Effacer'
+								})}
+							</Button>
+						)}
+					</div>
+
+					{/* 選択されたフィルターのバッジ表示 */}
+					{(selectedGuideCount > 0 || selectedRegionCount > 0) && (
+						<div className="flex flex-wrap gap-2 mt-4">
+							{currentFilters?.guides?.map((guideId) => {
+								const guide = guides.find((g) => String(g.id) === guideId);
+								if (!guide) return null;
+								return (
+									<Badge key={guideId} variant="secondary" className="gap-1 py-1 px-3">
+										{guide.name}
+										<X size={14} className="cursor-pointer ml-1" onClick={() => updateFilters('guides', String(guide.id), true)} />
+									</Badge>
+								);
+							})}
+							{currentFilters?.regions?.map((regionId) => {
+								const region = regions.find((r) => String(r.id) === regionId);
+								if (!region) return null;
+								return (
+									<Badge key={regionId} variant="secondary" className="gap-1 py-1 px-3">
+										{region.name}
+										<X size={14} className="cursor-pointer ml-1" onClick={() => updateFilters('regions', String(region.id), true)} />
+									</Badge>
+								);
+							})}
+						</div>
+					)}
+				</form>
+			</CardContent>
+		</Card>
+	);
 }
 
 ```
@@ -4229,6 +4917,8 @@ import { Locale } from '@/constants/site';
 import { getFormattedActivities, filterActivitiesByQuery, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
 import { ActivityFilters } from '@/types/activity';
 import ClientFilterComponent from './ClientFilterComponent';
+import { TourItem } from './TourItem';
+import { useTranslations } from '@/lib/i18n';
 
 interface TourListProps {
 	lang: Locale;
@@ -4236,15 +4926,12 @@ interface TourListProps {
 }
 
 export default async function TourList({ lang, filters }: TourListProps) {
-	// const activities = await getFormattedActivities({
-	// 	page: 1,
-	// 	pageSize: 10
-	// }, lang);
+	const t = useTranslations(lang);
 	const [activities, guides, regions] = await Promise.all([
 		getFormattedActivities(
 			{
 				page: 1,
-				pageSize: 10
+				pageSize: 100
 			},
 			lang
 		),
@@ -4253,23 +4940,290 @@ export default async function TourList({ lang, filters }: TourListProps) {
 	]);
 
 	const filteredActivities = filterActivitiesByQuery(activities, filters);
-	// console.log('activities:', activities);
-	console.log('filteredActivities:', filteredActivities);
 	return (
 		<>
 			<div>
-				<ClientFilterComponent lang={lang} guides={guides} regions={regions} />
+				<ClientFilterComponent lang={lang} guides={guides} regions={regions} currentFilters={filters} />
 			</div>
-			<div>
-				{filteredActivities.map((activity) => (
-					<div key={activity.id}>
-						<h2>{activity.title}</h2>
-						{/* <p>{activity.content}</p> */}
-					</div>
-				))}
+			<div className="c-tours">
+				{filteredActivities.length > 0 ? (
+					filteredActivities.map((activity) => <TourItem className="c-tours__tour" key={activity.id} activity={activity} />)
+				) : (
+					<p>
+						{' '}
+						{t({
+							ja: 'ツアーが見つかりません。',
+							en: 'No activities found.',
+							fr: 'Aucune activité trouvée.'
+						})}
+					</p>
+				)}
 			</div>
 		</>
 	);
+}
+
+```
+
+### components/Tour/ClientFilterComponent copy.tsx
+
+```
+"use client";
+
+import { Guide, Region, ActivityFilters } from '@/types';
+import { useTranslations } from '@/lib/i18n';
+import { Locale } from '@/constants/site';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, X } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface FilterComponentProps {
+  guides: Guide[];
+  regions: Region[];
+  currentFilters?: ActivityFilters;
+  lang: Locale;
+}
+
+export default function ClientFilterComponent({
+  guides,
+  regions,
+  currentFilters,
+  lang
+}: FilterComponentProps) {
+  const t = useTranslations(lang);
+  const router = useRouter();
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState(currentFilters?.search || "");
+
+  // 画面サイズの監視
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  // フィルター更新のメイン関数
+  const updateFilters = useCallback((type: keyof ActivityFilters, value: string, isRemoving: boolean = false) => {
+    const searchParams = new URLSearchParams();
+
+    // 現在のフィルターの状態をコピー
+    const currentGuides = new Set(currentFilters?.guides || []);
+    const currentRegions = new Set(currentFilters?.regions || []);
+		console.log('currentGuides:', currentGuides);
+
+    // フィルターの更新
+    if (type === 'guides') {
+      if (isRemoving) {
+        currentGuides.delete(value);
+      } else {
+        if (currentGuides.has(value)) {
+          currentGuides.delete(value);
+        } else {
+          currentGuides.add(value);
+        }
+      }
+    } else if (type === 'regions') {
+      if (isRemoving) {
+        currentRegions.delete(value);
+      } else {
+        if (currentRegions.has(value)) {
+          currentRegions.delete(value);
+        } else {
+          currentRegions.add(value);
+        }
+      }
+    }
+
+    // URLパラメータの設定
+    if (currentGuides.size > 0) {
+      searchParams.set('guides', Array.from(currentGuides).join(','));
+    }
+    if (currentRegions.size > 0) {
+      searchParams.set('regions', Array.from(currentRegions).join(','));
+    }
+    if (type === 'search' && value) {
+      searchParams.set('search', value);
+    } else if (currentFilters?.search) {
+      searchParams.set('search', currentFilters.search);
+    }
+
+    // URLを更新
+    router.push(`/${lang}/tours?${searchParams.toString()}`, {
+      scroll: false
+    });
+  }, [currentFilters, lang, router]);
+
+  // 検索フォームのサブミット
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateFilters('search', searchKeyword);
+  };
+
+  // フィルターをクリア
+  const handleClearFilters = useCallback(() => {
+    setSearchKeyword("");
+    router.push(`/${lang}/tours`, { scroll: false });
+  }, [lang, router]);
+
+  // 選択されているアイテムの数を取得
+  const selectedGuideCount = currentFilters?.guides?.length || 0;
+  const selectedRegionCount = currentFilters?.regions?.length || 0;
+
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className={`flex ${isSmallScreen ? "flex-col" : "flex-row"} gap-2 items-center`}>
+            {/* ガイドフィルター */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {t({
+                    ja: 'ガイド',
+                    en: 'Guide',
+                    fr: 'Guide'
+                  })}
+                  {selectedGuideCount > 0 && ` (${selectedGuideCount})`}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {guides.map((guide) => (
+                  <DropdownMenuCheckboxItem
+                    key={guide.id}
+                    checked={currentFilters?.guides?.includes(String(guide.id))}
+                    onCheckedChange={() => updateFilters('guides', String(guide.id))}
+                  >
+                    {guide.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* 地域フィルター */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {t({
+                    ja: '地域',
+                    en: 'Region',
+                    fr: 'Région'
+                  })}
+                  {selectedRegionCount > 0 && ` (${selectedRegionCount})`}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {regions.map((region) => (
+                  <DropdownMenuCheckboxItem
+                    key={region.id}
+                    checked={currentFilters?.regions?.includes(String(region.id))}
+                    onCheckedChange={() => updateFilters('regions', String(region.id))}
+                  >
+                    {region.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* 検索フィールド */}
+            <div className="relative flex-grow">
+              <Input
+                placeholder={t({
+                  ja: 'キーワードで検索',
+                  en: 'Search by keyword',
+                  fr: 'Rechercher par mot-clé'
+                })}
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            </div>
+
+            {/* 検索ボタン */}
+            <Button type="submit" variant="default">
+              {t({
+                ja: '検索',
+                en: 'Search',
+                fr: 'Rechercher'
+              })}
+            </Button>
+
+            {/* クリアボタン */}
+            {(selectedGuideCount > 0 || selectedRegionCount > 0 || currentFilters?.search) && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClearFilters}
+                className="gap-2"
+              >
+                <X className="h-4 w-4" />
+                {t({
+                  ja: 'クリア',
+                  en: 'Clear',
+                  fr: 'Effacer'
+                })}
+              </Button>
+            )}
+          </div>
+
+          {/* 選択されたフィルターのバッジ表示 */}
+          {(selectedGuideCount > 0 || selectedRegionCount > 0) && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {currentFilters?.guides?.map((guideId) => {
+                const guide = guides.find(g => String(g.id) === guideId);
+                if (!guide) return null;
+                return (
+                  <Badge
+                    key={guideId}
+                    variant="secondary"
+                    className="gap-1 py-1 px-3"
+                  >
+                    {guide.name}
+                    <X
+                      size={14}
+                      className="cursor-pointer ml-1"
+                      onClick={() => updateFilters('guides', String(guide.id), true)}
+                    />
+                  </Badge>
+                );
+              })}
+              {currentFilters?.regions?.map((regionId) => {
+                const region = regions.find(r => String(r.id) === regionId);
+                if (!region) return null;
+                return (
+                  <Badge
+                    key={regionId}
+                    variant="secondary"
+                    className="gap-1 py-1 px-3"
+                  >
+                    {region.name}
+                    <X
+                      size={14}
+                      className="cursor-pointer ml-1"
+                      onClick={() => updateFilters('regions', String(region.id), true)}
+                    />
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+        </form>
+      </CardContent>
+    </Card>
+  );
 }
 
 ```
@@ -4841,12 +5795,15 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
     "@hookform/resolvers": "^4.1.0",
     "@next/third-parties": "^15.1.6",
     "@radix-ui/react-checkbox": "^1.1.4",
+    "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/postcss": "^4.0.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
+    "motion": "^12.4.3",
     "negotiator": "^0.6.3",
     "next": "14.2.14",
     "postcss": "^8.5.2",
@@ -5194,7 +6151,7 @@ export async function fetchWPRegions(lang: Locale = DEFAULT_LOCALE): Promise<WPR
 }
 
 export async function fetchWPTours(lang: Locale = DEFAULT_LOCALE): Promise<WPTour[]> {
-	const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+	const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(lang)}&acf_format=standard&status=publish`;
 	return cachedFetch(`tours-${lang}`, () => fetchWithErrorHandling<WPTour[]>(url));
 }
 
