@@ -59,12 +59,33 @@
 			column-gap: 30px;
 
 			& > li > a {
+				$link: &;
+
 				display: block;
+				// border-bottom: 1px solid currentColor;
 				font-weight: 700;
 				font-size: g.$font-size-sm;
-				// font-size: 13px;
 				color: g.$color-main;
 				letter-spacing: 0.1em;
+
+				& > span {
+					display: inline-block;
+
+					&::after {
+						content: '';
+						display: block;
+						width: 0;
+						height: 2px;
+						background-color: currentColor;
+						transition: width 0.3s;
+
+						@at-root {
+							#{$link}:hover span::after {
+								width: 100%;
+							}
+						}
+					}
+				}
 			}
 		}
 	}

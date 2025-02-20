@@ -64,19 +64,38 @@
 		& > ul {
 			display: flex;
 			flex-direction: column;
-			gap: 36px;
+			gap: 24px;
 
 			@include g.mq(md) {
 				gap: 12px;
 			}
 
 			& > li {
-				font-weight: 700;
-				letter-spacing: 0.15em;
-				font-size: g.$font-size-sm;
+				& > a {
+					$link: &;
 
-				@include g.mq(md) {
-					// font-size: g.$font-size-xs;
+					font-weight: 700;
+					letter-spacing: 0.15em;
+					font-size: g.$font-size-sm;
+
+					& > span {
+						display: inline-block;
+
+						&::after {
+							content: '';
+							display: block;
+							width: 0;
+							height: 2px;
+							background-color: currentColor;
+							transition: width 0.3s;
+
+							@at-root {
+								#{$link}:hover span::after {
+									width: 100%;
+								}
+							}
+						}
+					}
 				}
 			}
 		}

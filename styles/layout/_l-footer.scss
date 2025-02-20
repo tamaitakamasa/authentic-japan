@@ -27,6 +27,7 @@
 
       & > li {
         & > a {
+					$link: &;
           font-weight: 700;
           letter-spacing: 0.15em;
           font-size: g.$font-size-sm;
@@ -34,6 +35,25 @@
           @include g.mq(md) {
             font-size: g.$font-size-xs;
           }
+
+					& > span {
+						display: inline-block;
+
+						&::after {
+							content: '';
+							display: block;
+							width: 0;
+							height: 2px;
+							background-color: currentColor;
+							transition: width 0.3s;
+
+							@at-root {
+								#{$link}:hover span::after {
+									width: 100%;
+								}
+							}
+						}
+					}
         }
 
         & > ul {

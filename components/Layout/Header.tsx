@@ -10,23 +10,11 @@ import { ArrowUpRight } from 'lucide-react';
 import treeImage from '@/public/header/tree.webp';
 import logo from '@/public/logo.svg';
 
-// import { getFormattedRegionData } from '@/lib/utils';
-// import { usePathname } from 'next/navigation';
-
 export default function Header({ lang }: { lang: Locale }) {
 	// const pathname = usePathname();
 	const [isOpen, setIsOpen] = useState(false);
-	// const [isAfterMarker, setIsAfterMarker] = useState(false);
 	const headerRef = useRef<HTMLElement>(null);
-	// const regions = getFormattedRegionData(lang);
-	// console.log('regions:', regions);
 
-	// ヘッダーのクラス制御
-	// const getHeaderClasses = useCallback(() => {
-	// 	return clsx('l-header', {
-	// 		'l-header--light': pathname === `/${lang}` || pathname.startsWith(`/${lang}/tours/`),
-	// 	});
-	// }, [pathname, lang]);
 
 	const toggleDrawer = () => {
 		setIsOpen(!isOpen);
@@ -45,7 +33,7 @@ export default function Header({ lang }: { lang: Locale }) {
 						<ul>
 							{NAVI_ITEMS.map((item, index) => (
 								<li key={index}>
-									<Link href={`/${lang}${item.href}`}>{item.label}</Link>
+									<Link href={`/${lang}${item.href}`}><span>{item.label}</span></Link>
 								</li>
 							))}
 						</ul>
@@ -77,7 +65,7 @@ export default function Header({ lang }: { lang: Locale }) {
 							{NAVI_ITEMS.map((item, index) => (
 								<li key={index}>
 									<Link href={`/${lang}${item.href}`} onClick={toggleDrawer}>
-										{item.label}
+										<span>{item.label}</span>
 									</Link>
 								</li>
 							))}

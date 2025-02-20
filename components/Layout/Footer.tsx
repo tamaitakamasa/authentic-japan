@@ -14,7 +14,7 @@ export default async function Footer({ lang }: { lang: Locale }) {
 						<li key={index}>
 							{item.label === 'REGIONS' ? (
 								<>
-									<Link href={`/${lang}${item.href}`}>{item.label}</Link>
+									<Link href={`/${lang}${item.href}`}><span>{item.label}</span></Link>
 									<ul>
 										{regions.map((region) => (
 											<li key={region.id}>
@@ -24,7 +24,7 @@ export default async function Footer({ lang }: { lang: Locale }) {
 									</ul>
 								</>
 							) : (
-								<Link href={`/${lang}${item.href}`}>{item.label}</Link>
+								<Link href={`/${lang}${item.href}`}><span>{item.label}</span></Link>
 							)}
 						</li>
 					))}
