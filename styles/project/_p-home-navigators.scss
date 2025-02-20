@@ -7,6 +7,10 @@
 
   @include g.clamp(padding-bottom, 120, 80);
 
+	& button {
+		cursor: pointer;
+	}
+
   &__copy {
     @include g.clamp(margin-top, 200, 60);
     font-family: g.$font-garamond;

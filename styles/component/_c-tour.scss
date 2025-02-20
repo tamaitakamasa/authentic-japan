@@ -8,6 +8,10 @@
   position: relative;
   overflow: hidden;
 
+	& button {
+		cursor: pointer;
+	}
+
   &__title {
     @include g.clamp(margin-top, 12, 8);
     @include g.font-clamp("2xl", "lg");
