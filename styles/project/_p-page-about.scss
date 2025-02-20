@@ -17,8 +17,8 @@
 	}
 
 	&__video {
-		@include g.clamp(margin-top, 80, 60);
-		@include g.clamp(margin-bottom, 120, 80);
+		@include g.clamp(margin-top, 120, 80);
+		@include g.clamp(margin-bottom, 60, 40);
 		padding-inline: 4vi;
 	}
 
