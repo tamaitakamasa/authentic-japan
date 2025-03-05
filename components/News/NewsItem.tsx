@@ -3,9 +3,16 @@ import { News } from '@/types';
 import NavigatorInfo from '../Navigator/NavigatorInfo';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Locale } from '@/constants/site';
 // import { Locale } from '@/constants/site';
 
-export default function NewsItem({ article }: { article: News }) {
+interface NewsItemProps {
+	lang: Locale;
+	article: News;
+}
+
+
+export default function NewsItem({ lang, article }: NewsItemProps) {
 	// console.log('featured_media:', article.featured_media);
 	return (
 		<div className="c-news">
@@ -16,7 +23,7 @@ export default function NewsItem({ article }: { article: News }) {
 				<div className="c-news__content">
 					<time className="c-news__date">{article.date}</time>
 					<h2 className="c-news__title">
-						<Link href={`/news/${article.id}`}>{article.title}</Link>
+						<Link href={`/${lang}/news/${article.id}`}>{article.title}</Link>
 					</h2>
 					{article.categories && article.categories.length > 0 && (
 						<div className="c-news__categories">

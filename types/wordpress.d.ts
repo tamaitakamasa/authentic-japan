@@ -7,7 +7,7 @@ export interface WPArticle {
 	content: {
 		rendered: string;
 	};
-	featured_media: number;
+	featured_media?: number;
 	categories: number[];
 	tags: number[];
 }

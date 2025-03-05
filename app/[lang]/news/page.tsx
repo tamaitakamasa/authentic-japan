@@ -3,6 +3,7 @@
 import { ContentHeader } from "@/components/Layout/ContentHeader";
 import NewsItem from "@/components/News/NewsItem";
 import { Locale } from "@/constants/site";
+import { useTranslations } from "@/lib/i18n";
 import { getFormattedNewsData } from "@/lib/utils";
 
 export default async function Home({
@@ -10,6 +11,7 @@ export default async function Home({
 }: {
   params: { lang: Locale };
 }) {
+	const t = useTranslations(lang);
   const newsArticles = await getFormattedNewsData(lang);
   // console.log('newsArticles:', newsArticles);
 
@@ -31,11 +33,17 @@ export default async function Home({
                 key={article.id}
                 className="p-page-news__item"
               >
-                <NewsItem article={article} />
+                <NewsItem lang={lang} article={article} />
               </div>
             ))
           ) : (
-            <p>ニュースが見つかりません。</p>
+            <p>
+              {t({
+                ja: "ニュースが見つかりません。",
+                en: "No news found.",
+                fr: "Aucune actualité trouvée.",
+              })}
+            </p>
           )}
         </div>
       </div>

@@ -159,10 +159,15 @@
 	}
 
 	.wp-block-gallery {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 40px;
 		@include g.clamp(margin-top, 60, 30);
 		@include g.clamp(margin-bottom, 60, 30);
 
 		figure {
+			margin-block: 0;
+			// max-width: 400px;
 			display: block;
 		}
 
