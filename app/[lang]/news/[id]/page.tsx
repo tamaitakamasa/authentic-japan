@@ -4,12 +4,10 @@ import { notFound } from 'next/navigation';
 import { ContentHeader } from '@/components/Layout/ContentHeader';
 import { getFormattedNewsData } from '@/lib/utils';
 import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
-import "@wordpress/block-library/build-style/style.css"
+import '@wordpress/block-library/build-style/style.css';
 // import "@wordpress/block-library/build-style/theme.css"
 
-
 export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
-
 	const newsArticles = await getFormattedNewsData(lang);
 	const article = newsArticles.find((article) => article.id === parseInt(id));
 	// console.log(newsArticles);
@@ -41,7 +39,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 						<div className="p-single-news__guides">
 							{article.guides.map((guide) => (
 								<div key={guide.id} className="p-single-news__guide">
-									<NavigatorInfo guide={guide} link lang={lang}  />
+									<NavigatorInfo guide={guide} link lang={lang} />
 								</div>
 							))}
 						</div>
@@ -49,7 +47,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 				</div>
 				{article.featured_media && <figure className="p-single-news__image">{article.featured_media && <Image src={article.featured_media.media_details.sizes['1536x1536'].source_url} alt={article.title} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>}
 				<div className="p-single-news__content">
-					<div className='c-article' dangerouslySetInnerHTML={{ __html: article.content }} />
+					<div className="c-article" dangerouslySetInnerHTML={{ __html: article.content }} />
 				</div>
 			</div>
 		</>
