@@ -84,7 +84,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 							{newsArticles.length > 0 ? (
 								newsArticles.slice(0, 3).map((article) => (
 									<div key={article.id} className="p-home-news__item">
-										<NewsItem article={article} />
+										<NewsItem lang={lang} article={article} />
 									</div>
 								))
 							) : (

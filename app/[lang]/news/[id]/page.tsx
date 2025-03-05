@@ -16,8 +16,6 @@ export default async function Page({
   const article = newsArticles.find(
     (article) => article.id === parseInt(id)
   );
-  // console.log(article);
-  // 1536x1536サイズが存在すればそれを使用、なければオリジナルURLを使用
 
   if (!article) {
     notFound();
@@ -84,17 +82,15 @@ export default async function Page({
             </div>
           )}
         </div>
-        {article.featured_media && (
+        {article.featured_media && featuredMediaPath && (
           <figure className="p-single-news__image">
-            {article.featured_media && (
-              <Image
-                src={featuredMediaPath}
-                alt={article.title}
-                fill
-                sizes="50vw"
-                style={{ objectFit: "cover" }}
-              />
-            )}
+            <Image
+              src={featuredMediaPath}
+              alt={article.title}
+              fill
+              sizes="50vw"
+              style={{ objectFit: "cover" }}
+            />
           </figure>
         )}
         <div className="p-single-news__content">
