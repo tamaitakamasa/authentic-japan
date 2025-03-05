@@ -1,0 +1,25 @@
+// project/_p-page-error.scss
+
+@use '../global' as g;
+
+.p-page-error {
+
+	padding-top: 0;
+
+	&__inner {
+		min-height: 50dvh;
+	}
+
+  &__title {
+    font-size: g.$font-size-3xl;
+  }
+
+  &__description {
+    margin-top: 48px;
+  }
+
+  &__button {
+		margin-top: 48px;
+    display: inline-block;
+  }
+}

@@ -1,4 +1,5 @@
-// import Image from 'next/image';
+// app/[lang]/news/[id]/page.tsx
+
 import { ContentHeader } from "@/components/Layout/ContentHeader";
 import NewsItem from "@/components/News/NewsItem";
 import { Locale } from "@/constants/site";
