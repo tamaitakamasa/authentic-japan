@@ -66,6 +66,7 @@
     gap: 2px;
 
     @include g.mq(md) {
+			margin-top: 2px;
       gap: 0;
     }
     & > i {
