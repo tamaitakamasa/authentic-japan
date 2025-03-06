@@ -75,7 +75,7 @@ export default function AboutSection({
 
 	// const y = useTransform(scrollYProgress, [0, 1], ["0", "30vh"]);
 	// const opacity = useTransform(scrollYProgress, [0, 0.5], [0.4, 1]);
-	const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.4]);
+	const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
 	// console.log('y:', y);
 
   // Intersection Observer を使用してアクティブなサービスアイテムを検出
