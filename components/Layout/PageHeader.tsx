@@ -3,11 +3,7 @@
 import { WPGalleryItem } from "@/types";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import useDeviceSize from "@/hooks/useDeviceSize";
 
 interface PageHeaderProps {
@@ -21,20 +17,14 @@ export function PageHeader({
   description,
   mv,
 }: PageHeaderProps) {
-  const [content, setContent] = useState<string | null>(
-    null
-  );
+  const [content, setContent] = useState<string | null>(null);
   const { isDesktop } = useDeviceSize();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"], // "ターゲットの上部"が画面の上部に来た時点を0とし、"ターゲットの上部"が画面の下部に来た時点を1とする
   });
-  const y = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ["0", "30vh"]
-  );
+  const y = useTransform(scrollYProgress, [0, 1], ["0", "30vh"]);
 
   useEffect(() => {
     if (description) {
@@ -48,9 +38,7 @@ export function PageHeader({
       ref={containerRef}
     >
       <div className="p-page__inner c-container">
-        {title && (
-          <h2 className="p-page__title">{title}</h2>
-        )}
+        {title && <h2 className="p-page__title">{title}</h2>}
         {content && (
           <p
             className="p-page__description"
@@ -62,10 +50,7 @@ export function PageHeader({
         mv.sizes &&
         mv.sizes["2048x2048"] &&
         (isDesktop ? (
-          <motion.figure
-            className="p-page__mv"
-            style={{ y }}
-          >
+          <motion.figure className="p-page__mv" style={{ y }}>
             <Image
               src={mv.sizes["2048x2048"]}
               alt=""

@@ -2,8 +2,8 @@
 
 import { WPSiteContent } from "@/types";
 import Image from "next/image";
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 interface AboutSectionItemProps {
   number: string;
@@ -67,6 +67,17 @@ export default function AboutSection({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   // console.log('activeImageIndex:', activeImageIndex);
 
+	const imageRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: imageRef,
+    offset: ["start start", "start end"], // "ターゲットの上部"が画面の上部に来た時点を0とし、"ターゲットの上部"が画面の下部に来た時点を1とする
+  });
+
+	// const y = useTransform(scrollYProgress, [0, 1], ["0", "30vh"]);
+	// const opacity = useTransform(scrollYProgress, [0, 0.5], [0.4, 1]);
+	const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.4]);
+	// console.log('y:', y);
+
   // Intersection Observer を使用してアクティブなサービスアイテムを検出
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -77,11 +88,10 @@ export default function AboutSection({
               entry.target.getAttribute("data-index")
             );
             setActiveImageIndex(index);
-            console.log("Section becoming visible:", {
-              index,
-              element: entry.target,
-            });
-            // setActiveMenuIndex(index);
+            // console.log("Section becoming visible:", {
+            //   index,
+            //   element: entry.target,
+            // });
           }
         });
       },
@@ -137,7 +147,13 @@ export default function AboutSection({
           color="blue"
         />
       </div>
-      <div className="p-page-about__image">
+      <motion.div
+        className="p-page-about__image"
+        // initial={{ opacity: 1, x: -100 }}
+        // whileInView={{ opacity: 0.4, x: 0 }}
+				ref={imageRef}
+				style={{ scale }}
+      >
         {[...Array(4)].map((_, index) => (
           <figure
             key={index}
@@ -154,7 +170,7 @@ export default function AboutSection({
             />
           </figure>
         ))}
-      </div>
+      </motion.div>
       {/* <div className="p-page-about__image">
 				<figure>
 					<Image src="/about/about_all.svg" alt="" fill unoptimized />
