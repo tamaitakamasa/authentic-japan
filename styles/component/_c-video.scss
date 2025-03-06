@@ -20,6 +20,10 @@
 		height: 60px;
 		background-color: #000000;
 		// background-color: g.$color-main;
+
+		@include g.mq(md) {
+			height: 0;
+		}
 	}
 
 	&::before {
