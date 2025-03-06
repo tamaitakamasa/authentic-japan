@@ -47,9 +47,6 @@ export default async function Page({
       ? "contain"
       : "cover";
 
-  // console.log(newsArticles);
-  // console.log(guide);
-
   if (!guide) {
     notFound();
   }
@@ -69,6 +66,7 @@ export default async function Page({
       <div className="l-contents__body p-page-navigator p-single p-single-navigator">
         <div className="p-single__header p-single-navigator__header u-full-bleed">
           <div className="p-single-navigator__profile c-container">
+						<div className="p-single-navigator__inner">
             <figure className="p-single-navigator__mv">
               {guide.mv && (
                 <Image
@@ -85,6 +83,7 @@ export default async function Page({
                 {guide.copy}
               </h2>
             )}
+						</div>
             <div className="p-single-navigator__info">
               {guide.regions && guide.regions.length > 0 && (
                 <div className="p-single-navigator__region">
