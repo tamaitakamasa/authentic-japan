@@ -116,6 +116,10 @@
     position: relative;
     aspect-ratio: 590 / 478;
     width: 100%;
+
+		@include g.mq(md) {
+			width: 150px;
+		}
   }
 
   &__navigators {
@@ -131,6 +135,10 @@
       display: flex;
       gap: 16px;
       @include g.clamp(margin-top, 24, 10);
+
+			@include g.mq(md) {
+				flex-direction: column;
+			}
     }
   }
 }
