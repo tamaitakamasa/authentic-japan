@@ -60,7 +60,7 @@ export default function Header({ lang }: { lang: Locale }) {
 					<nav className="l-drawer__navi">
 						<ul>
 							<li>
-								<Link href={`/${lang}`}><span>HOME</span></Link>
+								<Link href={`/${lang}`} onClick={toggleDrawer}><span>HOME</span></Link>
 							</li>
 							{NAVI_ITEMS.map((item, index) => (
 								<li key={index}>
