@@ -11,6 +11,10 @@
     padding-top: 0;
   }
 
+	@include g.mq(md) {
+		padding-top: 20px;
+	}
+
   &__header {
     display: flex;
     justify-content: space-between;

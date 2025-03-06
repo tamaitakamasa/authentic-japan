@@ -10,7 +10,7 @@
 
 	@include g.mq(md) {
 		height: auto;
-		padding-block: 5px;
+		padding-block: 8px;
 	}
 
 	& * {
@@ -28,8 +28,10 @@
 
 		@include g.mq(md) {
 			position: relative;
-			top: auto;
-			left: auto;
+			display: flex;
+			align-items: center;
+			top: unset;
+			left: unset;
 			transform: none;
 			width: 200px;
 		}
@@ -103,7 +105,7 @@
 		@include g.z-index(trigger);
 
 		@include g.mq(md) {
-			top: 10px;
+			top: 12px;
 			right: 16px;
 		}
 	}

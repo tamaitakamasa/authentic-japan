@@ -7,6 +7,7 @@
 
 	&__header {
 		@include g.mq(md) {
+			max-height: unset;
       aspect-ratio: unset;
 			overflow: hidden;
 
@@ -33,7 +34,7 @@
 				bottom: 0;
 				width: 120vi;
 				height: 50%;
-				margin-inline: -30px;
+				margin-inline: -50px;
 				background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4));
 			}
     }
@@ -71,8 +72,9 @@
 
     @include g.mq(md) {
 			// position: absolute;
-			bottom: 30px;
-      // max-width: 100em;
+			bottom: 40px;
+			padding-inline: 10px;
+      max-width: unset;
     }
   }
 
@@ -89,8 +91,7 @@
       align-items: center;
       position: relative;
       bottom: unset;
-      // margin-top: 20px;
-			margin-inline: -30px;
+			margin-inline: -50px;
 			padding-block: 28px;
 			background-color: #ffffff;
     }
@@ -159,8 +160,9 @@
 
     @include g.mq(md) {
       gap: 4px 8px;
-      width: 90vi;
-      justify-content: flex-start;
+      width: 80vi;
+      justify-content: center;
+      // justify-content: flex-start;
     }
   }
 
@@ -168,9 +170,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    @include g.clamp(margin-top, 48, 10);
+    @include g.clamp(margin-top, 48, 24);
 
     @include g.mq(md) {
+			margin-top: 16px;
       background-color: #999;
       border-radius: 5px;
       padding: 6px 10px;
