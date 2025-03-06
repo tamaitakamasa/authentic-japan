@@ -8,6 +8,7 @@
 	&__header {
 		@include g.mq(md) {
       aspect-ratio: unset;
+			overflow: hidden;
 
 			&::after {
 				display: none;
@@ -54,8 +55,12 @@
     text-shadow: g.$text-shadow;
 
     @include g.mq(md) {
-			position: relative;
-			bottom: unset;
+			position: absolute;
+			// position: relative;
+			top: 0;
+			// top: 50%;
+			// bottom: unset;
+			// bottom: 100px;
       // max-width: 100em;
     }
   }
@@ -73,7 +78,9 @@
       align-items: center;
       position: relative;
       bottom: unset;
-      margin-top: 20px;
+      // margin-top: 20px;
+			margin-inline: -30px;
+			padding-block: 32px;
 			background-color: #ffffff;
     }
     & * {
@@ -171,6 +178,7 @@
       @include g.mq(md) {
         line-height: 2.3;
         padding-inline: 6vw;
+				font-size: g.$font-size-sm;
       }
     }
   }
