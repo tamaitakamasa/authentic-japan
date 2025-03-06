@@ -181,7 +181,7 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 						<div className="p-page-navigator-news__items">
 							{relatedNews.map((article) => (
 								<div key={article.id} className="p-page-news__item">
-									<NewsItem article={article} />
+									<NewsItem lang={lang} article={article} />
 								</div>
 							))}
 						</div>
