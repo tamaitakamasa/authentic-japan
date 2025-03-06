@@ -8,10 +8,6 @@
   padding-bottom: 0;
 
   &__index {
-    // display: grid;
-    // place-content: center;
-    // grid-template-columns: repeat(2, 1fr);
-    // align-items: center;
     width: 100%;
     min-height: 500px;
     @include g.clamp(padding-bottom, 120, 80);
@@ -75,10 +71,14 @@
     display: flex;
     flex-direction: column;
     @include g.clamp(gap, 120, 80);
-    padding-right: g.$base-spacing;
+    // padding-right: g.$base-spacing;
+		// padding-left: g.$base-spacing;
+		padding-inline: 10vi;
     @include g.clamp(padding-bottom, 120, 80);
-    padding-left: g.$base-spacing;
-    // background-color: g.$color-main;
+
+		@include g.mq(md) {
+			padding-inline: 5vi;
+		}
   }
 
   &-slider {
