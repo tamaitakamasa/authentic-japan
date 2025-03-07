@@ -6,7 +6,7 @@ import { Locale } from "@/constants/site";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, Maximize2, Search, UserRound } from "lucide-react";
+import { MapPin, Maximize2, Minimize2, Search, UserRound } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -55,7 +55,7 @@ export default function ClientFilterComponent({
   const router = useRouter();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-	console.log(isSmallScreen);
+  console.log(isSmallScreen);
 
   // 画面サイズの監視
   useEffect(() => {
@@ -141,7 +141,11 @@ export default function ClientFilterComponent({
       <div className="fixed bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 overflow-hidden rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg backdrop-blur [&>*]:font-[Noto_Sans_JP]">
         <div className={`flex items-center justify-start gap-2`}>
           <Button size="icon" className="cursor-pointer rounded-full">
+            <Minimize2 />
+          </Button>
+          <Button className="cursor-pointer rounded-full">
             <Maximize2 />
+            <span className="text-xs">検索する</span>
           </Button>
 
           <span className="px-2 text-xs">
