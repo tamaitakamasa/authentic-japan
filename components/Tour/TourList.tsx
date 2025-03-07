@@ -26,7 +26,7 @@ export default async function TourList({
         page: 1,
         pageSize: 100,
       },
-      lang
+      lang,
     ),
     getFormattedGuideData(lang),
     getFormattedRegionData(lang),
@@ -34,20 +34,20 @@ export default async function TourList({
 
   const filteredActivities = filterActivitiesByQuery(
     activities,
-    filters
+    filters,
   );
-	const filteredActivitiesCount = filteredActivities.length;
+  const filteredActivitiesCount = filteredActivities.length;
   return (
     <>
-      <div className="absolute -top-44">
-        <ClientFilterComponent
-          lang={lang}
-          guides={guides}
-          regions={regions}
-          currentFilters={filters}
-					filteredActivitiesCount={filteredActivitiesCount}
-        />
-      </div>
+      {/* <div className="absolute -top-44"> */}
+      <ClientFilterComponent
+        lang={lang}
+        guides={guides}
+        regions={regions}
+        currentFilters={filters}
+        filteredActivitiesCount={filteredActivitiesCount}
+      />
+      {/* </div> */}
       <div className="c-tours">
         {filteredActivities.length > 0 ? (
           filteredActivities.map((activity) => (
@@ -59,7 +59,6 @@ export default async function TourList({
           ))
         ) : (
           <p>
-            {" "}
             {t({
               ja: "ツアーが見つかりません。",
               en: "No activities found.",
