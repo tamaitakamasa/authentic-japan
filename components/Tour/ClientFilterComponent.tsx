@@ -267,6 +267,16 @@ export default function ClientFilterComponent({
         <Button
           variant="ghost"
           className="cursor-pointer rounded-full"
+          onClick={() => {
+            // フィルターの状態をリセット（例えば検索キーワードなどの内部状態がある場合）
+            if (currentFilters?.search) {
+              // 検索キーワードをリセットする場合は、状態をリセットするロジックが必要
+              // 例: setSearchKeyword("");
+            }
+
+            // ページのURLをリセット（クエリパラメータを削除）
+            router.push(`/${lang}/tours`, { scroll: false });
+          }}
         >
           <span className="text-xs">
             {t({
