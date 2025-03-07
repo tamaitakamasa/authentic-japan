@@ -13,7 +13,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-// import { Separator } from "../ui/separator";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -21,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import SearchModal from "./SearchModal";
 
 interface FilterComponentProps {
   guides: Guide[];
@@ -54,7 +54,8 @@ export default function ClientFilterComponent({
   const t = useTranslations(lang);
   const router = useRouter();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  console.log(isSmallScreen);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+	console.log(isSmallScreen);
 
   // 画面サイズの監視
   useEffect(() => {
@@ -133,160 +134,167 @@ export default function ClientFilterComponent({
   // 選択されているアイテムの数を取得
   const selectedGuideCount = currentFilters?.guides?.length || 0;
   const selectedRegionCount = currentFilters?.regions?.length || 0;
+  const hasSearchTerm = !!currentFilters?.search;
 
   return (
-    <div className="fixed bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 overflow-hidden rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg backdrop-blur [&>*]:font-[Noto_Sans_JP]">
-      <div className={`flex items-center justify-start gap-2`}>
-        <Button size="icon" className="cursor-pointer rounded-full">
-          <Maximize2 />
-        </Button>
+    <>
+      <div className="fixed bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 overflow-hidden rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg backdrop-blur [&>*]:font-[Noto_Sans_JP]">
+        <div className={`flex items-center justify-start gap-2`}>
+          <Button size="icon" className="cursor-pointer rounded-full">
+            <Maximize2 />
+          </Button>
 
-        <span className="px-2 text-xs">
-          ツアー :{" "}
-          <span className="text-sm font-bold">
-            {filteredActivitiesCount}
+          <span className="px-2 text-xs">
+            ツアー :{" "}
+            <span className="text-sm font-bold">
+              {filteredActivitiesCount}
+            </span>
+            件
           </span>
-          件
-        </span>
-        <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
-        {/* ガイドフィルター */}
-        <div className="flex items-center justify-center">
-          {selectedGuideCount > 0 && <CurrentLight />}
-          <DropdownMenu>
+          <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
+          {/* ガイドフィルター */}
+          <div className="flex items-center justify-center">
+            {selectedGuideCount > 0 && <CurrentLight />}
+            <DropdownMenu>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="cursor-pointer rounded-full"
+                      >
+                        <UserRound />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="p-3">
+                    <p className="font-[Noto_Sans_JP]">
+                      ナビゲーターで絞り込む
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <DropdownMenuContent
+                align="start"
+                className="w-56 font-[Noto_Sans_JP]"
+              >
+                {guides.map((guide) => (
+                  <DropdownMenuCheckboxItem
+                    key={guide.id}
+                    checked={currentFilters?.guides?.includes(
+                      String(guide.id),
+                    )}
+                    onCheckedChange={() =>
+                      updateFilters("guides", String(guide.id))
+                    }
+                  >
+                    {guide.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* 地域フィルター */}
+          <div className="flex items-center justify-center">
+            {selectedRegionCount > 0 && <CurrentLight />}
+            <DropdownMenu>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="cursor-pointer rounded-full"
+                      >
+                        <MapPin />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="p-3">
+                    <p className="font-[Noto_Sans_JP]">
+                      地域で絞り込む
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <DropdownMenuContent
+                align="start"
+                className="w-56 font-[Noto_Sans_JP]"
+              >
+                {regions.map((region) => (
+                  <DropdownMenuCheckboxItem
+                    key={region.id}
+                    checked={currentFilters?.regions?.includes(
+                      String(region.id),
+                    )}
+                    onCheckedChange={() =>
+                      updateFilters("regions", String(region.id))
+                    }
+                  >
+                    {region.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* 検索ボタン */}
+          <div className="flex items-center justify-center">
+            {hasSearchTerm && <CurrentLight />}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="cursor-pointer rounded-full"
-                    >
-                      <UserRound />
-                    </Button>
-                  </DropdownMenuTrigger>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="cursor-pointer rounded-full"
+                    onClick={() => setIsSearchModalOpen(true)}
+                  >
+                    <Search />
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent className="p-3">
                   <p className="font-[Noto_Sans_JP]">
-                    ナビゲーターで絞り込む
+                    キーワードで絞り込む
                   </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <DropdownMenuContent
-              align="start"
-              className="w-56 font-[Noto_Sans_JP]"
-            >
-              {guides.map((guide) => (
-                <DropdownMenuCheckboxItem
-                  key={guide.id}
-                  checked={currentFilters?.guides?.includes(
-                    String(guide.id),
-                  )}
-                  onCheckedChange={() =>
-                    updateFilters("guides", String(guide.id))
-                  }
-                >
-                  {guide.name}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </div>
+
+          <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
+
+          {/* リセットボタン */}
+          <Button
+            variant="ghost"
+            className="cursor-pointer rounded-full"
+            onClick={() => {
+              // フィルターの状態をリセット
+              router.push(`/${lang}/tours`, { scroll: false });
+            }}
+          >
+            <span className="text-xs">
+              {t({
+                ja: "クリア",
+                en: "Clear",
+                fr: "Effacer",
+              })}
+            </span>
+          </Button>
         </div>
-
-        {/* 地域フィルター */}
-        <div className="flex items-center justify-center">
-          {selectedRegionCount > 0 && <CurrentLight />}
-          <DropdownMenu>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="cursor-pointer rounded-full"
-                    >
-                      <MapPin />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent className="p-3">
-                  <p className="font-[Noto_Sans_JP]">
-                    地域で絞り込む
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <DropdownMenuContent
-              align="start"
-              className="w-56 font-[Noto_Sans_JP]"
-            >
-              {regions.map((region) => (
-                <DropdownMenuCheckboxItem
-                  key={region.id}
-                  checked={currentFilters?.regions?.includes(
-                    String(region.id),
-                  )}
-                  onCheckedChange={() =>
-                    updateFilters("regions", String(region.id))
-                  }
-                >
-                  {region.name}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        {/* 検索ボタン */}
-        <div className="flex items-center justify-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="cursor-pointer rounded-full"
-                >
-                  <Search />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="p-3">
-                <p className="font-[Noto_Sans_JP]">
-                  キーワードで絞り込む
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-
-        <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
-
-        {/* リセットボタン */}
-        <Button
-          variant="ghost"
-          className="cursor-pointer rounded-full"
-          onClick={() => {
-            // フィルターの状態をリセット（例えば検索キーワードなどの内部状態がある場合）
-            if (currentFilters?.search) {
-              // 検索キーワードをリセットする場合は、状態をリセットするロジックが必要
-              // 例: setSearchKeyword("");
-            }
-
-            // ページのURLをリセット（クエリパラメータを削除）
-            router.push(`/${lang}/tours`, { scroll: false });
-          }}
-        >
-          <span className="text-xs">
-            {t({
-              ja: "クリア",
-              en: "Clear",
-              fr: "Effacer",
-            })}
-          </span>
-        </Button>
       </div>
-    </div>
+
+      {/* 検索モーダル */}
+      <SearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        currentFilters={currentFilters}
+        lang={lang}
+      />
+    </>
   );
 }
