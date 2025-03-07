@@ -1,223 +1,282 @@
-'use client';
+"use client";
 
-import { Guide, Region, ActivityFilters } from '@/types';
-import { useTranslations } from '@/lib/i18n';
-import { Locale } from '@/constants/site';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, X } from 'lucide-react';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Card, CardContent } from '@/components/ui/card';
+import { Guide, Region, ActivityFilters } from "@/types";
+import { useTranslations } from "@/lib/i18n";
+import { Locale } from "@/constants/site";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { MapPin, Maximize2, Search, UserRound } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+// import { Separator } from "../ui/separator";
+import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface FilterComponentProps {
-	guides: Guide[];
-	regions: Region[];
-	currentFilters?: ActivityFilters;
-	lang: Locale;
+  guides: Guide[];
+  regions: Region[];
+  currentFilters?: ActivityFilters;
+  lang: Locale;
+  filteredActivitiesCount: number;
 }
 
-export default function ClientFilterComponent({ guides, regions, currentFilters, lang }: FilterComponentProps) {
-	const t = useTranslations(lang);
-	const router = useRouter();
-	const [isSmallScreen, setIsSmallScreen] = useState(false);
-	const [searchKeyword, setSearchKeyword] = useState(currentFilters?.search || '');
+interface CurrentLightProps {
+  className?: string;
+}
+function CurrentLight({ className }: CurrentLightProps) {
+  return (
+    <div
+      className={cn(
+        "absolute top-0 aspect-square w-2 -translate-y-1/2 rounded-full bg-sky-500 shadow-[0_-2px_10px] shadow-sky-500",
+        className,
+      )}
+    />
+  );
+}
 
-	// 画面サイズの監視
-	useEffect(() => {
-		const checkScreenSize = () => {
-			setIsSmallScreen(window.innerWidth < 768);
-		};
-		checkScreenSize();
-		window.addEventListener('resize', checkScreenSize);
-		return () => window.removeEventListener('resize', checkScreenSize);
-	}, []);
+export default function ClientFilterComponent({
+  guides,
+  regions,
+  currentFilters,
+  lang,
+  filteredActivitiesCount,
+}: FilterComponentProps) {
+  const t = useTranslations(lang);
+  const router = useRouter();
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  console.log(isSmallScreen);
 
-	// フィルター更新のメイン関数
-	const updateFilters = useCallback(
-		(type: keyof ActivityFilters, value: string, isRemoving: boolean = false) => {
-			const searchParams = new URLSearchParams();
+  // 画面サイズの監視
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () =>
+      window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
-			// 現在のフィルターの状態をコピー
-			const currentGuides = new Set(currentFilters?.guides || []);
-			const currentRegions = new Set(currentFilters?.regions || []);
+  // フィルター更新のメイン関数
+  const updateFilters = useCallback(
+    (
+      type: keyof ActivityFilters,
+      value: string,
+      isRemoving: boolean = false,
+    ) => {
+      const searchParams = new URLSearchParams();
 
-			// フィルターの更新
-			if (type === 'guides') {
-				if (isRemoving) {
-					currentGuides.delete(value);
-				} else {
-					if (currentGuides.has(value)) {
-						currentGuides.delete(value);
-					} else {
-						currentGuides.add(value);
-					}
-				}
-			} else if (type === 'regions') {
-				if (isRemoving) {
-					currentRegions.delete(value);
-				} else {
-					if (currentRegions.has(value)) {
-						currentRegions.delete(value);
-					} else {
-						currentRegions.add(value);
-					}
-				}
-			}
+      // 現在のフィルターの状態をコピー
+      const currentGuides = new Set(currentFilters?.guides || []);
+      const currentRegions = new Set(currentFilters?.regions || []);
 
-			// URLパラメータの設定
-			if (currentGuides.size > 0) {
-				searchParams.set('guides', Array.from(currentGuides).join(','));
-			}
-			if (currentRegions.size > 0) {
-				searchParams.set('regions', Array.from(currentRegions).join(','));
-			}
-			if (type === 'search' && value) {
-				searchParams.set('search', value);
-			} else if (currentFilters?.search) {
-				searchParams.set('search', currentFilters.search);
-			}
+      // フィルターの更新
+      if (type === "guides") {
+        if (isRemoving) {
+          currentGuides.delete(value);
+        } else {
+          if (currentGuides.has(value)) {
+            currentGuides.delete(value);
+          } else {
+            currentGuides.add(value);
+          }
+        }
+      } else if (type === "regions") {
+        if (isRemoving) {
+          currentRegions.delete(value);
+        } else {
+          if (currentRegions.has(value)) {
+            currentRegions.delete(value);
+          } else {
+            currentRegions.add(value);
+          }
+        }
+      }
 
-			// URLを更新
-			router.push(`/${lang}/tours?${searchParams.toString()}`, {
-				scroll: false
-			});
-		},
-		[currentFilters, lang, router]
-	);
+      // URLパラメータの設定
+      if (currentGuides.size > 0) {
+        searchParams.set(
+          "guides",
+          Array.from(currentGuides).join(","),
+        );
+      }
+      if (currentRegions.size > 0) {
+        searchParams.set(
+          "regions",
+          Array.from(currentRegions).join(","),
+        );
+      }
+      if (type === "search" && value) {
+        searchParams.set("search", value);
+      } else if (currentFilters?.search) {
+        searchParams.set("search", currentFilters.search);
+      }
 
-	// 検索フォームのサブミット
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		updateFilters('search', searchKeyword);
-	};
+      // URLを更新
+      router.push(`/${lang}/tours?${searchParams.toString()}`, {
+        scroll: false,
+      });
+    },
+    [currentFilters, lang, router],
+  );
 
-	// フィルターをクリア
-	const handleClearFilters = useCallback(() => {
-		setSearchKeyword('');
-		router.push(`/${lang}/tours`, { scroll: false });
-	}, [lang, router]);
+  // 選択されているアイテムの数を取得
+  const selectedGuideCount = currentFilters?.guides?.length || 0;
+  const selectedRegionCount = currentFilters?.regions?.length || 0;
 
-	// 選択されているアイテムの数を取得
-	const selectedGuideCount = currentFilters?.guides?.length || 0;
-	const selectedRegionCount = currentFilters?.regions?.length || 0;
+  return (
+    <div className="fixed bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 overflow-hidden rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg backdrop-blur [&>*]:font-[Noto_Sans_JP]">
+      <div className={`flex items-center justify-start gap-2`}>
+        <Button size="icon" className="cursor-pointer rounded-full">
+          <Maximize2 />
+        </Button>
 
-	return (
-		<Card className="fixed z-10 bottom-4 md:relative md:bottom-auto font-[Noto_Sans_JP]">
-			<CardContent className="p-4">
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className={`flex ${isSmallScreen ? 'flex-col' : 'flex-row'} gap-2 justify-start`}>
-						<div className="flex gap-2">
-							{/* ガイドフィルター */}
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button variant="outline">
-										{t({
-											ja: 'ガイド',
-											en: 'Guide',
-											fr: 'Guide'
-										})}
-										{selectedGuideCount > 0 && ` (${selectedGuideCount})`}
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
-									{guides.map((guide) => (
-										<DropdownMenuCheckboxItem key={guide.id} checked={currentFilters?.guides?.includes(String(guide.id))} onCheckedChange={() => updateFilters('guides', String(guide.id))}>
-											{guide.name}
-										</DropdownMenuCheckboxItem>
-									))}
-								</DropdownMenuContent>
-							</DropdownMenu>
+        <span className="px-2 text-xs">
+          ツアー :{" "}
+          <span className="text-sm font-bold">
+            {filteredActivitiesCount}
+          </span>
+          件
+        </span>
+        <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
+        {/* ガイドフィルター */}
+        <div className="flex items-center justify-center">
+          {selectedGuideCount > 0 && <CurrentLight />}
+          <DropdownMenu>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="cursor-pointer rounded-full"
+                    >
+                      <UserRound />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent className="p-3">
+                  <p className="font-[Noto_Sans_JP]">
+                    ナビゲーターで絞り込む
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <DropdownMenuContent
+              align="start"
+              className="w-56 font-[Noto_Sans_JP]"
+            >
+              {guides.map((guide) => (
+                <DropdownMenuCheckboxItem
+                  key={guide.id}
+                  checked={currentFilters?.guides?.includes(
+                    String(guide.id),
+                  )}
+                  onCheckedChange={() =>
+                    updateFilters("guides", String(guide.id))
+                  }
+                >
+                  {guide.name}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-							{/* 地域フィルター */}
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button variant="outline">
-										{t({
-											ja: '地域',
-											en: 'Region',
-											fr: 'Région'
-										})}
-										{selectedRegionCount > 0 && ` (${selectedRegionCount})`}
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
-									{regions.map((region) => (
-										<DropdownMenuCheckboxItem key={region.id} checked={currentFilters?.regions?.includes(String(region.id))} onCheckedChange={() => updateFilters('regions', String(region.id))}>
-											{region.name}
-										</DropdownMenuCheckboxItem>
-									))}
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</div>
-						<div className="flex gap-2 flex-grow">
-							{/* 検索フィールド */}
-							<div className="relative flex-grow">
-								<Input
-									placeholder={t({
-										ja: 'キーワードで検索',
-										en: 'Search by keyword',
-										fr: 'Rechercher par mot-clé'
-									})}
-									value={searchKeyword}
-									onChange={(e) => setSearchKeyword(e.target.value)}
-									className="pl-10 pr-4 py-2 w-full"
-								/>
-								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-							</div>
+        {/* 地域フィルター */}
+        <div className="flex items-center justify-center">
+          {selectedRegionCount > 0 && <CurrentLight />}
+          <DropdownMenu>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="cursor-pointer rounded-full"
+                    >
+                      <MapPin />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent className="p-3">
+                  <p className="font-[Noto_Sans_JP]">
+                    地域で絞り込む
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <DropdownMenuContent
+              align="start"
+              className="w-56 font-[Noto_Sans_JP]"
+            >
+              {regions.map((region) => (
+                <DropdownMenuCheckboxItem
+                  key={region.id}
+                  checked={currentFilters?.regions?.includes(
+                    String(region.id),
+                  )}
+                  onCheckedChange={() =>
+                    updateFilters("regions", String(region.id))
+                  }
+                >
+                  {region.name}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-							{/* 検索ボタン */}
-							<Button type="submit" variant="default">
-								{t({
-									ja: '検索',
-									en: 'Search',
-									fr: 'Rechercher'
-								})}
-							</Button>
-						</div>
+        {/* 検索ボタン */}
+        <div className="flex items-center justify-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="cursor-pointer rounded-full"
+                >
+                  <Search />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="p-3">
+                <p className="font-[Noto_Sans_JP]">
+                  キーワードで絞り込む
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
-						{/* クリアボタン */}
-						{(selectedGuideCount > 0 || selectedRegionCount > 0 || currentFilters?.search) && (
-							<Button type="button" variant="outline" onClick={handleClearFilters} className="gap-2">
-								<X className="h-4 w-4" />
-								{t({
-									ja: 'クリア',
-									en: 'Clear',
-									fr: 'Effacer'
-								})}
-							</Button>
-						)}
-					</div>
+        <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
 
-					{/* 選択されたフィルターのバッジ表示 */}
-					{(selectedGuideCount > 0 || selectedRegionCount > 0) && (
-						<div className="flex flex-wrap gap-2 mt-4">
-							{currentFilters?.guides?.map((guideId) => {
-								const guide = guides.find((g) => String(g.id) === guideId);
-								if (!guide) return null;
-								return (
-									<Badge key={guideId} variant="secondary" className="gap-1 py-1 px-3">
-										{guide.name}
-										<X size={14} className="cursor-pointer ml-1" onClick={() => updateFilters('guides', String(guide.id), true)} />
-									</Badge>
-								);
-							})}
-							{currentFilters?.regions?.map((regionId) => {
-								const region = regions.find((r) => String(r.id) === regionId);
-								if (!region) return null;
-								return (
-									<Badge key={regionId} variant="secondary" className="gap-1 py-1 px-3">
-										{region.name}
-										<X size={14} className="cursor-pointer ml-1" onClick={() => updateFilters('regions', String(region.id), true)} />
-									</Badge>
-								);
-							})}
-						</div>
-					)}
-				</form>
-			</CardContent>
-		</Card>
-	);
+        {/* リセットボタン */}
+        <Button
+          variant="ghost"
+          className="cursor-pointer rounded-full"
+        >
+          <span className="text-xs">
+            {t({
+              ja: "クリア",
+              en: "Clear",
+              fr: "Effacer",
+            })}
+          </span>
+        </Button>
+      </div>
+    </div>
+  );
 }

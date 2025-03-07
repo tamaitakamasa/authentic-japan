@@ -28,7 +28,6 @@
       - news/
         - [id]/
           - page.tsx
-          - not-found.tsx
         - page.tsx
       - _tour/
         - page.tsx
@@ -36,9 +35,9 @@
       - navigator/
         - [id]/
           - page.tsx
-          - not-found.tsx
         - page.tsx
       - page.tsx
+      - not-found.tsx
   - bun.lockb (binary file)
   - postcss.config.mjs
   - constants/
@@ -53,7 +52,9 @@
       - card.tsx
       - scroll-area.tsx
       - label.tsx
+      - tooltip.tsx
       - badge.tsx
+      - separator.tsx
       - button.tsx
       - checkbox.tsx
       - dropdown-menu.tsx
@@ -84,6 +85,7 @@
     - Navigator/
       - NavigatorInfo.tsx
       - NavigatorCard.tsx
+      - NavigatorList.tsx
       - NavigatorItem.tsx
     - Tour/
       - ClientFilteredActivities.tsx
@@ -101,6 +103,8 @@
     - LanguageSwitcher.tsx
   - .prettierrc.json
   - package.json
+  - hooks/
+    - useDeviceSize.ts
   - .clinerules
   - lib/
     - debounce.ts
@@ -220,7 +224,7 @@ export interface WPArticle {
 	content: {
 		rendered: string;
 	};
-	featured_media: number;
+	featured_media?: number;
 	categories: number[];
 	tags: number[];
 }
@@ -694,47 +698,66 @@ export interface Guide {
 ### app/[lang]/tours/page.tsx
 
 ```
-import { Locale } from '@/constants/site';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-import { getWPSiteOptions } from '@/lib/fetchData';
-import { Suspense } from 'react';
-import TourList from '@/components/Tour/TourList';
-import { ActivityFilters } from '@/types/activity';
-import { PageHeader } from '@/components/Layout/PageHeader';
+import { Locale } from "@/constants/site";
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+import { getWPSiteOptions } from "@/lib/fetchData";
+import { Suspense } from "react";
+import TourList from "@/components/Tour/TourList";
+import { ActivityFilters } from "@/types/activity";
+import { PageHeader } from "@/components/Layout/PageHeader";
 
-function parseQueryParam(value: string | string[] | undefined): string[] {
-	if (!value) return [];
-	if (Array.isArray(value)) return value;
-	return value.split(',').filter(Boolean);
+function parseQueryParam(
+  value: string | string[] | undefined
+): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  return value.split(",").filter(Boolean);
 }
 
-function parseSearchParam(value: string | string[] | undefined): string | undefined {
-	if (!value) return undefined;
-	if (Array.isArray(value)) return value[0];
-	return value;
+function parseSearchParam(
+  value: string | string[] | undefined
+): string | undefined {
+  if (!value) return undefined;
+  if (Array.isArray(value)) return value[0];
+  return value;
 }
 
-export default async function Page({ params: { lang }, searchParams }: { params: { lang: Locale }; searchParams: { [key: string]: string | string[] | undefined } }) {
-	const filters: ActivityFilters = {
-		guides: parseQueryParam(searchParams.guides),
-		regions: parseQueryParam(searchParams.regions),
-		search: parseSearchParam(searchParams.search)
-	};
-	// console.log('filters:', filters);
+export default async function Page({
+  params: { lang },
+  searchParams,
+}: {
+  params: { lang: Locale };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const filters: ActivityFilters = {
+    guides: parseQueryParam(searchParams.guides),
+    regions: parseQueryParam(searchParams.regions),
+    search: parseSearchParam(searchParams.search),
+  };
+  // console.log('filters:', filters);
 
-	const siteOptions = await getWPSiteOptions(lang);
+  const siteOptions = await getWPSiteOptions(lang);
 
-	return (
-		<>
-			<ContentHeader title="TOURS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'TOURS' }]} lang={lang} />
-			<div className="l-contents__body p-page p-page-tours">
-				<PageHeader mv={siteOptions.tours_mv} />
-				<Suspense fallback={<p>Loading...</p>}>
-					<TourList lang={lang} filters={filters} />
-				</Suspense>
-			</div>
-		</>
-	);
+  return (
+    <>
+      <ContentHeader
+        title="TOURS"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "TOURS" },
+        ]}
+        lang={lang}
+      />
+      <div className="l-contents__body p-page p-page-tours">
+        <PageHeader mv={siteOptions.tours_mv} />
+        <div className="p-page-tours__content relative">
+          <Suspense fallback={<p>Loading...</p>}>
+            <TourList lang={lang} filters={filters} />
+          </Suspense>
+        </div>
+      </div>
+    </>
+  );
 }
 
 ```
@@ -763,105 +786,108 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 ### app/[lang]/global.css
 
 ```
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
+@plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	--background: hsl(0 0% 100%);
-	--foreground: hsl(240 10% 3.9%);
-	--card: hsl(0 0% 100%);
-	--card-foreground: hsl(240 10% 3.9%);
-	--popover: hsl(0 0% 100%);
-	--popover-foreground: hsl(240 10% 3.9%);
-	--primary: hsl(240 5.9% 10%);
-	--primary-foreground: hsl(0 0% 98%);
-	--secondary: hsl(240 4.8% 95.9%);
-	--secondary-foreground: hsl(240 5.9% 10%);
-	--muted: hsl(240 4.8% 95.9%);
-	--muted-foreground: hsl(240 3.8% 46.1%);
-	--accent: hsl(240 4.8% 95.9%);
-	--accent-foreground: hsl(240 5.9% 10%);
-	--destructive: hsl(0 84.2% 60.2%);
-	--destructive-foreground: hsl(0 0% 98%);
-	--border: hsl(240 5.9% 90%);
-	--input: hsl(240 5.9% 90%);
-	--ring: hsl(240 10% 3.9%);
-	--chart-1: hsl(12 76% 61%);
-	--chart-2: hsl(173 58% 39%);
-	--chart-3: hsl(197 37% 24%);
-	--chart-4: hsl(43 74% 66%);
-	--chart-5: hsl(27 87% 67%);
-	--radius: 0.6rem;
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(240 10% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(240 10% 3.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(240 10% 3.9%);
+  --primary: hsl(240 5.9% 10%);
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: hsl(240 4.8% 95.9%);
+  --secondary-foreground: hsl(240 5.9% 10%);
+  --muted: hsl(240 4.8% 95.9%);
+  --muted-foreground: hsl(240 3.8% 46.1%);
+  --accent: hsl(240 4.8% 95.9%);
+  --accent-foreground: hsl(240 5.9% 10%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 5.9% 90%);
+  --input: hsl(240 5.9% 90%);
+  --ring: hsl(240 10% 3.9%);
+  --chart-1: hsl(12 76% 61%);
+  --chart-2: hsl(173 58% 39%);
+  --chart-3: hsl(197 37% 24%);
+  --chart-4: hsl(43 74% 66%);
+  --chart-5: hsl(27 87% 67%);
+  --radius: 0.6rem;
 }
 
 .dark {
-	--background: hsl(240 10% 3.9%);
-	--foreground: hsl(0 0% 98%);
-	--card: hsl(240 10% 3.9%);
-	--card-foreground: hsl(0 0% 98%);
-	--popover: hsl(240 10% 3.9%);
-	--popover-foreground: hsl(0 0% 98%);
-	--primary: hsl(0 0% 98%);
-	--primary-foreground: hsl(240 5.9% 10%);
-	--secondary: hsl(240 3.7% 15.9%);
-	--secondary-foreground: hsl(0 0% 98%);
-	--muted: hsl(240 3.7% 15.9%);
-	--muted-foreground: hsl(240 5% 64.9%);
-	--accent: hsl(240 3.7% 15.9%);
-	--accent-foreground: hsl(0 0% 98%);
-	--destructive: hsl(0 62.8% 30.6%);
-	--destructive-foreground: hsl(0 0% 98%);
-	--border: hsl(240 3.7% 15.9%);
-	--input: hsl(240 3.7% 15.9%);
-	--ring: hsl(240 4.9% 83.9%);
-	--chart-1: hsl(220 70% 50%);
-	--chart-2: hsl(160 60% 45%);
-	--chart-3: hsl(30 80% 55%);
-	--chart-4: hsl(280 65% 60%);
-	--chart-5: hsl(340 75% 55%);
+  --background: hsl(240 10% 3.9%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(240 10% 3.9%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(240 10% 3.9%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: hsl(0 0% 98%);
+  --primary-foreground: hsl(240 5.9% 10%);
+  --secondary: hsl(240 3.7% 15.9%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --muted: hsl(240 3.7% 15.9%);
+  --muted-foreground: hsl(240 5% 64.9%);
+  --accent: hsl(240 3.7% 15.9%);
+  --accent-foreground: hsl(0 0% 98%);
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 3.7% 15.9%);
+  --input: hsl(240 3.7% 15.9%);
+  --ring: hsl(240 4.9% 83.9%);
+  --chart-1: hsl(220 70% 50%);
+  --chart-2: hsl(160 60% 45%);
+  --chart-3: hsl(30 80% 55%);
+  --chart-4: hsl(280 65% 60%);
+  --chart-5: hsl(340 75% 55%);
 }
 
 @theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
-	--color-card: var(--card);
-	--color-card-foreground: var(--card-foreground);
-	--color-popover: var(--popover);
-	--color-popover-foreground: var(--popover-foreground);
-	--color-primary: var(--primary);
-	--color-primary-foreground: var(--primary-foreground);
-	--color-secondary: var(--secondary);
-	--color-secondary-foreground: var(--secondary-foreground);
-	--color-muted: var(--muted);
-	--color-muted-foreground: var(--muted-foreground);
-	--color-accent: var(--accent);
-	--color-accent-foreground: var(--accent-foreground);
-	--color-destructive: var(--destructive);
-	--color-destructive-foreground: var(--destructive-foreground);
-	--color-border: var(--border);
-	--color-input: var(--input);
-	--color-ring: var(--ring);
-	--color-chart-1: var(--chart-1);
-	--color-chart-2: var(--chart-2);
-	--color-chart-3: var(--chart-3);
-	--color-chart-4: var(--chart-4);
-	--color-chart-5: var(--chart-5);
-	--radius-sm: calc(var(--radius) - 4px);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-lg: var(--radius);
-	--radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(
+    --destructive-foreground
+  );
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
-	* {
-		@apply border-border outline-ring/50;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 /* @theme {
@@ -1497,19 +1523,21 @@ export default async function Home({ params: { lang } }: { params: { lang: Local
 
 ```
 // import Image from 'next/image';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-import { PageHeader } from '@/components/Layout/PageHeader';
-import { VideoPlayer } from '@/components/VideoPlayer';
-import { Locale } from '@/constants/site';
-import { getWPSiteOptions } from '@/lib/fetchData';
-import { Metadata } from 'next';
-import AboutSection from '@/components/About/AboutSection';
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+import { PageHeader } from "@/components/Layout/PageHeader";
+import { VideoPlayer } from "@/components/VideoPlayer";
+import { Locale } from "@/constants/site";
+import { getWPSiteOptions } from "@/lib/fetchData";
+import { Metadata } from "next";
+import AboutSection from "@/components/About/AboutSection";
 
 type Props = {
-  params: { lang: Locale }
-}
+  params: { lang: Locale };
+};
 
-export async function generateMetadata({ params: { lang } }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params: { lang },
+}: Props): Promise<Metadata> {
   return {
     // タイトルだけをオーバーライド
     // layout.tsxで設定したテンプレートが適用される
@@ -1527,23 +1555,37 @@ export async function generateMetadata({ params: { lang } }: Props): Promise<Met
   };
 }
 
-export default async function AboutPage({ params: { lang } }: { params: { lang: Locale } }) {
-	const siteOptions = await getWPSiteOptions(lang);
+export default async function AboutPage({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
+  const siteOptions = await getWPSiteOptions(lang);
 
-	return (
-		<>
-			<ContentHeader title="ABOUT US" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'ABOUT US' }]} lang={lang} />
-			<div className="l-contents__body p-page p-page-about">
-				<PageHeader description={siteOptions.about_description} mv={siteOptions.about_mv} />
-				{siteOptions.about_video && (
-					<div className="p-page-about__video">
-						<VideoPlayer videoUrl={siteOptions.about_video} />
-					</div>
-				)}
-				<AboutSection siteOptions={siteOptions} />
-			</div>
-		</>
-	);
+  return (
+    <>
+      <ContentHeader
+        title="ABOUT US"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "ABOUT US" },
+        ]}
+        lang={lang}
+      />
+      <div className="l-contents__body p-page p-page-about">
+        <PageHeader
+          description={siteOptions.about_description}
+          mv={siteOptions.about_mv}
+        />
+        {siteOptions.about_video && (
+          <div className="p-page-about__video">
+            <VideoPlayer videoUrl={siteOptions.about_video} />
+          </div>
+        )}
+        <AboutSection siteOptions={siteOptions} />
+      </div>
+    </>
+  );
 }
 
 ```
@@ -1551,98 +1593,146 @@ export default async function AboutPage({ params: { lang } }: { params: { lang: 
 ### app/[lang]/region/page.tsx
 
 ```
-import Image from 'next/image';
-import { Locale } from '@/constants/site';
+import Image from "next/image";
+import { Locale } from "@/constants/site";
 // import { useTranslations } from '@/lib/i18n';
-import { getFormattedGuideData, getFormattedRegionData, getGuidesByRegion } from '@/lib/utils';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-import { getWPSiteOptions } from '@/lib/fetchData';
-import { Button } from '@/components/Button';
-import { RegionSlider } from '@/components/Region/RegionSlider';
-import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
-import { PageHeader } from '@/components/Layout/PageHeader';
+import {
+  getFormattedGuideData,
+  getFormattedRegionData,
+  getGuidesByRegion,
+} from "@/lib/utils";
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+import { getWPSiteOptions } from "@/lib/fetchData";
+import { Button } from "@/components/Button";
+import { RegionSlider } from "@/components/Region/RegionSlider";
+import NavigatorInfo from "@/components/Navigator/NavigatorInfo";
+import { PageHeader } from "@/components/Layout/PageHeader";
 
-export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
-	// const t = useTranslations(lang);
-	const regions = await getFormattedRegionData(lang);
-	const siteOptions = await getWPSiteOptions(lang);
-	const guides = await getFormattedGuideData(lang);
+export default async function Page({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
+  // const t = useTranslations(lang);
+  const regions = await getFormattedRegionData(lang);
+  const siteOptions = await getWPSiteOptions(lang);
+  const guides = await getFormattedGuideData(lang);
 
-	return (
-		<>
-			<ContentHeader title="REGIONS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'REGIONS' }]} lang={lang} />
-			<div className="l-contents__body p-page p-page-region">
-				<PageHeader description={siteOptions.regions_description} mv={siteOptions.regions_mv} />
-				<div className="p-page-region__index">
-					<figure className="p-page-region__map">
-						<Image src="/region/map.svg" alt="" fill unoptimized />
-					</figure>
-					<ul className="p-page-region__list">
-						{regions &&
-							regions.length > 0 &&
-							regions.map((region, index) => (
-								<li key={index}>
-									<a href={`#region${region.id}`}>
-										<i className="c-pin"></i>
-										<span>{region.name}</span>
-									</a>
-								</li>
-							))}
-					</ul>
-				</div>
-				<div className="p-page-region__items u-full-bleed">
-					{regions.length > 0 &&
-						regions.map((region, index) => {
-							const regionGuides = getGuidesByRegion(guides, region.id);
-							return (
-								<div key={index} id={`region${region.id}`} className="p-page-region__item">
-									<div className="c-region">
-										{region.gallery && (
-											<div className="c-region__gallery">
-												<RegionSlider images={region.gallery} />
-											</div>
-										)}
-										<div className="c-region__inner">
-											<div className="c-region__content">
-												<h2 className="c-region__name">{region.name}</h2>
-												<div className="c-region__description">
-													<p dangerouslySetInnerHTML={{ __html: region.description || '' }} />
-												</div>
-											</div>
-											<div className="c-region__locale">
-												<figure className="c-region__map">
-													<Image src="/region/map_sample.svg" alt="" fill unoptimized />
-												</figure>
-												{region.access && (
-													<div className="c-region__access">
-														<Button href={`/${lang}/tour`} label="ACCESS" />
-													</div>
-												)}
-											</div>
-										</div>
-										{regionGuides.length > 0 && (
-											<div className="c-region__navigators">
-												<h3 className="c-region__navigators-title">NAVIGATORS</h3>
-												<div className="c-region__navigators-list">
-													{regionGuides.map((guide) => (
-														<div key={guide.id} className="c-region__navigator">
-															<NavigatorInfo guide={guide} lang={lang} link />
-														</div>
-													))}
-												</div>
-											</div>
-										)}
-									</div>
-								</div>
-							);
-						})}
-				</div>
-				{/* <figure className="p-page-region__mv u-full-bleed">
+  return (
+    <>
+      <ContentHeader
+        title="REGIONS"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "REGIONS" },
+        ]}
+        lang={lang}
+      />
+      <div className="l-contents__body p-page p-page-region">
+        <PageHeader
+          description={siteOptions.regions_description}
+          mv={siteOptions.regions_mv}
+        />
+        <div className="p-page-region__index">
+          <figure className="p-page-region__map">
+            <Image src="/region/map.svg" alt="" fill unoptimized />
+          </figure>
+          <ul className="p-page-region__list">
+            {regions &&
+              regions.length > 0 &&
+              regions.map((region, index) => (
+                <li key={index}>
+                  <a href={`#region${region.id}`}>
+                    <i className="c-pin"></i>
+                    <span>{region.name}</span>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </div>
+        <div className="p-page-region__items u-full-bleed">
+          {regions.length > 0 &&
+            regions.map((region, index) => {
+              const regionGuides = getGuidesByRegion(
+                guides,
+                region.id
+              );
+              return (
+                <div
+                  key={index}
+                  id={`region${region.id}`}
+                  className="p-page-region__item"
+                >
+                  <div className="c-region">
+                    {region.gallery && (
+                      <div className="c-region__gallery">
+                        <RegionSlider images={region.gallery} />
+                      </div>
+                    )}
+                    <div className="c-region__inner">
+                      <div className="c-region__content">
+                        <h2 className="c-region__name">
+                          {region.name}
+                        </h2>
+                        <div className="c-region__description">
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: region.description || "",
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="c-region__locale">
+                        <figure className="c-region__map">
+                          <Image
+                            src="/region/map_sample.svg"
+                            alt=""
+                            fill
+                            unoptimized
+                          />
+                        </figure>
+                        {region.access && (
+                          <div className="c-region__access">
+                            <Button
+                              href={`/${lang}/tour`}
+                              label="ACCESS"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {regionGuides.length > 0 && (
+                      <div className="c-region__navigators">
+                        <h3 className="c-region__navigators-title">
+                          NAVIGATORS
+                        </h3>
+                        <div className="c-region__navigators-list">
+                          {regionGuides.map((guide) => (
+                            <div
+                              key={guide.id}
+                              className="c-region__navigator"
+                            >
+                              <NavigatorInfo
+                                guide={guide}
+                                lang={lang}
+                                link
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+        {/* <figure className="p-page-region__mv u-full-bleed">
 					<Image src={regionsPage.mv.sizes['1536x1536']} alt="" fill />
 				</figure> */}
-			</div>
-		</>
-	);
+      </div>
+    </>
+  );
 }
 
 ```
@@ -1650,74 +1740,111 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 ### app/[lang]/news/[id]/page.tsx
 
 ```
-import Image from 'next/image';
-import { Locale } from '@/constants/site';
-import { notFound } from 'next/navigation';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-import { getFormattedNewsData } from '@/lib/utils';
-import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
-import '@wordpress/block-library/build-style/style.css';
+import Image from "next/image";
+import { Locale } from "@/constants/site";
+import { notFound } from "next/navigation";
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+import { getFormattedNewsData } from "@/lib/utils";
+import NavigatorInfo from "@/components/Navigator/NavigatorInfo";
+// import '@wordpress/block-library/build-style/style.css';
 // import "@wordpress/block-library/build-style/theme.css"
 
-export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
-	const newsArticles = await getFormattedNewsData(lang);
-	const article = newsArticles.find((article) => article.id === parseInt(id));
-	// console.log(newsArticles);
+export default async function Page({
+  params: { lang, id },
+}: {
+  params: { lang: Locale; id: string };
+}) {
+  const newsArticles = await getFormattedNewsData(lang);
+  const article = newsArticles.find(
+    (article) => article.id === parseInt(id)
+  );
 
-	if (!article) {
-		notFound();
-	}
+  if (!article) {
+    notFound();
+  }
 
-	return (
-		<>
-			<ContentHeader title="NEWS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NEWS', href: '/news' }, { label: 'NEWS' }]} lang={lang} />
-
-			<div className="l-contents__body p-single p-single--no-header p-single-news">
-				<div className="p-single-news__header">
-					<time className="p-single-news__date" dateTime={article.date}>
-						{article.date}
-					</time>
-					<h2 className="p-single-news__title">{article.title}</h2>
-					{article.categories && article.categories.length > 0 && (
-						<div className="p-single-news__categories">
-							{article.categories.map((category) => (
-								<span key={category.id} className="p-single-news__category c-taxonomy">
-									{category.name}
-								</span>
-							))}
-						</div>
-					)}
-					{article.guides && article.guides.length > 0 && (
-						<div className="p-single-news__guides">
-							{article.guides.map((guide) => (
-								<div key={guide.id} className="p-single-news__guide">
-									<NavigatorInfo guide={guide} link lang={lang} />
-								</div>
-							))}
-						</div>
-					)}
-				</div>
-				{article.featured_media && <figure className="p-single-news__image">{article.featured_media && <Image src={article.featured_media.media_details.sizes['1536x1536'].source_url} alt={article.title} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>}
-				<div className="p-single-news__content">
-					<div className="c-article" dangerouslySetInnerHTML={{ __html: article.content }} />
-				</div>
-			</div>
-		</>
-	);
-}
-
-```
-
-### app/[lang]/news/[id]/not-found.tsx
-
-```
-
-export default function NotFound() {
+  // 1536x1536サイズが存在すればそれを使用、なければオリジナルURLを使用
+  const featuredMediaPath = article.featured_media
+    ?.media_details?.sizes?.["1536x1536"]
+    ? article.featured_media.media_details.sizes[
+        "1536x1536"
+      ].source_url
+    : article.featured_media?.source_url;
+  console.log("featuredMediaPath:", featuredMediaPath);
 
   return (
-    <div className="">
-			404 not found
-    </div>
+    <>
+      <ContentHeader
+        title="NEWS"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "NEWS", href: "/news" },
+          { label: "NEWS DETAIL" },
+        ]}
+        lang={lang}
+      />
+      <div className="l-contents__body p-single p-single--no-header p-single-news">
+        <div className="p-single-news__header">
+          <time
+            className="p-single-news__date"
+            dateTime={article.date}
+          >
+            {article.date}
+          </time>
+          <h2 className="p-single-news__title">
+            {article.title}
+          </h2>
+          {article.categories &&
+            article.categories.length > 0 && (
+              <div className="p-single-news__categories">
+                {article.categories.map((category) => (
+                  <span
+                    key={category.id}
+                    className="p-single-news__category c-taxonomy"
+                  >
+                    {category.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          {article.guides && article.guides.length > 0 && (
+            <div className="p-single-news__guides">
+              {article.guides.map((guide) => (
+                <div
+                  key={guide.id}
+                  className="p-single-news__guide"
+                >
+                  <NavigatorInfo
+                    guide={guide}
+                    link
+                    lang={lang}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {article.featured_media && featuredMediaPath && (
+          <figure className="p-single-news__image">
+            <Image
+              src={featuredMediaPath}
+              alt={article.title}
+              fill
+              sizes="50vw"
+              style={{ objectFit: "cover" }}
+            />
+          </figure>
+        )}
+        <div className="p-single-news__content">
+          <div
+            className="c-article"
+            dangerouslySetInnerHTML={{
+              __html: article.content,
+            }}
+          />
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -1726,10 +1853,12 @@ export default function NotFound() {
 ### app/[lang]/news/page.tsx
 
 ```
-// import Image from 'next/image';
+// app/[lang]/news/[id]/page.tsx
+
 import { ContentHeader } from "@/components/Layout/ContentHeader";
 import NewsItem from "@/components/News/NewsItem";
 import { Locale } from "@/constants/site";
+import { useTranslations } from "@/lib/i18n";
 import { getFormattedNewsData } from "@/lib/utils";
 
 export default async function Home({
@@ -1737,6 +1866,7 @@ export default async function Home({
 }: {
   params: { lang: Locale };
 }) {
+	const t = useTranslations(lang);
   const newsArticles = await getFormattedNewsData(lang);
   // console.log('newsArticles:', newsArticles);
 
@@ -1758,11 +1888,17 @@ export default async function Home({
                 key={article.id}
                 className="p-page-news__item"
               >
-                <NewsItem article={article} />
+                <NewsItem lang={lang} article={article} />
               </div>
             ))
           ) : (
-            <p>ニュースが見つかりません。</p>
+            <p>
+              {t({
+                ja: "ニュースが見つかりません。",
+                en: "No news found.",
+                fr: "Aucune actualité trouvée.",
+              })}
+            </p>
           )}
         </div>
       </div>
@@ -1945,125 +2081,240 @@ export default async function RootLayout({ children, params: { lang } }: { child
 ### app/[lang]/navigator/[id]/page.tsx
 
 ```
-import Image from 'next/image';
-import { Locale } from '@/constants/site';
-// import { useTranslations } from '@/lib/i18n';
-import { notFound } from 'next/navigation';
-import { getFormattedActivities, getFormattedGuideData, getFormattedNewsData } from '@/lib/utils';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-import { TourItem } from '@/components/Tour/TourItem';
-import Link from 'next/link';
-// import { fetchNewsArticles } from '@/lib/fetchData';
-// import NavigatorInfo from '@/components/Navigator/NavigatorInfo';
-import NewsItem from '@/components/News/NewsItem';
-import { useTranslations } from '@/lib/i18n';
+import Image from "next/image";
+import { Locale } from "@/constants/site";
+import { notFound } from "next/navigation";
+import {
+  getFormattedActivities,
+  getFormattedGuideData,
+  getFormattedNewsData,
+} from "@/lib/utils";
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+import { TourItem } from "@/components/Tour/TourItem";
+import Link from "next/link";
+import NewsItem from "@/components/News/NewsItem";
+import { useTranslations } from "@/lib/i18n";
 
-export default async function Page({ params: { lang, id } }: { params: { lang: Locale; id: string } }) {
-	const t = useTranslations(lang);
-	const guides = await getFormattedGuideData(lang);
-	const otherGuides = guides.filter((g) => g.id !== parseInt(id));
-	const guide = guides.find((g) => g.id === parseInt(id));
-	const activities = await getFormattedActivities({ page: 1, pageSize: 10 }, lang);
-	const newsArticles = await getFormattedNewsData(lang);
-	const filteredActivities = guide ? activities.filter((activity) => activity.guideIds?.includes(guide.id)) : [];
-	const relatedNews = guide ? newsArticles.filter((news) => news.guides?.some((g) => g.id === guide.id)) : [];
+export default async function Page({
+  params: { lang, id },
+}: {
+  params: { lang: Locale; id: string };
+}) {
+  const t = useTranslations(lang);
+  const guides = await getFormattedGuideData(lang);
+  const otherGuides = guides.filter((g) => g.id !== parseInt(id));
+  const guide = guides.find((g) => g.id === parseInt(id));
+  const activities = await getFormattedActivities(
+    { page: 1, pageSize: 10 },
+    lang
+  );
+  const newsArticles = await getFormattedNewsData(lang);
+  const filteredActivities = guide
+    ? activities.filter((activity) =>
+        activity.guideIds?.includes(guide.id)
+      )
+    : [];
+  const relatedNews = guide
+    ? newsArticles.filter((news) =>
+        news.guides?.some((g) => g.id === guide.id)
+      )
+    : [];
 
-	// objectFit値を決定
-	const mvAspectRatio = guide?.mv ? guide.mv.width / guide.mv.height : undefined;
-	const baseAspectRatio = 1 / 1;
-	const objectFit = mvAspectRatio !== undefined && mvAspectRatio < baseAspectRatio ? 'contain' : 'cover';
+  // objectFit値を決定
+  const mvAspectRatio = guide?.mv
+    ? guide.mv.width / guide.mv.height
+    : undefined;
+  const baseAspectRatio = 1 / 1;
+  const objectFit =
+    mvAspectRatio !== undefined && mvAspectRatio < baseAspectRatio
+      ? "contain"
+      : "cover";
 
-	// console.log(newsArticles);
-	// console.log(guide);
+  if (!guide) {
+    notFound();
+  }
 
-	if (!guide) {
-		notFound();
-	}
+  return (
+    <>
+      <ContentHeader
+        title="NAVIGATOR"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "NAVIGATORS", href: "/navigator" },
+          { label: "NAVIGATOR" },
+        ]}
+        lang={lang}
+      />
 
-	return (
-		<>
-			<ContentHeader title="NAVIGATOR" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NAVIGATORS', href: '/navigator' }, { label: 'NAVIGATOR' }]} lang={lang} />
-
-			<div className="l-contents__body p-page-navigator p-single p-single-navigator">
-				<div className="p-single__header u-full-bleed">
-					<div className="p-single-navigator__profile c-container">
-						<figure className="p-single-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: objectFit }} />}</figure>
-						{guide.copy && <h2 className="p-single-navigator__copy">{guide.copy}</h2>}
-						<div className="p-single-navigator__info">
-							{guide.regions && guide.regions.length > 0 && (
-								<div className="p-single-navigator__region">
-									<i className="c-pin"></i>
-									<span>{guide.regions.join(', ')}</span>
-								</div>
-							)}
-							{guide.name && <h2 className="p-single-navigator__name">{guide.name}</h2>}
-							{guide.title && <h3 className="p-single-navigator__title">{guide.title}</h3>}
-							{guide.photo && (
-								<figure className="p-single-navigator__photo">
-									<Image src={guide.photo.link} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
-								</figure>
-							)}
-							{guide.tags && guide.tags.length > 0 && (
-								<div className="p-single-navigator__tags">
-									{guide.tags.map((tag) => (
-										<span key={tag.id} className="p-single-navigator__tag c-taxonomy">
-											#{tag.name}
-										</span>
-									))}
-								</div>
-							)}
-							<ul className="p-single-navigator__sns">
-								{guide.sns?.instagram && (
-									<li>
-										<a href={guide.sns.instagram} target="_blank" rel="noopener noreferrer">
-											<Image src={'/icon_instagram.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
-										</a>
-									</li>
-								)}
-								{guide.sns?.facebook && (
-									<li>
-										<a href={guide.sns.facebook} target="_blank" rel="noopener noreferrer">
-											<Image src={'/icon_fb.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
-										</a>
-									</li>
-								)}
-								{guide.sns?.website && (
-									<li>
-										<a href={guide.sns.website} target="_blank" rel="noopener noreferrer">
-											<Image src={'/icon_x.svg'} width={15} height={15} alt="" style={{ aspectRatio: 1 / 1 }} />
-										</a>
-									</li>
-								)}
-								{guide.sns?.note && (
-									<li>
-										<a href={guide.sns.note} target="_blank" rel="noopener noreferrer">
-											<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" style={{ aspectRatio: 400 / 87 }} />
-										</a>
-									</li>
-								)}
-							</ul>
+      <div className="l-contents__body p-page-navigator p-single p-single-navigator">
+        <div className="p-single__header p-single-navigator__header u-full-bleed">
+          <div className="p-single-navigator__profile c-container">
+						<div className="p-single-navigator__inner">
+            <figure className="p-single-navigator__mv">
+              {guide.mv && (
+                <Image
+                  src={guide.mv.link}
+                  alt={guide.name}
+                  fill
+                  sizes="50vw"
+                  style={{ objectFit: objectFit }}
+                />
+              )}
+            </figure>
+            {guide.copy && (
+              <h2 className="p-single-navigator__copy">
+                {guide.copy}
+              </h2>
+            )}
 						</div>
-					</div>
-				</div>
+            <div className="p-single-navigator__info">
+              {guide.regions && guide.regions.length > 0 && (
+                <div className="p-single-navigator__region">
+                  <i className="c-pin"></i>
+                  <span>{guide.regions.join(", ")}</span>
+                </div>
+              )}
+              {guide.name && (
+                <h2 className="p-single-navigator__name">
+                  {guide.name}
+                </h2>
+              )}
+              {guide.title && (
+                <h3 className="p-single-navigator__title">
+                  {guide.title}
+                </h3>
+              )}
+              {guide.photo && (
+                <figure className="p-single-navigator__photo">
+                  <Image
+                    src={guide.photo.link}
+                    alt={guide.name}
+                    fill
+                    sizes="10vw"
+                    style={{ objectFit: "cover" }}
+                  />
+                </figure>
+              )}
+              {guide.tags && guide.tags.length > 0 && (
+                <div className="p-single-navigator__tags">
+                  {guide.tags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="p-single-navigator__tag c-taxonomy"
+                    >
+                      #{tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <ul className="p-single-navigator__sns">
+                {guide.sns?.instagram && (
+                  <li>
+                    <a
+                      href={guide.sns.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src={"/icon_instagram.svg"}
+                        width={15}
+                        height={15}
+                        alt=""
+                        style={{ aspectRatio: 1 / 1 }}
+                      />
+                    </a>
+                  </li>
+                )}
+                {guide.sns?.facebook && (
+                  <li>
+                    <a
+                      href={guide.sns.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src={"/icon_fb.svg"}
+                        width={15}
+                        height={15}
+                        alt=""
+                        style={{ aspectRatio: 1 / 1 }}
+                      />
+                    </a>
+                  </li>
+                )}
+                {guide.sns?.website && (
+                  <li>
+                    <a
+                      href={guide.sns.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src={"/icon_x.svg"}
+                        width={15}
+                        height={15}
+                        alt=""
+                        style={{ aspectRatio: 1 / 1 }}
+                      />
+                    </a>
+                  </li>
+                )}
+                {guide.sns?.note && (
+                  <li>
+                    <a
+                      href={guide.sns.note}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src={"/icon_note.svg"}
+                        width={40}
+                        height={8.7}
+                        alt=""
+                        style={{ aspectRatio: 400 / 87 }}
+                      />
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
 
-				<div className="p-single-navigator__description">
-					<p dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
-					{guide.values && guide.values.length > 0 && (
-						<>
-							<h2 className="p-single-navigator__values-title">{t({ ja: '私の提供する旅で大切にしたいこと', en: 'What I value in the journey I offer' })}</h2>
-							<ul className="p-single-navigator__values">
-								{guide.values.map((value, index) => (
-									<li key={index} className="p-single-navigator__value">
-										<h3>{value.title}</h3>
-										<p dangerouslySetInnerHTML={{ __html: value.description }} />
-									</li>
-								))}
-							</ul>
-						</>
-					)}
-				</div>
+        <div className="p-single-navigator__description">
+          <p
+            dangerouslySetInnerHTML={{
+              __html: guide.description || "",
+            }}
+          />
+          {guide.values && guide.values.length > 0 && (
+            <>
+              <h2 className="p-single-navigator__values-title">
+                {t({
+                  ja: "私の提供する旅で大切にしたいこと",
+                  en: "What I value in the journey I offer",
+                })}
+              </h2>
+              <ul className="p-single-navigator__values">
+                {guide.values.map((value, index) => (
+                  <li
+                    key={index}
+                    className="p-single-navigator__value"
+                  >
+                    <h3>{value.title}</h3>
+                    <p
+                      dangerouslySetInnerHTML={{
+                        __html: value.description,
+                      }}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
 
-				{/* <div className="p-page-navigator__profile">
+        {/* <div className="p-page-navigator__profile">
 					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
 					<div className="p-page-navigator__detail">
 						<h2 className="p-page-navigator__copy" dangerouslySetInnerHTML={{ __html: guide.copy || '' }} />
@@ -2107,81 +2358,84 @@ export default async function Page({ params: { lang, id } }: { params: { lang: L
 					<div className="p-page-navigator__description" dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
 				</div> */}
 
-				{filteredActivities.length > 0 && (
-					<div className="p-page-navigator-tours">
-						<div className="p-page-navigator-tours__title">
-							<h2 className="c-heading c-heading--2">TOURS</h2>
-						</div>
-						<div className="p-page-navigator-tours__tours c-tours">
-							{filteredActivities.map((activity) => (
-								<TourItem key={activity.id} activity={activity} className="c-tours__tour" />
-							))}
-						</div>
-					</div>
-				)}
+        {filteredActivities.length > 0 && (
+          <div className="p-page-navigator-tours">
+            <div className="p-page-navigator-tours__title">
+              <h2 className="c-heading c-heading--2">TOURS</h2>
+            </div>
+            <div className="p-page-navigator-tours__tours c-tours">
+              {filteredActivities.map((activity) => (
+                <TourItem
+                  key={activity.id}
+                  activity={activity}
+                  className="c-tours__tour"
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
-				{relatedNews.length > 0 && (
-					<div className="p-page-navigator-news">
-						<div className="p-page-navigator-news__title">
-							<h2 className="c-heading c-heading--2">RELATED NEWS</h2>
-						</div>
-						<div className="p-page-navigator-news__items">
-							{relatedNews.map((article) => (
-								<div key={article.id} className="p-page-news__item">
-									<NewsItem article={article} />
-								</div>
-							))}
-						</div>
-					</div>
-				)}
+        {relatedNews.length > 0 && (
+          <div className="p-page-navigator-news">
+            <div className="p-page-navigator-news__title">
+              <h2 className="c-heading c-heading--2">RELATED NEWS</h2>
+            </div>
+            <div className="p-page-navigator-news__items">
+              {relatedNews.map((article) => (
+                <div key={article.id} className="p-page-news__item">
+                  <NewsItem lang={lang} article={article} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-				{otherGuides.length > 0 && (
-					<div className="p-page-navigator-others">
-						<div className="p-page-navigator-others__title">
-							<h2 className="c-heading c-heading--2">OTHER NAVIGATORS</h2>
-						</div>
-						<div className="p-page-navigator-others__items">
-							{otherGuides.map((guide) => (
-								<div key={guide.id} className="p-page-navigator-others__item">
-									<div className="c-navigator-circle u-hover">
-										<figure className="c-navigator-circle__thumb">
-											<Image src={guide.photo?.link ?? '/no-photo.jpg'} alt={guide.name} fill sizes="10vw" style={{ objectFit: 'cover' }} />
-										</figure>
+        {otherGuides.length > 0 && (
+          <div className="p-page-navigator-others">
+            <div className="p-page-navigator-others__title">
+              <h2 className="c-heading c-heading--2">
+                OTHER NAVIGATORS
+              </h2>
+            </div>
+            <div className="p-page-navigator-others__items">
+              {otherGuides.map((guide) => (
+                <div
+                  key={guide.id}
+                  className="p-page-navigator-others__item"
+                >
+                  <div className="c-navigator-circle u-hover">
+                    <figure className="c-navigator-circle__thumb">
+                      <Image
+                        src={guide.photo?.link ?? "/no-photo.jpg"}
+                        alt={guide.name}
+                        fill
+                        sizes="10vw"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </figure>
 
-										<h3 className="c-navigator-circle__name">
-											<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-circle__link">
-												{guide.name}
-											</Link>
-										</h3>
-										{guide.regions && guide.regions.length > 0 && (
-											<div className="c-navigator-circle__region">
-												<i className="c-pin"></i>
-												<span>{guide.regions.join(', ')}</span>
-											</div>
-										)}
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
-				)}
-			</div>
-		</>
-	);
-}
-
-```
-
-### app/[lang]/navigator/[id]/not-found.tsx
-
-```
-
-export default function NotFound() {
-
-  return (
-    <div className="">
-			404 not found
-    </div>
+                    <h3 className="c-navigator-circle__name">
+                      <Link
+                        href={`/${lang}/navigator/${guide.id}`}
+                        className="c-navigator-circle__link"
+                      >
+                        {guide.name}
+                      </Link>
+                    </h3>
+                    {guide.regions && guide.regions.length > 0 && (
+                      <div className="c-navigator-circle__region">
+                        <i className="c-pin"></i>
+                        <span>{guide.regions.join(", ")}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -2190,50 +2444,42 @@ export default function NotFound() {
 ### app/[lang]/navigator/page.tsx
 
 ```
-import { Locale } from '@/constants/site';
-// import { useTranslations } from '@/lib/i18n';
-import { getFormattedGuideData } from '@/lib/utils';
-import { NavigatorItem } from '@/components/Navigator/NavigatorItem';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-import { getWPSiteOptions } from '@/lib/fetchData';
-// import Image from 'next/image';
-import { PageHeader } from '@/components/Layout/PageHeader';
+import { Locale } from "@/constants/site";
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+import { getWPSiteOptions } from "@/lib/fetchData";
+import { PageHeader } from "@/components/Layout/PageHeader";
+import NavigatorList from "@/components/Navigator/NavigatorList";
+import { Suspense } from "react";
 
-export default async function Page({ params: { lang } }: { params: { lang: Locale } }) {
-	// const t = useTranslations(lang);
-	const guides = await getFormattedGuideData(lang);
-	const siteOptions = await getWPSiteOptions(lang);
-	// console.log('guides:', guides);
-	return (
-		<>
-			<ContentHeader title="NAVIGATORS" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'NAVIGATORS' }]} lang={lang} />
-			<div className="l-contents__body p-page p-page-navigators">
-			<PageHeader title={siteOptions.navigators_title} description={siteOptions.navigators_description} mv={siteOptions.navigators_mv} />
-				{/* <div className="p-page__header u-full-bleed">
-					<div className="p-page__inner c-container">
-						<h2 className="p-page__title">{siteOptions.navigators_title}</h2>
-						<p className="p-page__description" dangerouslySetInnerHTML={{ __html: siteOptions.navigators_description || '' }} />
-					</div>
-					{siteOptions.navigators_mv && (
-						<figure className="p-page__mv">
-							<Image src={siteOptions.navigators_mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
-						</figure>
-					)}
-				</div> */}
-				<div className="p-page-navigators__items u-full-bleed">
-					{guides && guides.length > 0 ? (
-						guides.map((guide, index) => (
-							<div key={index} className="p-page-navigators__item">
-								<NavigatorItem lang={lang} guide={guide} />
-							</div>
-						))
-					) : (
-						<li>No guides available</li>
-					)}
-				</div>
-			</div>
-		</>
-	);
+export default async function Page({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
+  const siteOptions = await getWPSiteOptions(lang);
+
+  return (
+    <>
+      <ContentHeader
+        title="NAVIGATORS"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "NAVIGATORS" },
+        ]}
+        lang={lang}
+      />
+      <div className="l-contents__body p-page p-page-navigators">
+        <PageHeader
+          title={siteOptions.navigators_title}
+          description={siteOptions.navigators_description}
+          mv={siteOptions.navigators_mv}
+        />
+        <Suspense fallback={<p>Loading...</p>}>
+          <NavigatorList lang={lang} />
+        </Suspense>
+      </div>
+    </>
+  );
 }
 
 ```
@@ -2327,7 +2573,7 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 							{newsArticles.length > 0 ? (
 								newsArticles.slice(0, 3).map((article) => (
 									<div key={article.id} className="p-home-news__item">
-										<NewsItem article={article} />
+										<NewsItem lang={lang} article={article} />
 									</div>
 								))
 							) : (
@@ -2356,6 +2602,88 @@ export default async function Page({ params: { lang } }: { params: { lang: Local
 			</div>
 		</>
 	);
+}
+
+```
+
+### app/[lang]/not-found.tsx
+
+```
+"use client";
+
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import {
+  LOCALES,
+  Locale,
+  DEFAULT_LOCALE,
+} from "@/constants/site";
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+
+export default function NotFound() {
+  // パスから言語を取得
+  const pathname = usePathname();
+  const langFromPath = pathname?.split("/")[1] as Locale;
+  const lang = LOCALES.includes(langFromPath)
+    ? langFromPath
+    : DEFAULT_LOCALE;
+
+  // 言語ごとのメッセージ
+  const messages = {
+    ja: {
+      title: "ページが見つかりません",
+      description:
+        "お探しのページは存在しないか、移動した可能性があります。",
+      linkText: "ホームに戻る",
+    },
+    en: {
+      title: "Page Not Found",
+      description:
+        "The page you are looking for does not exist or may have been moved.",
+      linkText: "Return to Home",
+    },
+    fr: {
+      title: "Page Non Trouvée",
+      description:
+        "La page que vous recherchez n'existe pas ou a peut-être été déplacée.",
+      linkText: "Retourner à l'Accueil",
+    },
+  };
+
+  const { title, description, linkText } = messages[lang];
+
+  return (
+    <>
+      <ContentHeader
+        title="404 Not Found"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "404 Not Found " },
+        ]}
+        lang={lang}
+      />
+      <div className="l-contents__body p-page p-page-error">
+        <div className="p-page-error__inner">
+          <h2 className="p-page-error__title">
+            {title}
+          </h2>
+          <p className="p-page-error__description">
+            {description}
+          </p>
+          <div className="p-page-error__button">
+            <Link href={`/${lang}`} className="c-button">
+              <span className="c-button__label">
+                {linkText}
+              </span>
+              <div className="c-button__circle">
+                <i className="c-button__icon"></i>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 }
 
 ```
@@ -2706,6 +3034,73 @@ export { Label }
 
 ```
 
+### components/ui/tooltip.tsx
+
+```
+"use client"
+
+import * as React from "react"
+import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+
+import { cn } from "@/lib/utils"
+
+function TooltipProvider({
+  delayDuration = 0,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
+  return (
+    <TooltipPrimitive.Provider
+      data-slot="tooltip-provider"
+      delayDuration={delayDuration}
+      {...props}
+    />
+  )
+}
+
+function Tooltip({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+  return (
+    <TooltipProvider>
+      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+    </TooltipProvider>
+  )
+}
+
+function TooltipTrigger({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+}
+
+function TooltipContent({
+  className,
+  sideOffset = 0,
+  children,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+  return (
+    <TooltipPrimitive.Portal>
+      <TooltipPrimitive.Content
+        data-slot="tooltip-content"
+        sideOffset={sideOffset}
+        className={cn(
+          "bg-primary text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
+      </TooltipPrimitive.Content>
+    </TooltipPrimitive.Portal>
+  )
+}
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+
+```
+
 ### components/ui/badge.tsx
 
 ```
@@ -2745,6 +3140,40 @@ function Badge({ className, variant, ...props }: BadgeProps) {
 }
 
 export { Badge, badgeVariants }
+
+```
+
+### components/ui/separator.tsx
+
+```
+"use client"
+
+import * as React from "react"
+import * as SeparatorPrimitive from "@radix-ui/react-separator"
+
+import { cn } from "@/lib/utils"
+
+function Separator({
+  className,
+  orientation = "horizontal",
+  decorative = true,
+  ...props
+}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
+  return (
+    <SeparatorPrimitive.Root
+      data-slot="separator-root"
+      decorative={decorative}
+      orientation={orientation}
+      className={cn(
+        "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Separator }
 
 ```
 
@@ -3941,48 +4370,78 @@ export default function ContactForm({ lang }: { lang: Locale }) {
 ### components/Layout/PageHeader.tsx
 
 ```
-'use client';
+"use client";
 
-import { WPGalleryItem } from '@/types';
-import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { WPGalleryItem } from "@/types";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import useDeviceSize from "@/hooks/useDeviceSize";
 
 interface PageHeaderProps {
-	title?: string;
-	description?: string;
-	mv?: WPGalleryItem;
+  title?: string;
+  description?: string;
+  mv?: WPGalleryItem;
 }
 
-export function PageHeader({ title, description, mv }: PageHeaderProps) {
-	const [content, setContent] = useState<string | null>(null);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const { scrollYProgress } = useScroll({
-		target: containerRef,
-		offset: ['start start', 'end start'] // "ターゲットの上部"が画面の上部に来た時点を0とし、"ターゲットの上部"が画面の下部に来た時点を1とする
-	});
-	const y = useTransform(scrollYProgress, [0, 1], ['0', '30vh']);
+export function PageHeader({
+  title,
+  description,
+  mv,
+}: PageHeaderProps) {
+  const [content, setContent] = useState<string | null>(null);
+  const { isDesktop } = useDeviceSize();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"], // "ターゲットの上部"が画面の上部に来た時点を0とし、"ターゲットの上部"が画面の下部に来た時点を1とする
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["0", "30vh"]);
 
-	useEffect(() => {
-		if (description) {
-			setContent(description);
-		}
-	}, [description]);
+  useEffect(() => {
+    if (description) {
+      setContent(description);
+    }
+  }, [description]);
 
-	return (
-		<div className="p-page__header u-full-bleed overflow-y-hidden" ref={containerRef}>
-			<div className="p-page__inner c-container">
-				{title && <h2 className="p-page__title">{title}</h2>}
-				{content && <p className="p-page__description" dangerouslySetInnerHTML={{ __html: content }} />}
-			</div>
-			{mv && mv.sizes && mv.sizes['2048x2048'] && (
-				<motion.figure className="p-page__mv" style={{ y }}>
-					<Image src={mv.sizes['2048x2048']} alt="" fill style={{ objectFit: 'cover' }} />
-				</motion.figure>
-			)}
-			<p>hoge</p>
-		</div>
-	);
+  return (
+    <div
+      className="p-page__header u-full-bleed overflow-y-hidden"
+      ref={containerRef}
+    >
+      <div className="p-page__inner c-container">
+        {title && <h2 className="p-page__title">{title}</h2>}
+        {content && (
+          <p
+            className="p-page__description"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        )}
+      </div>
+      {mv &&
+        mv.sizes &&
+        mv.sizes["2048x2048"] &&
+        (isDesktop ? (
+          <motion.figure className="p-page__mv" style={{ y }}>
+            <Image
+              src={mv.sizes["2048x2048"]}
+              alt=""
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </motion.figure>
+        ) : (
+          <figure className="p-page__mv">
+            <Image
+              src={mv.sizes["2048x2048"]}
+              alt=""
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </figure>
+        ))}
+    </div>
+  );
 }
 
 ```
@@ -4144,7 +4603,7 @@ export default function Header({ lang }: { lang: Locale }) {
 					<nav className="l-drawer__navi">
 						<ul>
 							<li>
-								<Link href={`/${lang}`}><span>HOME</span></Link>
+								<Link href={`/${lang}`} onClick={toggleDrawer}><span>HOME</span></Link>
 							</li>
 							{NAVI_ITEMS.map((item, index) => (
 								<li key={index}>
@@ -4184,104 +4643,180 @@ export default function Header({ lang }: { lang: Locale }) {
 ### components/About/AboutSection.tsx
 
 ```
-'use client';
+"use client";
 
-import { WPSiteContent } from '@/types';
-import Image from 'next/image';
-import { motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { WPSiteContent } from "@/types";
+import Image from "next/image";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 interface AboutSectionItemProps {
-	number: string;
-	title: string;
-	subtitle: string | undefined;
-	description: string | undefined;
-	color?: string;
+  number: string;
+  title: string;
+  subtitle: string | undefined;
+  description: string | undefined;
+  color?: string;
 }
 
 interface AboutSectionProps {
-	siteOptions: WPSiteContent;
+  siteOptions: WPSiteContent;
 }
 
-function AboutSectionItem({ number, title, subtitle, description, color }: AboutSectionItemProps) {
-	return (
-		<div data-index={number} className={`u-${color} p-page-about__section`}>
-			<motion.div initial={{ opacity: 0, x: -100 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}>
-				<hgroup>
-					<motion.h2 initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-						{number}. {title}
-					</motion.h2>
-					<motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-						{subtitle}
-					</motion.h3>
-				</hgroup>
-				<motion.p dangerouslySetInnerHTML={{ __html: description || '' }} initial={{ opacity: 0, x: -100 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }} />
-			</motion.div>
-		</div>
-	);
+function AboutSectionItem({
+  number,
+  title,
+  subtitle,
+  description,
+  color,
+}: AboutSectionItemProps) {
+  return (
+    <div
+      data-index={number}
+      className={`u-${color} p-page-about__section`}
+    >
+      <motion.div
+        initial={{ opacity: 0, x: -100 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <hgroup>
+          <motion.h2
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            {number}. {title}
+          </motion.h2>
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            {subtitle}
+          </motion.h3>
+        </hgroup>
+        <motion.p
+          dangerouslySetInnerHTML={{ __html: description || "" }}
+          initial={{ opacity: 0, x: -100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+        />
+      </motion.div>
+    </div>
+  );
 }
 
-export default function AboutSection({ siteOptions }: AboutSectionProps) {
-	const [activeImageIndex, setActiveImageIndex] = useState(0);
-	// console.log('activeImageIndex:', activeImageIndex);
+export default function AboutSection({
+  siteOptions,
+}: AboutSectionProps) {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  // console.log('activeImageIndex:', activeImageIndex);
 
-	// Intersection Observer を使用してアクティブなサービスアイテムを検出
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						const index = Number(entry.target.getAttribute('data-index'));
-						setActiveImageIndex(index);
-						console.log('Section becoming visible:', {
-							index,
-							element: entry.target
-						});
-						// setActiveMenuIndex(index);
-					}
-				});
-			},
-			{
-				threshold: 0.5
-			}
-		);
+	const imageRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: imageRef,
+    offset: ["start start", "start end"], // "ターゲットの上部"が画面の上部に来た時点を0とし、"ターゲットの上部"が画面の下部に来た時点を1とする
+  });
 
-		const items = document.querySelectorAll('.p-page-about__section');
-		items.forEach((item) => observer.observe(item));
+	// const y = useTransform(scrollYProgress, [0, 1], ["0", "30vh"]);
+	// const opacity = useTransform(scrollYProgress, [0, 0.5], [0.4, 1]);
+	const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
+	// console.log('y:', y);
 
-		return () => {
-			items.forEach((item) => observer.unobserve(item));
-		};
-	}, []);
+  // Intersection Observer を使用してアクティブなサービスアイテムを検出
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(
+              entry.target.getAttribute("data-index")
+            );
+            setActiveImageIndex(index);
+            // console.log("Section becoming visible:", {
+            //   index,
+            //   element: entry.target,
+            // });
+          }
+        });
+      },
+      {
+        threshold: 0.5,
+      }
+    );
 
-	return (
-		<div className="p-page-about__container">
-			<div className="p-page-about__description">
-				<div data-index="00" className="p-page-about__section">
-					<div>
-						<hgroup>
-							<h3>Authentic Japan Navigator Will Share The Passion</h3>
-						</hgroup>
-						<p dangerouslySetInnerHTML={{ __html: siteOptions.about_section0_description || '' }} />
-					</div>
-				</div>
-				<AboutSectionItem number="01" title="Travelers" subtitle={siteOptions.about_section1_title} description={siteOptions.about_section1_description} color="green" />
-				<AboutSectionItem number="02" title="Authentic Japnan Navigator" subtitle={siteOptions.about_section2_title} description={siteOptions.about_section2_description} color="red" />
-				<AboutSectionItem number="03" title="Local Area" subtitle={siteOptions.about_section3_title} description={siteOptions.about_section3_description} color="blue" />
-			</div>
-			<div className="p-page-about__image">
-				{[...Array(4)].map((_, index) => (
-					<figure
-						key={index}
-						style={{
-							opacity: activeImageIndex === index ? 1 : 0,
-							transition: 'opacity 0.5s ease-in-out'
-						}}>
-						<Image src={`/about/about${index === 0 ? '_all' : index}.svg`} alt="" fill unoptimized />
-					</figure>
-				))}
-			</div>
-			{/* <div className="p-page-about__image">
+    const items = document.querySelectorAll(".p-page-about__section");
+    items.forEach((item) => observer.observe(item));
+
+    return () => {
+      items.forEach((item) => observer.unobserve(item));
+    };
+  }, []);
+
+  return (
+    <div className="p-page-about__container">
+      <div className="p-page-about__description">
+        <div data-index="00" className="p-page-about__section">
+          <div>
+            <hgroup>
+              <h3>
+                Authentic Japan Navigator Will Share The Passion
+              </h3>
+            </hgroup>
+            <p
+              dangerouslySetInnerHTML={{
+                __html: siteOptions.about_section0_description || "",
+              }}
+            />
+          </div>
+        </div>
+        <AboutSectionItem
+          number="01"
+          title="Travelers"
+          subtitle={siteOptions.about_section1_title}
+          description={siteOptions.about_section1_description}
+          color="green"
+        />
+        <AboutSectionItem
+          number="02"
+          title="Authentic Japnan Navigator"
+          subtitle={siteOptions.about_section2_title}
+          description={siteOptions.about_section2_description}
+          color="red"
+        />
+        <AboutSectionItem
+          number="03"
+          title="Local Area"
+          subtitle={siteOptions.about_section3_title}
+          description={siteOptions.about_section3_description}
+          color="blue"
+        />
+      </div>
+      <motion.div
+        className="p-page-about__image"
+        // initial={{ opacity: 1, x: -100 }}
+        // whileInView={{ opacity: 0.4, x: 0 }}
+				ref={imageRef}
+				style={{ scale }}
+      >
+        {[...Array(4)].map((_, index) => (
+          <figure
+            key={index}
+            style={{
+              opacity: activeImageIndex === index ? 1 : 0,
+              transition: "opacity 0.5s ease-in-out",
+            }}
+          >
+            <Image
+              src={`/about/about${index === 0 ? "_all" : index}.png`}
+              alt=""
+              fill
+              unoptimized
+            />
+          </figure>
+        ))}
+      </motion.div>
+      {/* <div className="p-page-about__image">
 				<figure>
 					<Image src="/about/about_all.svg" alt="" fill unoptimized />
 				</figure>
@@ -4295,8 +4830,8 @@ export default function AboutSection({ siteOptions }: AboutSectionProps) {
 					<Image src="/about/about3.svg" alt="" fill unoptimized />
 				</figure>
 			</div> */}
-		</div>
-	);
+    </div>
+  );
 }
 
 ```
@@ -4389,9 +4924,16 @@ import { News } from '@/types';
 import NavigatorInfo from '../Navigator/NavigatorInfo';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Locale } from '@/constants/site';
 // import { Locale } from '@/constants/site';
 
-export default function NewsItem({ article }: { article: News }) {
+interface NewsItemProps {
+	lang: Locale;
+	article: News;
+}
+
+
+export default function NewsItem({ lang, article }: NewsItemProps) {
 	// console.log('featured_media:', article.featured_media);
 	return (
 		<div className="c-news">
@@ -4402,7 +4944,7 @@ export default function NewsItem({ article }: { article: News }) {
 				<div className="c-news__content">
 					<time className="c-news__date">{article.date}</time>
 					<h2 className="c-news__title">
-						<Link href={`/news/${article.id}`}>{article.title}</Link>
+						<Link href={`/${lang}/news/${article.id}`}>{article.title}</Link>
 					</h2>
 					{article.categories && article.categories.length > 0 && (
 						<div className="c-news__categories">
@@ -4481,52 +5023,129 @@ export default function NavigatorInfo({ guide, link, lang, className }: Navigato
 ### components/Navigator/NavigatorCard.tsx
 
 ```
-'use client';
+"use client";
 
-import { Locale } from '@/constants/site';
-import { Guide } from '@/types';
-import Image from 'next/image';
+import { Locale } from "@/constants/site";
+import { Guide } from "@/types";
+import Image from "next/image";
 // import { useTranslations } from '@/lib/i18n';
-import Link from 'next/link';
+import Link from "next/link";
 
-export function NavigatorCard({ lang, guide }: { lang: Locale; guide: Guide }) {
-	// const t = useTranslations(lang);
-	return (
-		<Link href={`/${lang}/navigator/${guide.id}`} className="c-navigator-card">
-			<figure className="c-navigator-card__image">
-				<Image src={guide.mv?.sizes['1536x1536'] ?? '/default-image.jpg'} alt="" fill sizes="50vw" style={{ objectFit: 'cover' }} />
-			</figure>
-			<div className="c-navigator-card__inner">
-				<h3 className="c-navigator-card__copy">
-					<p>{guide.copy}</p>
-				</h3>
-				{guide.regions && guide.regions.length > 0 && (
-					<div className="c-navigator-card__region">
-						<i className="c-pin"></i>
-						<span>{guide.regions.join(', ')}</span>
-					</div>
-				)}
-				<div className="c-navigator-card__cols">
-					<div className="c-navigator-card__col-left">
-						<div className="c-navigator-card__photo">
-							<Image src={guide.photo?.link ?? '/default-image.jpg'} alt="" fill sizes="20vw" style={{ objectFit: 'cover' }} />
-						</div>
-					</div>
-					<div className="c-navigator-card__col-right">
-						<h2 className="c-navigator-card__name">{guide.name}</h2>
-						<h3 className="c-navigator-card__title">{guide.title}</h3>
-					</div>
-				</div>
-				<div className="c-navigator-card__tags">
-					{guide.tags.map((tag) => (
-						<span key={tag.id} className="c-navigator-card__tag">
-							#{tag.name}
-						</span>
-					))}
-				</div>
-			</div>
-		</Link>
-	);
+export function NavigatorCard({
+  lang,
+  guide,
+}: {
+  lang: Locale;
+  guide: Guide;
+}) {
+  // const t = useTranslations(lang);
+  return (
+    <Link
+      href={`/${lang}/navigator/${guide.id}`}
+      className="c-navigator-card"
+    >
+      <figure className="c-navigator-card__image">
+        <Image
+          src={
+            guide.mv?.sizes["1536x1536"] ??
+            "/default-image.jpg"
+          }
+          alt=""
+          fill
+          sizes="50vw"
+          style={{ objectFit: "cover" }}
+        />
+      </figure>
+      <div className="c-navigator-card__inner">
+        <h3 className="c-navigator-card__copy">
+          <p>{guide.copy}</p>
+        </h3>
+        {guide.regions && guide.regions.length > 0 && (
+          <div className="c-navigator-card__region">
+            <i className="c-pin"></i>
+            <span>{guide.regions.join(", ")}</span>
+          </div>
+        )}
+        <div className="c-navigator-card__cols">
+          <div className="c-navigator-card__col-left">
+            <div className="c-navigator-card__photo">
+              <Image
+                src={
+                  guide.photo?.link ?? "/default-image.jpg"
+                }
+                alt=""
+                fill
+                sizes="20vw"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
+          </div>
+          <div className="c-navigator-card__col-right">
+            <h2 className="c-navigator-card__name">
+              {guide.name}
+            </h2>
+            <h3 className="c-navigator-card__title">
+              {guide.title}
+            </h3>
+          </div>
+        </div>
+        <div className="c-navigator-card__tags">
+          {guide.tags.map((tag) => (
+            <span
+              key={tag.id}
+              className="c-navigator-card__tag"
+            >
+              #{tag.name}
+            </span>
+          ))}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+```
+
+### components/Navigator/NavigatorList.tsx
+
+```
+import { Locale } from "@/constants/site";
+import { getFormattedGuideData } from "@/lib/utils";
+import { NavigatorItem } from "@/components/Navigator/NavigatorItem";
+import { useTranslations } from "@/lib/i18n";
+
+interface NavigatorListProps {
+  lang: Locale;
+}
+
+export default async function NavigatorList({
+  lang,
+}: NavigatorListProps) {
+  const t = useTranslations(lang);
+  const guides = await getFormattedGuideData(lang);
+  // console.log('guides:', guides);
+  return (
+    <div className="p-page-navigators__items u-full-bleed">
+      {guides && guides.length > 0 ? (
+        guides.map((guide, index) => (
+          <div
+            key={index}
+            className="p-page-navigators__item"
+          >
+            <NavigatorItem lang={lang} guide={guide} />
+          </div>
+        ))
+      ) : (
+        <p>
+          {t({
+            ja: "ナビゲーターが見つかりません",
+            en: "No navigators found",
+            fr: "Aucun navigateur trouvé",
+          })}
+        </p>
+      )}
+    </div>
+  );
 }
 
 ```
@@ -4626,228 +5245,280 @@ export function ClientFilteredActivities({ initialActivities, guides, regions, t
 ### components/Tour/ClientFilterComponent.tsx
 
 ```
-'use client';
+"use client";
 
-import { Guide, Region, ActivityFilters } from '@/types';
-import { useTranslations } from '@/lib/i18n';
-import { Locale } from '@/constants/site';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, X } from 'lucide-react';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Card, CardContent } from '@/components/ui/card';
+import { Guide, Region, ActivityFilters } from "@/types";
+import { useTranslations } from "@/lib/i18n";
+import { Locale } from "@/constants/site";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  MapPin,
+  Maximize2,
+  Search,
+  UserRound,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+// import { Separator } from "../ui/separator";
+import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface FilterComponentProps {
-	guides: Guide[];
-	regions: Region[];
-	currentFilters?: ActivityFilters;
-	lang: Locale;
+  guides: Guide[];
+  regions: Region[];
+  currentFilters?: ActivityFilters;
+  lang: Locale;
 }
 
-export default function ClientFilterComponent({ guides, regions, currentFilters, lang }: FilterComponentProps) {
-	const t = useTranslations(lang);
-	const router = useRouter();
-	const [isSmallScreen, setIsSmallScreen] = useState(false);
-	const [searchKeyword, setSearchKeyword] = useState(currentFilters?.search || '');
+interface CurrentLightProps {
+  className?: string;
+}
+function CurrentLight({ className }: CurrentLightProps) {
+  return (
+    <div
+      className={cn(
+        "absolute top-0 aspect-square w-2 -translate-y-1/2 rounded-full bg-sky-500 shadow-[0_-2px_10px] shadow-sky-500",
+        className,
+      )}
+    />
+  );
+}
 
-	// 画面サイズの監視
-	useEffect(() => {
-		const checkScreenSize = () => {
-			setIsSmallScreen(window.innerWidth < 768);
-		};
-		checkScreenSize();
-		window.addEventListener('resize', checkScreenSize);
-		return () => window.removeEventListener('resize', checkScreenSize);
-	}, []);
+export default function ClientFilterComponent({
+  guides,
+  regions,
+  currentFilters,
+  lang,
+}: FilterComponentProps) {
+  const t = useTranslations(lang);
+  const router = useRouter();
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-	// フィルター更新のメイン関数
-	const updateFilters = useCallback(
-		(type: keyof ActivityFilters, value: string, isRemoving: boolean = false) => {
-			const searchParams = new URLSearchParams();
+  // 画面サイズの監視
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () =>
+      window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
-			// 現在のフィルターの状態をコピー
-			const currentGuides = new Set(currentFilters?.guides || []);
-			const currentRegions = new Set(currentFilters?.regions || []);
+  // フィルター更新のメイン関数
+  const updateFilters = useCallback(
+    (
+      type: keyof ActivityFilters,
+      value: string,
+      isRemoving: boolean = false,
+    ) => {
+      const searchParams = new URLSearchParams();
 
-			// フィルターの更新
-			if (type === 'guides') {
-				if (isRemoving) {
-					currentGuides.delete(value);
-				} else {
-					if (currentGuides.has(value)) {
-						currentGuides.delete(value);
-					} else {
-						currentGuides.add(value);
-					}
-				}
-			} else if (type === 'regions') {
-				if (isRemoving) {
-					currentRegions.delete(value);
-				} else {
-					if (currentRegions.has(value)) {
-						currentRegions.delete(value);
-					} else {
-						currentRegions.add(value);
-					}
-				}
-			}
+      // 現在のフィルターの状態をコピー
+      const currentGuides = new Set(currentFilters?.guides || []);
+      const currentRegions = new Set(currentFilters?.regions || []);
 
-			// URLパラメータの設定
-			if (currentGuides.size > 0) {
-				searchParams.set('guides', Array.from(currentGuides).join(','));
-			}
-			if (currentRegions.size > 0) {
-				searchParams.set('regions', Array.from(currentRegions).join(','));
-			}
-			if (type === 'search' && value) {
-				searchParams.set('search', value);
-			} else if (currentFilters?.search) {
-				searchParams.set('search', currentFilters.search);
-			}
+      // フィルターの更新
+      if (type === "guides") {
+        if (isRemoving) {
+          currentGuides.delete(value);
+        } else {
+          if (currentGuides.has(value)) {
+            currentGuides.delete(value);
+          } else {
+            currentGuides.add(value);
+          }
+        }
+      } else if (type === "regions") {
+        if (isRemoving) {
+          currentRegions.delete(value);
+        } else {
+          if (currentRegions.has(value)) {
+            currentRegions.delete(value);
+          } else {
+            currentRegions.add(value);
+          }
+        }
+      }
 
-			// URLを更新
-			router.push(`/${lang}/tours?${searchParams.toString()}`, {
-				scroll: false
-			});
-		},
-		[currentFilters, lang, router]
-	);
+      // URLパラメータの設定
+      if (currentGuides.size > 0) {
+        searchParams.set(
+          "guides",
+          Array.from(currentGuides).join(","),
+        );
+      }
+      if (currentRegions.size > 0) {
+        searchParams.set(
+          "regions",
+          Array.from(currentRegions).join(","),
+        );
+      }
+      if (type === "search" && value) {
+        searchParams.set("search", value);
+      } else if (currentFilters?.search) {
+        searchParams.set("search", currentFilters.search);
+      }
 
-	// 検索フォームのサブミット
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		updateFilters('search', searchKeyword);
-	};
+      // URLを更新
+      router.push(`/${lang}/tours?${searchParams.toString()}`, {
+        scroll: false,
+      });
+    },
+    [currentFilters, lang, router],
+  );
 
-	// フィルターをクリア
-	const handleClearFilters = useCallback(() => {
-		setSearchKeyword('');
-		router.push(`/${lang}/tours`, { scroll: false });
-	}, [lang, router]);
+  // 選択されているアイテムの数を取得
+  const selectedGuideCount = currentFilters?.guides?.length || 0;
+  const selectedRegionCount = currentFilters?.regions?.length || 0;
 
-	// 選択されているアイテムの数を取得
-	const selectedGuideCount = currentFilters?.guides?.length || 0;
-	const selectedRegionCount = currentFilters?.regions?.length || 0;
+  return (
+    <div className="fixed bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 overflow-hidden rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg backdrop-blur [&>*]:font-[Noto_Sans_JP]">
+      <div className={`flex items-center justify-start gap-2`}>
+        <Button size="icon" className="cursor-pointer rounded-full">
+          <Maximize2 />
+        </Button>
 
-	return (
-		<Card className="fixed z-10 bottom-4 md:relative md:bottom-auto font-[Noto_Sans_JP]">
-			<CardContent className="p-4">
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className={`flex ${isSmallScreen ? 'flex-col' : 'flex-row'} gap-2 justify-start`}>
-						<div className="flex gap-2">
-							{/* ガイドフィルター */}
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button variant="outline">
-										{t({
-											ja: 'ガイド',
-											en: 'Guide',
-											fr: 'Guide'
-										})}
-										{selectedGuideCount > 0 && ` (${selectedGuideCount})`}
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
-									{guides.map((guide) => (
-										<DropdownMenuCheckboxItem key={guide.id} checked={currentFilters?.guides?.includes(String(guide.id))} onCheckedChange={() => updateFilters('guides', String(guide.id))}>
-											{guide.name}
-										</DropdownMenuCheckboxItem>
-									))}
-								</DropdownMenuContent>
-							</DropdownMenu>
+        <span className="px-2 text-xs">
+          ツアー : <span className="text-sm font-bold">4</span>件
+        </span>
+        <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
+        {/* ガイドフィルター */}
+        <div className="flex items-center justify-center">
+          {selectedGuideCount > 0 && <CurrentLight />}
+          <DropdownMenu>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="cursor-pointer rounded-full"
+                    >
+                      <UserRound />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent className="p-3">
+                  <p className="font-[Noto_Sans_JP]">
+                    ナビゲーターで絞り込む
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <DropdownMenuContent
+              align="start"
+              className="w-56 font-[Noto_Sans_JP]"
+            >
+              {guides.map((guide) => (
+                <DropdownMenuCheckboxItem
+                  key={guide.id}
+                  checked={currentFilters?.guides?.includes(
+                    String(guide.id),
+                  )}
+                  onCheckedChange={() =>
+                    updateFilters("guides", String(guide.id))
+                  }
+                >
+                  {guide.name}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-							{/* 地域フィルター */}
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button variant="outline">
-										{t({
-											ja: '地域',
-											en: 'Region',
-											fr: 'Région'
-										})}
-										{selectedRegionCount > 0 && ` (${selectedRegionCount})`}
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="start" className="w-56 font-[Noto_Sans_JP]">
-									{regions.map((region) => (
-										<DropdownMenuCheckboxItem key={region.id} checked={currentFilters?.regions?.includes(String(region.id))} onCheckedChange={() => updateFilters('regions', String(region.id))}>
-											{region.name}
-										</DropdownMenuCheckboxItem>
-									))}
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</div>
-						<div className="flex gap-2 flex-grow">
-							{/* 検索フィールド */}
-							<div className="relative flex-grow">
-								<Input
-									placeholder={t({
-										ja: 'キーワードで検索',
-										en: 'Search by keyword',
-										fr: 'Rechercher par mot-clé'
-									})}
-									value={searchKeyword}
-									onChange={(e) => setSearchKeyword(e.target.value)}
-									className="pl-10 pr-4 py-2 w-full"
-								/>
-								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-							</div>
+        {/* 地域フィルター */}
+        <div className="flex items-center justify-center">
+          {selectedRegionCount > 0 && <CurrentLight />}
+          <DropdownMenu>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="cursor-pointer rounded-full"
+                    >
+                      <MapPin />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent className="p-3">
+                  <p className="font-[Noto_Sans_JP]">
+                    地域で絞り込む
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <DropdownMenuContent
+              align="start"
+              className="w-56 font-[Noto_Sans_JP]"
+            >
+              {regions.map((region) => (
+                <DropdownMenuCheckboxItem
+                  key={region.id}
+                  checked={currentFilters?.regions?.includes(
+                    String(region.id),
+                  )}
+                  onCheckedChange={() =>
+                    updateFilters("regions", String(region.id))
+                  }
+                >
+                  {region.name}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-							{/* 検索ボタン */}
-							<Button type="submit" variant="default">
-								{t({
-									ja: '検索',
-									en: 'Search',
-									fr: 'Rechercher'
-								})}
-							</Button>
-						</div>
+        {/* 検索ボタン */}
+        <div className="flex items-center justify-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="cursor-pointer rounded-full"
+                >
+                  <Search />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="p-3">
+                <p className="font-[Noto_Sans_JP]">
+                  キーワードで絞り込む
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
-						{/* クリアボタン */}
-						{(selectedGuideCount > 0 || selectedRegionCount > 0 || currentFilters?.search) && (
-							<Button type="button" variant="outline" onClick={handleClearFilters} className="gap-2">
-								<X className="h-4 w-4" />
-								{t({
-									ja: 'クリア',
-									en: 'Clear',
-									fr: 'Effacer'
-								})}
-							</Button>
-						)}
-					</div>
+        <div className="h-4 w-[1px] shrink-0 bg-muted-foreground"></div>
 
-					{/* 選択されたフィルターのバッジ表示 */}
-					{(selectedGuideCount > 0 || selectedRegionCount > 0) && (
-						<div className="flex flex-wrap gap-2 mt-4">
-							{currentFilters?.guides?.map((guideId) => {
-								const guide = guides.find((g) => String(g.id) === guideId);
-								if (!guide) return null;
-								return (
-									<Badge key={guideId} variant="secondary" className="gap-1 py-1 px-3">
-										{guide.name}
-										<X size={14} className="cursor-pointer ml-1" onClick={() => updateFilters('guides', String(guide.id), true)} />
-									</Badge>
-								);
-							})}
-							{currentFilters?.regions?.map((regionId) => {
-								const region = regions.find((r) => String(r.id) === regionId);
-								if (!region) return null;
-								return (
-									<Badge key={regionId} variant="secondary" className="gap-1 py-1 px-3">
-										{region.name}
-										<X size={14} className="cursor-pointer ml-1" onClick={() => updateFilters('regions', String(region.id), true)} />
-									</Badge>
-								);
-							})}
-						</div>
-					)}
-				</form>
-			</CardContent>
-		</Card>
-	);
+        {/* リセットボタン */}
+        <Button
+          variant="ghost"
+          className="cursor-pointer rounded-full"
+        >
+          <span className="text-xs">リセット</span>
+        </Button>
+      </div>
+
+    </div>
+  );
 }
 
 ```
@@ -4879,54 +5550,76 @@ export default function TourButton({ tourId, children, className }: TourButtonPr
 ### components/Tour/TourList.tsx
 
 ```
-import { Locale } from '@/constants/site';
-import { getFormattedActivities, filterActivitiesByQuery, getFormattedGuideData, getFormattedRegionData } from '@/lib/utils';
-import { ActivityFilters } from '@/types/activity';
-import ClientFilterComponent from './ClientFilterComponent';
-import { TourItem } from './TourItem';
-import { useTranslations } from '@/lib/i18n';
+import { Locale } from "@/constants/site";
+import {
+  getFormattedActivities,
+  filterActivitiesByQuery,
+  getFormattedGuideData,
+  getFormattedRegionData,
+} from "@/lib/utils";
+import { ActivityFilters } from "@/types/activity";
+import ClientFilterComponent from "./ClientFilterComponent";
+import { TourItem } from "./TourItem";
+import { useTranslations } from "@/lib/i18n";
 
 interface TourListProps {
-	lang: Locale;
-	filters?: ActivityFilters;
+  lang: Locale;
+  filters?: ActivityFilters;
 }
 
-export default async function TourList({ lang, filters }: TourListProps) {
-	const t = useTranslations(lang);
-	const [activities, guides, regions] = await Promise.all([
-		getFormattedActivities(
-			{
-				page: 1,
-				pageSize: 100
-			},
-			lang
-		),
-		getFormattedGuideData(lang),
-		getFormattedRegionData(lang)
-	]);
+export default async function TourList({
+  lang,
+  filters,
+}: TourListProps) {
+  const t = useTranslations(lang);
+  const [activities, guides, regions] = await Promise.all([
+    getFormattedActivities(
+      {
+        page: 1,
+        pageSize: 100,
+      },
+      lang
+    ),
+    getFormattedGuideData(lang),
+    getFormattedRegionData(lang),
+  ]);
 
-	const filteredActivities = filterActivitiesByQuery(activities, filters);
-	return (
-		<>
-			<div>
-				<ClientFilterComponent lang={lang} guides={guides} regions={regions} currentFilters={filters} />
-			</div>
-			<div className="c-tours">
-				{filteredActivities.length > 0 ? (
-					filteredActivities.map((activity) => <TourItem className="c-tours__tour" key={activity.id} activity={activity} />)
-				) : (
-					<p>
-						{' '}
-						{t({
-							ja: 'ツアーが見つかりません。',
-							en: 'No activities found.',
-							fr: 'Aucune activité trouvée.'
-						})}
-					</p>
-				)}
-			</div>
-		</>
-	);
+  const filteredActivities = filterActivitiesByQuery(
+    activities,
+    filters
+  );
+  return (
+    <>
+      <div className="absolute -top-44">
+        <ClientFilterComponent
+          lang={lang}
+          guides={guides}
+          regions={regions}
+          currentFilters={filters}
+        />
+      </div>
+      <div className="c-tours">
+        {filteredActivities.length > 0 ? (
+          filteredActivities.map((activity) => (
+            <TourItem
+              className="c-tours__tour"
+              key={activity.id}
+              activity={activity}
+            />
+          ))
+        ) : (
+          <p>
+            {" "}
+            {t({
+              ja: "ツアーが見つかりません。",
+              en: "No activities found.",
+              fr: "Aucune activité trouvée.",
+            })}
+          </p>
+        )}
+      </div>
+    </>
+  );
 }
 
 ```
@@ -4936,11 +5629,11 @@ export default async function TourList({ lang, filters }: TourListProps) {
 ```
 "use client";
 
-import { Guide, Region, ActivityFilters } from '@/types';
-import { useTranslations } from '@/lib/i18n';
-import { Locale } from '@/constants/site';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { Guide, Region, ActivityFilters } from "@/types";
+import { useTranslations } from "@/lib/i18n";
+import { Locale } from "@/constants/site";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -4964,12 +5657,14 @@ export default function ClientFilterComponent({
   guides,
   regions,
   currentFilters,
-  lang
+  lang,
 }: FilterComponentProps) {
   const t = useTranslations(lang);
   const router = useRouter();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState(currentFilters?.search || "");
+  const [searchKeyword, setSearchKeyword] = useState(
+    currentFilters?.search || ""
+  );
 
   // 画面サイズの監視
   useEffect(() => {
@@ -4978,64 +5673,77 @@ export default function ClientFilterComponent({
     };
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
+    return () =>
+      window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   // フィルター更新のメイン関数
-  const updateFilters = useCallback((type: keyof ActivityFilters, value: string, isRemoving: boolean = false) => {
-    const searchParams = new URLSearchParams();
+  const updateFilters = useCallback(
+    (
+      type: keyof ActivityFilters,
+      value: string,
+      isRemoving: boolean = false
+    ) => {
+      const searchParams = new URLSearchParams();
 
-    // 現在のフィルターの状態をコピー
-    const currentGuides = new Set(currentFilters?.guides || []);
-    const currentRegions = new Set(currentFilters?.regions || []);
-		console.log('currentGuides:', currentGuides);
+      // 現在のフィルターの状態をコピー
+      const currentGuides = new Set(currentFilters?.guides || []);
+      const currentRegions = new Set(currentFilters?.regions || []);
 
-    // フィルターの更新
-    if (type === 'guides') {
-      if (isRemoving) {
-        currentGuides.delete(value);
-      } else {
-        if (currentGuides.has(value)) {
+      // フィルターの更新
+      if (type === "guides") {
+        if (isRemoving) {
           currentGuides.delete(value);
         } else {
-          currentGuides.add(value);
+          if (currentGuides.has(value)) {
+            currentGuides.delete(value);
+          } else {
+            currentGuides.add(value);
+          }
         }
-      }
-    } else if (type === 'regions') {
-      if (isRemoving) {
-        currentRegions.delete(value);
-      } else {
-        if (currentRegions.has(value)) {
+      } else if (type === "regions") {
+        if (isRemoving) {
           currentRegions.delete(value);
         } else {
-          currentRegions.add(value);
+          if (currentRegions.has(value)) {
+            currentRegions.delete(value);
+          } else {
+            currentRegions.add(value);
+          }
         }
       }
-    }
 
-    // URLパラメータの設定
-    if (currentGuides.size > 0) {
-      searchParams.set('guides', Array.from(currentGuides).join(','));
-    }
-    if (currentRegions.size > 0) {
-      searchParams.set('regions', Array.from(currentRegions).join(','));
-    }
-    if (type === 'search' && value) {
-      searchParams.set('search', value);
-    } else if (currentFilters?.search) {
-      searchParams.set('search', currentFilters.search);
-    }
+      // URLパラメータの設定
+      if (currentGuides.size > 0) {
+        searchParams.set(
+          "guides",
+          Array.from(currentGuides).join(",")
+        );
+      }
+      if (currentRegions.size > 0) {
+        searchParams.set(
+          "regions",
+          Array.from(currentRegions).join(",")
+        );
+      }
+      if (type === "search" && value) {
+        searchParams.set("search", value);
+      } else if (currentFilters?.search) {
+        searchParams.set("search", currentFilters.search);
+      }
 
-    // URLを更新
-    router.push(`/${lang}/tours?${searchParams.toString()}`, {
-      scroll: false
-    });
-  }, [currentFilters, lang, router]);
+      // URLを更新
+      router.push(`/${lang}/tours?${searchParams.toString()}`, {
+        scroll: false,
+      });
+    },
+    [currentFilters, lang, router]
+  );
 
   // 検索フォームのサブミット
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateFilters('search', searchKeyword);
+    updateFilters("search", searchKeyword);
   };
 
   // フィルターをクリア
@@ -5049,86 +5757,114 @@ export default function ClientFilterComponent({
   const selectedRegionCount = currentFilters?.regions?.length || 0;
 
   return (
-    <Card>
+    <Card className="fixed z-10 bottom-4 md:relative md:bottom-auto font-[Noto_Sans_JP]">
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className={`flex ${isSmallScreen ? "flex-col" : "flex-row"} gap-2 items-center`}>
-            {/* ガイドフィルター */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {t({
-                    ja: 'ガイド',
-                    en: 'Guide',
-                    fr: 'Guide'
-                  })}
-                  {selectedGuideCount > 0 && ` (${selectedGuideCount})`}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                {guides.map((guide) => (
-                  <DropdownMenuCheckboxItem
-                    key={guide.id}
-                    checked={currentFilters?.guides?.includes(String(guide.id))}
-                    onCheckedChange={() => updateFilters('guides', String(guide.id))}
-                  >
-                    {guide.name}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div
+            className={`flex ${
+              isSmallScreen ? "flex-col" : "flex-row"
+            } gap-2 justify-start`}
+          >
+            <div className="flex gap-2">
+              {/* ガイドフィルター */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size={isSmallScreen ? "sm" : "default"}>
+                    {t({
+                      ja: "ガイド",
+                      en: "Guide",
+                      fr: "Guide",
+                    })}
+                    {selectedGuideCount > 0 &&
+                      ` (${selectedGuideCount})`}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="w-56 font-[Noto_Sans_JP]"
+                >
+                  {guides.map((guide) => (
+                    <DropdownMenuCheckboxItem
+                      key={guide.id}
+                      checked={currentFilters?.guides?.includes(
+                        String(guide.id)
+                      )}
+                      onCheckedChange={() =>
+                        updateFilters("guides", String(guide.id))
+                      }
+                    >
+                      {guide.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            {/* 地域フィルター */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {t({
-                    ja: '地域',
-                    en: 'Region',
-                    fr: 'Région'
+              {/* 地域フィルター */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    {t({
+                      ja: "地域",
+                      en: "Region",
+                      fr: "Région",
+                    })}
+                    {selectedRegionCount > 0 &&
+                      ` (${selectedRegionCount})`}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="w-56 font-[Noto_Sans_JP]"
+                >
+                  {regions.map((region) => (
+                    <DropdownMenuCheckboxItem
+                      key={region.id}
+                      checked={currentFilters?.regions?.includes(
+                        String(region.id)
+                      )}
+                      onCheckedChange={() =>
+                        updateFilters("regions", String(region.id))
+                      }
+                    >
+                      {region.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="flex gap-2 flex-grow">
+              {/* 検索フィールド */}
+              <div className="relative flex-grow">
+                <Input
+                  placeholder={t({
+                    ja: "キーワードで検索",
+                    en: "Search by keyword",
+                    fr: "Rechercher par mot-clé",
                   })}
-                  {selectedRegionCount > 0 && ` (${selectedRegionCount})`}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                {regions.map((region) => (
-                  <DropdownMenuCheckboxItem
-                    key={region.id}
-                    checked={currentFilters?.regions?.includes(String(region.id))}
-                    onCheckedChange={() => updateFilters('regions', String(region.id))}
-                  >
-                    {region.name}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  className="pl-10 pr-4 py-2 w-full"
+                />
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+              </div>
 
-            {/* 検索フィールド */}
-            <div className="relative flex-grow">
-              <Input
-                placeholder={t({
-                  ja: 'キーワードで検索',
-                  en: 'Search by keyword',
-                  fr: 'Rechercher par mot-clé'
+              {/* 検索ボタン */}
+              <Button type="submit" variant="default">
+                {t({
+                  ja: "検索",
+                  en: "Search",
+                  fr: "Rechercher",
                 })}
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              </Button>
             </div>
 
-            {/* 検索ボタン */}
-            <Button type="submit" variant="default">
-              {t({
-                ja: '検索',
-                en: 'Search',
-                fr: 'Rechercher'
-              })}
-            </Button>
-
             {/* クリアボタン */}
-            {(selectedGuideCount > 0 || selectedRegionCount > 0 || currentFilters?.search) && (
+            {(selectedGuideCount > 0 ||
+              selectedRegionCount > 0 ||
+              currentFilters?.search) && (
               <Button
                 type="button"
                 variant="outline"
@@ -5137,9 +5873,9 @@ export default function ClientFilterComponent({
               >
                 <X className="h-4 w-4" />
                 {t({
-                  ja: 'クリア',
-                  en: 'Clear',
-                  fr: 'Effacer'
+                  ja: "クリア",
+                  en: "Clear",
+                  fr: "Effacer",
                 })}
               </Button>
             )}
@@ -5149,7 +5885,9 @@ export default function ClientFilterComponent({
           {(selectedGuideCount > 0 || selectedRegionCount > 0) && (
             <div className="flex flex-wrap gap-2 mt-4">
               {currentFilters?.guides?.map((guideId) => {
-                const guide = guides.find(g => String(g.id) === guideId);
+                const guide = guides.find(
+                  (g) => String(g.id) === guideId
+                );
                 if (!guide) return null;
                 return (
                   <Badge
@@ -5161,13 +5899,21 @@ export default function ClientFilterComponent({
                     <X
                       size={14}
                       className="cursor-pointer ml-1"
-                      onClick={() => updateFilters('guides', String(guide.id), true)}
+                      onClick={() =>
+                        updateFilters(
+                          "guides",
+                          String(guide.id),
+                          true
+                        )
+                      }
                     />
                   </Badge>
                 );
               })}
               {currentFilters?.regions?.map((regionId) => {
-                const region = regions.find(r => String(r.id) === regionId);
+                const region = regions.find(
+                  (r) => String(r.id) === regionId
+                );
                 if (!region) return null;
                 return (
                   <Badge
@@ -5179,7 +5925,13 @@ export default function ClientFilterComponent({
                     <X
                       size={14}
                       className="cursor-pointer ml-1"
-                      onClick={() => updateFilters('regions', String(region.id), true)}
+                      onClick={() =>
+                        updateFilters(
+                          "regions",
+                          String(region.id),
+                          true
+                        )
+                      }
                     />
                   </Badge>
                 );
@@ -5747,7 +6499,9 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
 
 ```
 {
-  "printWidth": 60
+  "printWidth": 70,
+	"plugins": ["prettier-plugin-tailwindcss"],
+	"tailwindStylesheet": "./app/[lang]/global.css"
 }
 
 ```
@@ -5773,7 +6527,9 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
     "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-scroll-area": "^1.2.3",
+    "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@tailwindcss/postcss": "^4.0.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -5794,6 +6550,7 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -5801,8 +6558,78 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
     "@wordpress/block-library": "^9.9.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.14",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript": "^5"
   }
+}
+
+```
+
+### hooks/useDeviceSize.ts
+
+```
+// hooks/useDeviceSize.ts
+import { useState, useEffect } from 'react';
+
+// デバイスタイプを定義
+export type DeviceType = 'mobile' | 'tablet' | 'desktop';
+
+// ブレークポイントをプロジェクトの設計に合わせて調整
+const BREAKPOINTS = {
+  mobile: 0,
+  tablet: 768,
+  desktop: 1024
+};
+
+export default function useDeviceSize() {
+  // デフォルトで画面サイズが不明なときはdesktopとみなす
+  const [deviceType, setDeviceType] = useState<DeviceType>('desktop');
+  const [width, setWidth] = useState<number>(0);
+  const [height, setHeight] = useState<number>(0);
+
+  useEffect(() => {
+    // サーバーサイドレンダリング対策
+    if (typeof window === 'undefined') return;
+
+    function handleResize() {
+      const currentWidth = window.innerWidth;
+      setWidth(currentWidth);
+      setHeight(window.innerHeight);
+
+      if (currentWidth < BREAKPOINTS.tablet) {
+        setDeviceType('mobile');
+      } else if (currentWidth < BREAKPOINTS.desktop) {
+        setDeviceType('tablet');
+      } else {
+        setDeviceType('desktop');
+      }
+    }
+
+    // 初期化時に一度実行
+    handleResize();
+
+    // リサイズイベントリスナーの登録
+    window.addEventListener('resize', handleResize);
+
+    // クリーンアップ関数
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const isMobile = deviceType === 'mobile';
+  const isTablet = deviceType === 'tablet';
+  const isDesktop = deviceType === 'desktop';
+
+  return {
+    deviceType,
+    width,
+    height,
+    isMobile,
+    isTablet,
+    isDesktop
+  };
 }
 
 ```
@@ -6006,135 +6833,213 @@ export function getLangFromUrl(url: URL) {
 ### lib/fetchData.ts
 
 ```
-import { BokunResponseData, WPSiteContent, WPRegion, WPGuide, WPTour, WPTag, WPCategory, WPNewsArticle, WPMediaItem, } from '@/types';
-import { Locale, DEFAULT_LOCALE } from '@/constants/site';
+import {
+  BokunResponseData,
+  WPSiteContent,
+  WPRegion,
+  WPGuide,
+  WPTour,
+  WPTag,
+  WPCategory,
+  WPNewsArticle,
+  WPMediaItem,
+} from "@/types";
+import { Locale, DEFAULT_LOCALE } from "@/constants/site";
 
-const BOKUN_API_BASE_URL = 'https://bokun-wrapper.pages.dev';
+const BOKUN_API_BASE_URL =
+  "https://bokun-wrapper.pages.dev";
 // const BOKUN_API_BASE_URL = 'https://neighborsflavorstours-bokun-wrapper.pages.dev';
-const WP_API_BASE_URL = 'https://shimatoworks.xsrv.jp/transformativetour/wp-json/wp/v2';
+const WP_API_BASE_URL =
+  "https://shimatoworks.xsrv.jp/transformativetour/wp-json/wp/v2";
 
 interface BokunSearchParams {
-	facetFilters?: Array<{
-		excluded: boolean;
-		name: string;
-		values: string[];
-	}>;
-	page: number;
-	pageSize: number;
-	vendorId?: number;
+  facetFilters?: Array<{
+    excluded: boolean;
+    name: string;
+    values: string[];
+  }>;
+  page: number;
+  pageSize: number;
+  vendorId?: number;
 }
 
 // カスタムエラークラス
 class FetchError extends Error {
-	constructor(public status: number, message: string) {
-		super(message);
-		this.name = 'FetchError';
-	}
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = "FetchError";
+  }
 }
 
 // 再利用可能なfetch関数
-async function fetchWithErrorHandling<T>(url: string, options?: RequestInit): Promise<T> {
-	const response = await fetch(url, options);
-	if (!response.ok) {
-		throw new FetchError(response.status, `HTTP error! status: ${response.status}`);
-	}
-	return await response.json();
+async function fetchWithErrorHandling<T>(
+  url: string,
+  options?: RequestInit
+): Promise<T> {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new FetchError(
+      response.status,
+      `HTTP error! status: ${response.status}`
+    );
+  }
+  return await response.json();
 }
 
 // キャッシュオブジェクト
 const cache: Record<string, unknown> = {};
 
 // キャッシュ付きfetch関数
-async function cachedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
-	const start = Date.now();
-	let source: 'cache' | 'fetch';
+async function cachedFetch<T>(
+  key: string,
+  fetcher: () => Promise<T>
+): Promise<T> {
+  const start = Date.now();
+  let source: "cache" | "fetch";
 
-	if (process.env.NODE_ENV === 'development') {
-		// 開発環境ではキャッシュを使用しない
-		const data = await fetcher();
-		source = 'fetch';
-		const end = Date.now();
-		const duration = end - start;
-		console.log(`${source}: ${key} (${duration}ms)`);
-		return data;
-	}
+  if (process.env.NODE_ENV === "development") {
+    // 開発環境ではキャッシュを使用しない
+    const data = await fetcher();
+    source = "fetch";
+    const end = Date.now();
+    const duration = end - start;
+    console.log(`${source}: ${key} (${duration}ms)`);
+    return data;
+  }
 
-	if (cache[key]) {
-		source = 'cache';
-		const data = cache[key] as T;
-		const end = Date.now();
-		const duration = end - start;
-		console.log(`${source}: ${key} (${duration}ms)`);
-		return data;
-	}
+  if (cache[key]) {
+    source = "cache";
+    const data = cache[key] as T;
+    const end = Date.now();
+    const duration = end - start;
+    console.log(`${source}: ${key} (${duration}ms)`);
+    return data;
+  }
 
-	const data = await fetcher();
-	cache[key] = data;
-	source = 'fetch';
-	const end = Date.now();
-	const duration = end - start;
-	console.log(`${source}: ${key} (${duration}ms)`);
-	return data;
+  const data = await fetcher();
+  cache[key] = data;
+  source = "fetch";
+  const end = Date.now();
+  const duration = end - start;
+  console.log(`${source}: ${key} (${duration}ms)`);
+  return data;
 }
 
-export async function postSearchActivities(params: BokunSearchParams, lang: Locale = DEFAULT_LOCALE): Promise<BokunResponseData> {
-	const url = `${BOKUN_API_BASE_URL}/activity.json/search?lang=${encodeURIComponent(lang)}`;
-	return cachedFetch(`activities-${lang}-${JSON.stringify(params)}`, () =>
-		fetchWithErrorHandling<BokunResponseData>(url, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(params)
-		})
-	);
+export async function postSearchActivities(
+  params: BokunSearchParams,
+  lang: Locale = DEFAULT_LOCALE
+): Promise<BokunResponseData> {
+  const url = `${BOKUN_API_BASE_URL}/activity.json/search?lang=${encodeURIComponent(
+    lang
+  )}`;
+  return cachedFetch(
+    `activities-${lang}-${JSON.stringify(params)}`,
+    () =>
+      fetchWithErrorHandling<BokunResponseData>(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params),
+      })
+  );
 }
 
-export async function getWPSiteOptions(lang: Locale = DEFAULT_LOCALE): Promise<WPSiteContent> {
-	const BASE_URL = 'https://shimatoworks.xsrv.jp/transformativetour/wp-json';
-	const url = `${BASE_URL}/acf/v1/options?lang=${encodeURIComponent(lang)}&acf_format=standard`;
-	// const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
-	return cachedFetch(`options-${lang}`, () => fetchWithErrorHandling<WPSiteContent>(url));
+export async function getWPSiteOptions(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<WPSiteContent> {
+  const BASE_URL =
+    "https://shimatoworks.xsrv.jp/transformativetour/wp-json";
+  const url = `${BASE_URL}/acf/v1/options?lang=${encodeURIComponent(
+    lang
+  )}&acf_format=standard`;
+  // const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
+  return cachedFetch(`options-${lang}`, () =>
+    fetchWithErrorHandling<WPSiteContent>(url)
+  );
 }
 
-export function fetchWPMediaItem(id: number): Promise<WPMediaItem> {
-	const url = `${WP_API_BASE_URL}/media/${id}`;
-	return cachedFetch(`media-${id}`, () => fetchWithErrorHandling<WPMediaItem>(url));
+export function fetchWPMediaItem(
+  id: number
+): Promise<WPMediaItem> {
+  const url = `${WP_API_BASE_URL}/media/${id}`;
+  return cachedFetch(`media-${id}`, () =>
+    fetchWithErrorHandling<WPMediaItem>(url)
+  );
 }
 
-export async function fetchWPTag(id: number): Promise<WPTag> {
-	const url = `${WP_API_BASE_URL}/tags/${id}`;
-	return cachedFetch(`tag-${id}`, () => fetchWithErrorHandling<WPTag>(url));
+export async function fetchWPTag(
+  id: number
+): Promise<WPTag> {
+  const url = `${WP_API_BASE_URL}/tags/${id}`;
+  return cachedFetch(`tag-${id}`, () =>
+    fetchWithErrorHandling<WPTag>(url)
+  );
 }
 
-export async function fetchAllWPTags(lang: Locale = DEFAULT_LOCALE): Promise<WPTag[]> {
-	const url = `${WP_API_BASE_URL}/tags?per_page=100&lang=${encodeURIComponent(lang)}`;
-	return cachedFetch(`all-tags-${lang}`, () => fetchWithErrorHandling<WPTag[]>(url));
+export async function fetchAllWPTags(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<WPTag[]> {
+  const url = `${WP_API_BASE_URL}/tags?per_page=100&lang=${encodeURIComponent(
+    lang
+  )}`;
+  return cachedFetch(`all-tags-${lang}`, () =>
+    fetchWithErrorHandling<WPTag[]>(url)
+  );
 }
 
-export async function fetchAllWPCategories(lang: Locale = DEFAULT_LOCALE): Promise<WPCategory[]> {
-	const url = `${WP_API_BASE_URL}/categories?per_page=100&lang=${encodeURIComponent(lang)}`;
-	return cachedFetch(`all-categories-${lang}`, () => fetchWithErrorHandling<WPCategory[]>(url));
+export async function fetchAllWPCategories(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<WPCategory[]> {
+  const url = `${WP_API_BASE_URL}/categories?per_page=100&lang=${encodeURIComponent(
+    lang
+  )}`;
+  return cachedFetch(`all-categories-${lang}`, () =>
+    fetchWithErrorHandling<WPCategory[]>(url)
+  );
 }
 
-export async function fetchWPGuides(lang: Locale = DEFAULT_LOCALE): Promise<WPGuide[]> {
-	const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
-	return cachedFetch(`guides-${lang}`, () => fetchWithErrorHandling<WPGuide[]>(url));
+export async function fetchWPGuides(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<WPGuide[]> {
+  const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(
+    lang
+  )}&acf_format=standard`;
+  return cachedFetch(`guides-${lang}`, () =>
+    fetchWithErrorHandling<WPGuide[]>(url)
+  );
 }
 
-export async function fetchWPRegions(lang: Locale = DEFAULT_LOCALE): Promise<WPRegion[]> {
-	const url = `${WP_API_BASE_URL}/region?lang=${encodeURIComponent(lang)}&acf_format=standard`;
-	return cachedFetch(`regions-${lang}`, () => fetchWithErrorHandling<WPRegion[]>(url));
+export async function fetchWPRegions(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<WPRegion[]> {
+  const url = `${WP_API_BASE_URL}/region?lang=${encodeURIComponent(
+    lang
+  )}&acf_format=standard`;
+  return cachedFetch(`regions-${lang}`, () =>
+    fetchWithErrorHandling<WPRegion[]>(url)
+  );
 }
 
-export async function fetchWPTours(lang: Locale = DEFAULT_LOCALE): Promise<WPTour[]> {
-	const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(lang)}&acf_format=standard&status=publish`;
-	return cachedFetch(`tours-${lang}`, () => fetchWithErrorHandling<WPTour[]>(url));
+export async function fetchWPTours(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<WPTour[]> {
+  const url = `${WP_API_BASE_URL}/tour?lang=${encodeURIComponent(
+    lang
+  )}&acf_format=standard&status=publish`;
+  return cachedFetch(`tours-${lang}`, () =>
+    fetchWithErrorHandling<WPTour[]>(url)
+  );
 }
 
-export async function fetchNewsArticles(lang: Locale = DEFAULT_LOCALE): Promise<WPNewsArticle[]> {
-	const url = `${WP_API_BASE_URL}/posts?lang=${encodeURIComponent(lang)}&acf_format=standard`;
-	return cachedFetch(`news-${lang}`, () => fetchWithErrorHandling<WPNewsArticle[]>(url));
+export async function fetchNewsArticles(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<WPNewsArticle[]> {
+  const url = `${WP_API_BASE_URL}/posts?lang=${encodeURIComponent(
+    lang
+  )}&acf_format=standard&_embed=1`;
+  return cachedFetch(`news-${lang}`, () =>
+    fetchWithErrorHandling<WPNewsArticle[]>(url)
+  );
 }
-
 
 // export async function fetchPostsWithDetails<T extends WPArticle>(
 //   fetchPostsFn: () => Promise<T[]>,
@@ -6179,215 +7084,374 @@ export type { BokunSearchParams };
 ### lib/utils.ts
 
 ```
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import { DEFAULT_LOCALE, Locale } from '@/constants/site';
-import { Guide, Activity, Region, News, WPMediaItem, ActivityFilters } from '@/types';
-import { BokunSearchParams, fetchAllWPCategories, fetchAllWPTags, fetchNewsArticles, fetchWPGuides, fetchWPMediaItem, fetchWPRegions, fetchWPTours, postSearchActivities } from './fetchData';
-import { formatDate } from './formatDate';
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { DEFAULT_LOCALE, Locale } from "@/constants/site";
+import {
+  Guide,
+  Activity,
+  Region,
+  News,
+  WPMediaItem,
+  ActivityFilters,
+} from "@/types";
+import {
+  BokunSearchParams,
+  fetchAllWPCategories,
+  fetchAllWPTags,
+  fetchNewsArticles,
+  fetchWPGuides,
+  fetchWPMediaItem,
+  fetchWPRegions,
+  fetchWPTours,
+  postSearchActivities,
+} from "./fetchData";
+import { formatDate } from "./formatDate";
 
 // タグ・カテゴリー情報のキャッシュ
-let tagCache: Map<number, { name: string; slug: string }> | null = null;
-let categoryCache: Map<number, { name: string; slug: string }> | null = null;
+let tagCache: Map<
+  number,
+  { name: string; slug: string }
+> | null = null;
+let categoryCache: Map<
+  number,
+  { name: string; slug: string }
+> | null = null;
 
-async function getTagCache(lang: Locale): Promise<Map<number, { name: string; slug: string }>> {
-	if (!tagCache) {
-		const tags = await fetchAllWPTags(lang);
-		tagCache = new Map(tags.map((tag) => [tag.id, { name: tag.name, slug: tag.slug }]));
-	}
-	return tagCache;
+async function getTagCache(
+  lang: Locale
+): Promise<Map<number, { name: string; slug: string }>> {
+  if (!tagCache) {
+    const tags = await fetchAllWPTags(lang);
+    tagCache = new Map(
+      tags.map((tag) => [
+        tag.id,
+        { name: tag.name, slug: tag.slug },
+      ])
+    );
+  }
+  return tagCache;
 }
 
-async function getCategoryCache(lang: Locale): Promise<Map<number, { name: string; slug: string }>> {
-	if (!categoryCache) {
-		const categories = await fetchAllWPCategories(lang);
-		// console.log('categoryCache:', categories);
-		categoryCache = new Map(categories.map((category) => [category.id, { name: category.name, slug: category.slug }]));
-	}
-	return categoryCache;
+async function getCategoryCache(
+  lang: Locale
+): Promise<Map<number, { name: string; slug: string }>> {
+  if (!categoryCache) {
+    const categories = await fetchAllWPCategories(lang);
+    // console.log('categoryCache:', categories);
+    categoryCache = new Map(
+      categories.map((category) => [
+        category.id,
+        { name: category.name, slug: category.slug },
+      ])
+    );
+  }
+  return categoryCache;
 }
 
-export async function getFormattedGuideData(lang: Locale = DEFAULT_LOCALE): Promise<Guide[]> {
-	const [guides, regions, tagCacheResult] = await Promise.all([fetchWPGuides(lang), fetchWPRegions(lang), getTagCache(lang)]);
+export async function getFormattedGuideData(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<Guide[]> {
+  const [guides, regions, tagCacheResult] =
+    await Promise.all([
+      fetchWPGuides(lang),
+      fetchWPRegions(lang),
+      getTagCache(lang),
+    ]);
 
-	const regionMap = new Map(regions.map((region) => [region.id, region.acf.name]));
+  const regionMap = new Map(
+    regions.map((region) => [region.id, region.acf.name])
+  );
 
-	const formattedGuides = await Promise.all(
-		guides.map(async (guide) => {
-			// console.log('guide:', guide);
-			const tags = guide.tags
-				? guide.tags.map((tagId) => {
-						const tagInfo = tagCacheResult.get(tagId);
-						return tagInfo ? { id: tagId, name: tagInfo.name, slug: tagInfo.slug } : { id: tagId, name: '', slug: '' };
-				  })
-				: [];
-			// const tags = guide.tags ? await Promise.all(guide.tags.map(fetchWPTag)) : [];
+  const formattedGuides = await Promise.all(
+    guides.map(async (guide) => {
+      // console.log('guide:', guide);
+      const tags = guide.tags
+        ? guide.tags.map((tagId) => {
+            const tagInfo = tagCacheResult.get(tagId);
+            return tagInfo
+              ? {
+                  id: tagId,
+                  name: tagInfo.name,
+                  slug: tagInfo.slug,
+                }
+              : { id: tagId, name: "", slug: "" };
+          })
+        : [];
+      // const tags = guide.tags ? await Promise.all(guide.tags.map(fetchWPTag)) : [];
 
-			return {
-				id: guide.id,
-				title: guide.acf.title,
-				name: guide.acf.name,
-				mv: guide.acf.mv,
-				photo: guide.acf.photo,
-				copy: guide.acf.copy,
-				description: guide.acf.description,
-				regionIds: guide.acf.region ?? [], // nullish coalescing operator を使用
-				regions: guide.acf.region?.map((id) => regionMap.get(id) || '').filter((name): name is string => name !== '') ?? [],
-				tags: tags.map((tag) => ({
-					id: tag.id,
-					name: tag.name,
-					slug: tag.slug
-				})),
-				values: guide.acf.values ?? [],
-				sns: guide.acf.sns
-			};
-		})
-	);
+      return {
+        id: guide.id,
+        title: guide.acf.title,
+        name: guide.acf.name,
+        mv: guide.acf.mv,
+        photo: guide.acf.photo,
+        copy: guide.acf.copy,
+        description: guide.acf.description,
+        regionIds: guide.acf.region ?? [], // nullish coalescing operator を使用
+        regions:
+          guide.acf.region
+            ?.map((id) => regionMap.get(id) || "")
+            .filter(
+              (name): name is string => name !== ""
+            ) ?? [],
+        tags: tags.map((tag) => ({
+          id: tag.id,
+          name: tag.name,
+          slug: tag.slug,
+        })),
+        values: guide.acf.values ?? [],
+        sns: guide.acf.sns,
+      };
+    })
+  );
 
-	return formattedGuides;
+  return formattedGuides;
 }
 
-export async function getFormattedRegionData(lang: Locale = DEFAULT_LOCALE): Promise<Region[]> {
-	const regions = await fetchWPRegions(lang);
+export async function getFormattedRegionData(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<Region[]> {
+  const regions = await fetchWPRegions(lang);
 
-	return regions.map((region) => ({
-		id: region.id,
-		name: region.acf.name,
-		description: region.acf.description,
-		mv: region.acf?.mv?.sizes?.large,
-		gallery: region.acf.gallery,
-		access: region.acf.access
-	}));
+  return regions.map((region) => ({
+    id: region.id,
+    name: region.acf.name,
+    description: region.acf.description,
+    mv: region.acf?.mv?.sizes?.large,
+    gallery: region.acf.gallery,
+    access: region.acf.access,
+  }));
 }
 
-export async function getFormattedActivities(searchParams: BokunSearchParams, lang: Locale = DEFAULT_LOCALE): Promise<Activity[]> {
-	try {
-		const [bokunActivities, wpTours, formattedGuides, tagCacheResult] = await Promise.all([postSearchActivities(searchParams, lang), fetchWPTours(lang), getFormattedGuideData(lang), getTagCache(lang)]);
+export async function getFormattedActivities(
+  searchParams: BokunSearchParams,
+  lang: Locale = DEFAULT_LOCALE
+): Promise<Activity[]> {
+  try {
+    const [
+      bokunActivities,
+      wpTours,
+      formattedGuides,
+      tagCacheResult,
+    ] = await Promise.all([
+      postSearchActivities(searchParams, lang),
+      fetchWPTours(lang),
+      getFormattedGuideData(lang),
+      getTagCache(lang),
+    ]);
 
-		// console.log('bokunActivities:', bokunActivities);
+    // console.log('bokunActivities:', bokunActivities);
 
-		const activities = await Promise.all(
-			bokunActivities.items.map(async (item) => {
-				const wpTour = wpTours.find((tour) => tour.acf.bokun_id === item.id);
-				const guideIds = wpTour?.acf.guide || [];
-				const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
+    const activities = await Promise.all(
+      bokunActivities.items.map(async (item) => {
+        const wpTour = wpTours.find(
+          (tour) => tour.acf.bokun_id === item.id
+        );
+        const guideIds = wpTour?.acf.guide || [];
+        const guides = guideIds
+          .map((id) =>
+            formattedGuides.find(
+              (guide) => guide.id === Number(id)
+            )
+          )
+          .filter(
+            (guide): guide is Guide => guide !== undefined
+          );
 
-				// guides から regions と regionIds を抽出
-				const regions = Array.from(new Set(guides.flatMap((guide) => guide.regions))).filter((region): region is string => region !== undefined);
-				const regionIds = Array.from(new Set(guides.flatMap((guide) => guide.regionIds || []))).filter((id): id is number => id !== undefined);
+        // guides から regions と regionIds を抽出
+        const regions = Array.from(
+          new Set(guides.flatMap((guide) => guide.regions))
+        ).filter(
+          (region): region is string => region !== undefined
+        );
+        const regionIds = Array.from(
+          new Set(
+            guides.flatMap((guide) => guide.regionIds || [])
+          )
+        ).filter((id): id is number => id !== undefined);
 
-				// キャッシュからタグ情報を取得
-				const tags = wpTour?.tags
-					? wpTour.tags.map((tagId) => {
-							const tagInfo = tagCacheResult.get(tagId);
-							return tagInfo ? { id: tagId, name: tagInfo.name, slug: tagInfo.slug } : { id: tagId, name: '', slug: '' };
-					  })
-					: [];
+        // キャッシュからタグ情報を取得
+        const tags = wpTour?.tags
+          ? wpTour.tags.map((tagId) => {
+              const tagInfo = tagCacheResult.get(tagId);
+              return tagInfo
+                ? {
+                    id: tagId,
+                    name: tagInfo.name,
+                    slug: tagInfo.slug,
+                  }
+                : { id: tagId, name: "", slug: "" };
+            })
+          : [];
 
-				const formattedDuration = formatDuration(item.fields.durationWeeks || 0, item.fields.durationDays || 0, item.fields.durationHours || 0);
-				const totalDays = (item.fields.durationWeeks || 0) * 7 + (item.fields.durationDays || 0);
-				// const fields = item.fields || {};
-				// console.log('fields:', fields);
+        const formattedDuration = formatDuration(
+          item.fields.durationWeeks || 0,
+          item.fields.durationDays || 0,
+          item.fields.durationHours || 0
+        );
+        const totalDays =
+          (item.fields.durationWeeks || 0) * 7 +
+          (item.fields.durationDays || 0);
+        // const fields = item.fields || {};
+        // console.log('fields:', fields);
 
-				return {
-					id: parseInt(item.id),
-					wpId: wpTour?.id,
-					title: item.title,
-					excerpt: item.excerpt,
-					photo: item.keyPhoto?.derived.find((p) => p.name === 'large')?.url || item.keyPhoto?.originalUrl,
-					categories: item.activityCategories,
-					tags: tags,
-					price: item.price,
-					formattedPrice: formatNumber(item.price),
-					regions: regions,
-					regionIds: regionIds,
-					duration: formattedDuration,
-					durationDays: totalDays,
-					durationHours: totalDays > 0 ? 0 : item.fields.durationHours || 0,
-					guideIds: guideIds,
-					guides: guides
-				};
-			})
-		);
-		return activities;
-	} catch (error) {
-		console.error('Error in getFormattedActivities:', error);
-		throw error;
-	}
+        return {
+          id: parseInt(item.id),
+          wpId: wpTour?.id,
+          title: item.title,
+          excerpt: item.excerpt,
+          photo:
+            item.keyPhoto?.derived.find(
+              (p) => p.name === "large"
+            )?.url || item.keyPhoto?.originalUrl,
+          categories: item.activityCategories,
+          tags: tags,
+          price: item.price,
+          formattedPrice: formatNumber(item.price),
+          regions: regions,
+          regionIds: regionIds,
+          duration: formattedDuration,
+          durationDays: totalDays,
+          durationHours:
+            totalDays > 0
+              ? 0
+              : item.fields.durationHours || 0,
+          guideIds: guideIds,
+          guides: guides,
+        };
+      })
+    );
+    return activities;
+  } catch (error) {
+    console.error(
+      "Error in getFormattedActivities:",
+      error
+    );
+    throw error;
+  }
 }
 
-export async function getFormattedNewsData(lang: Locale = DEFAULT_LOCALE): Promise<News[]> {
-	const [newsArticles, formattedGuides, categoryCacheResult] = await Promise.all([fetchNewsArticles(lang), getFormattedGuideData(lang), getCategoryCache(lang)]);
+export async function getFormattedNewsData(
+  lang: Locale = DEFAULT_LOCALE
+): Promise<News[]> {
+  const [
+    newsArticles,
+    formattedGuides,
+    categoryCacheResult,
+  ] = await Promise.all([
+    fetchNewsArticles(lang),
+    getFormattedGuideData(lang),
+    getCategoryCache(lang),
+  ]);
+	// console.log('newsArticles:', newsArticles);
 
-	const formattedNewsArticles = await Promise.all(
-		newsArticles.map(async (article) => {
-			// console.log('categories:', article.categories);
-			const formatedDate = formatDate(article.date);
-			// アイキャッチ画像がある場合はその詳細を取得
-			let mediaItem: WPMediaItem | undefined;
-			if (article.featured_media) {
-				try {
-					mediaItem = await fetchWPMediaItem(article.featured_media);
-				} catch (error) {
-					console.error(`Failed to fetch media for post ${article.id}:`, error);
-				}
-			}
-			const guideIds = article?.acf.guide || [];
-			const guides = guideIds.map((id) => formattedGuides.find((guide) => guide.id === Number(id))).filter((guide): guide is Guide => guide !== undefined);
-			const categories = article.categories
-				? article.categories.map((categoryId) => {
-						const categoryInfo = categoryCacheResult.get(categoryId);
-						return categoryInfo ? { id: categoryId, name: categoryInfo.name, slug: categoryInfo.slug } : { id: categoryId, name: '', slug: '' };
-				  })
-				: [];
+  const formattedNewsArticles = await Promise.all(
+    newsArticles.map(async (article) => {
+      const formatedDate = formatDate(article.date);
+			// console.log('article:', article);
 
-			return {
-				id: article.id,
-				date: formatedDate,
-				title: article.title.rendered,
-				content: article.content.rendered,
-				featured_media: mediaItem,
-				categories: categories.map((category) => ({
-					id: category.id,
-					name: category.name,
-					slug: category.slug
-				})),
-				guides: guides
-			};
-		})
-	);
+      // アイキャッチ画像がある場合はその詳細を取得
+      let mediaItem: WPMediaItem | undefined;
+      if (article.featured_media) {
+        try {
+          mediaItem = await fetchWPMediaItem(
+            article.featured_media
+          );
+        } catch (error) {
+          console.error(
+            `Failed to fetch media for post ${article.id}:`,
+            error
+          );
+        }
+      }
+      const guideIds = article?.acf.guide || [];
+      const guides = guideIds
+        .map((id) =>
+          formattedGuides.find(
+            (guide) => guide.id === Number(id)
+          )
+        )
+        .filter(
+          (guide): guide is Guide => guide !== undefined
+        );
+      const categories = article.categories
+        ? article.categories.map((categoryId) => {
+            const categoryInfo =
+              categoryCacheResult.get(categoryId);
+            return categoryInfo
+              ? {
+                  id: categoryId,
+                  name: categoryInfo.name,
+                  slug: categoryInfo.slug,
+                }
+              : { id: categoryId, name: "", slug: "" };
+          })
+        : [];
 
-	return formattedNewsArticles;
+      return {
+        id: article.id,
+        date: formatedDate,
+        title: article.title.rendered,
+        content: article.content.rendered,
+        featured_media: mediaItem,
+        categories: categories.map((category) => ({
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+        })),
+        guides: guides,
+      };
+    })
+  );
+
+  return formattedNewsArticles;
 }
 
-export function getGuidesByRegion(guides: Guide[], regionId: number): Guide[] {
-	return guides.filter((guide) => guide.regionIds?.includes(regionId));
+export function getGuidesByRegion(
+  guides: Guide[],
+  regionId: number
+): Guide[] {
+  return guides.filter((guide) =>
+    guide.regionIds?.includes(regionId)
+  );
 }
 
-function formatDuration(weeks: number, days: number, hours: number): string {
-	const totalDays = weeks * 7 + days;
+function formatDuration(
+  weeks: number,
+  days: number,
+  hours: number
+): string {
+  const totalDays = weeks * 7 + days;
 
-	if (totalDays > 0) {
-		return `${totalDays} Day${totalDays > 1 ? 's' : ''}`;
-	} else if (hours > 0) {
-		return `${hours} Hour${hours !== 1 ? 's' : ''}`;
-	} else {
-		return 'Less than an hour';
-	}
+  if (totalDays > 0) {
+    return `${totalDays} Day${totalDays > 1 ? "s" : ""}`;
+  } else if (hours > 0) {
+    return `${hours} Hour${hours !== 1 ? "s" : ""}`;
+  } else {
+    return "Less than an hour";
+  }
 }
 
 export function formatNumber(num: number): string {
-	return num.toLocaleString('ja-JP');
+  return num.toLocaleString("ja-JP");
 }
 
-export function filterActivitiesByQuery(activities: Activity[], filters?: ActivityFilters): Activity[] {
+export function filterActivitiesByQuery(
+  activities: Activity[],
+  filters?: ActivityFilters
+): Activity[] {
   if (!filters) return activities;
 
   return activities.filter((activity) => {
     // ガイドでフィルタリング
     if (filters.guides?.length) {
       const filterGuideIds = filters.guides.map(Number);
-      if (!activity.guideIds?.some(id => filterGuideIds.includes(id))) {
+      if (
+        !activity.guideIds?.some((id) =>
+          filterGuideIds.includes(id)
+        )
+      ) {
         return false;
       }
     }
@@ -6395,7 +7459,11 @@ export function filterActivitiesByQuery(activities: Activity[], filters?: Activi
     // 地域でフィルタリング
     if (filters.regions?.length) {
       const filterRegionIds = filters.regions.map(Number);
-      if (!activity.regionIds?.some(id => filterRegionIds.includes(id))) {
+      if (
+        !activity.regionIds?.some((id) =>
+          filterRegionIds.includes(id)
+        )
+      ) {
         return false;
       }
     }
@@ -6403,8 +7471,13 @@ export function filterActivitiesByQuery(activities: Activity[], filters?: Activi
     // テキスト検索（変更なし）
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      const titleMatch = activity.title.toLowerCase().includes(searchLower);
-      const excerptMatch = activity.excerpt?.toLowerCase().includes(searchLower) ?? false;
+      const titleMatch = activity.title
+        .toLowerCase()
+        .includes(searchLower);
+      const excerptMatch =
+        activity.excerpt
+          ?.toLowerCase()
+          .includes(searchLower) ?? false;
       if (!titleMatch && !excerptMatch) {
         return false;
       }
@@ -6414,26 +7487,54 @@ export function filterActivitiesByQuery(activities: Activity[], filters?: Activi
   });
 }
 
-export function filterActivities(activities: Activity[], filters: { guideId: number | null; regionId: number | null; tagIds: number[] }, guides: Guide[], regions: Region[]): Activity[] {
-	return activities.filter((activity) => {
-		if (filters.guideId != null && !activity.guides?.some((guide) => guide.id === filters.guideId)) return false;
-		if (filters.regionId != null) {
-			const regionName = regions.find((r) => r.id === filters.regionId)?.name;
-			if (regionName && !activity.regions?.includes(regionName)) return false;
-		}
-		if (filters.tagIds.length > 0 && !filters.tagIds.every((tagId) => activity.tags?.some((tag) => tag.id === tagId))) return false;
-		return true;
-	});
+export function filterActivities(
+  activities: Activity[],
+  filters: {
+    guideId: number | null;
+    regionId: number | null;
+    tagIds: number[];
+  },
+  guides: Guide[],
+  regions: Region[]
+): Activity[] {
+  return activities.filter((activity) => {
+    if (
+      filters.guideId != null &&
+      !activity.guides?.some(
+        (guide) => guide.id === filters.guideId
+      )
+    )
+      return false;
+    if (filters.regionId != null) {
+      const regionName = regions.find(
+        (r) => r.id === filters.regionId
+      )?.name;
+      if (
+        regionName &&
+        !activity.regions?.includes(regionName)
+      )
+        return false;
+    }
+    if (
+      filters.tagIds.length > 0 &&
+      !filters.tagIds.every((tagId) =>
+        activity.tags?.some((tag) => tag.id === tagId)
+      )
+    )
+      return false;
+    return true;
+  });
 }
 
 export function extractVideoID(url: string): string | null {
-	const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-	const match = url.match(regExp);
-	return match && match[2].length === 11 ? match[2] : null;
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
 }
 
 export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs));
 }
 
 ```
