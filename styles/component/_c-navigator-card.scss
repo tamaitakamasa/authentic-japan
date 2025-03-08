@@ -133,6 +133,7 @@
 
     @include g.mq(md) {
       margin-top: 1px;
+			font-weight: 500;
       line-height: 1.25;
     }
   }

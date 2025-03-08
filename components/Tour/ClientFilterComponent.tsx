@@ -146,7 +146,7 @@ export default function ClientFilterComponent({
 
   return (
     <>
-      <div className="sticky bottom-8 mx-auto mt-10 flex w-fit flex-row items-center justify-center gap-1 rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg [&>*]:font-[Noto_Sans_JP]">
+      <div className="p-page-tours__filter sticky bottom-8 mx-auto mt-10 flex w-fit flex-row items-center justify-center gap-1 rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg [&>*]:font-[Noto_Sans_JP]">
         {isExpanded ? (
           <Button
             size="icon"

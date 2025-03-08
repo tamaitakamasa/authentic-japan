@@ -7,8 +7,9 @@
 	padding-top: 0;
 
 	&__filter {
-		display: flex;
-		justify-content: center;
+		& > * {
+			font-family: g.$font-noto-sans;
+		}
 	}
 
 	&__items {
