@@ -161,16 +161,34 @@ export default function ClientFilterComponent({
             onClick={() => setIsExpanded(true)}
           >
             <Maximize2 />
-            <span className="text-xs">検索する</span>
+            <span className="font-[Noto_Sans_JP] text-xs">
+              {t({
+                ja: "検索",
+                en: "Search",
+                fr: "Rechercher",
+              })}
+            </span>
           </Button>
         )}
 
-        <div className="block flex-none px-2 text-xs">
-          ツアー :
-          <span className="text-sm font-bold">
+        <div className="block flex-none px-2 font-[Noto_Sans_JP] text-xs">
+          <span className="text-base font-bold mr-1">
             {filteredActivitiesCount}
           </span>
-          件
+					<span>tours</span>
+          {/* {t({
+            ja: "ツアー : ",
+            en: "Tours : ",
+            fr: "Circuits : "
+          })}
+          <span className="text-sm font-bold">
+            {filteredActivitiesCount}
+          </span> */}
+          {/* {t({
+            ja: "件",
+            en: ".",
+            fr: "."
+          })} */}
         </div>
 
         <AnimatePresence>
@@ -209,7 +227,11 @@ export default function ClientFilterComponent({
                       </TooltipTrigger>
                       <TooltipContent className="p-3">
                         <p className="font-[Noto_Sans_JP]">
-                          ナビゲーターで絞り込む
+                          {t({
+                            ja: "ナビゲーターで絞り込む",
+                            en: "Filter by navigator",
+                            fr: "Filtrer par navigateur",
+                          })}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -260,7 +282,11 @@ export default function ClientFilterComponent({
                       </TooltipTrigger>
                       <TooltipContent className="p-3">
                         <p className="font-[Noto_Sans_JP]">
-                          地域で絞り込む
+                          {t({
+                            ja: "地域で絞り込む",
+                            en: "Filter by region",
+                            fr: "Filtrer par région",
+                          })}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -309,7 +335,11 @@ export default function ClientFilterComponent({
                     </TooltipTrigger>
                     <TooltipContent className="p-3">
                       <p className="font-[Noto_Sans_JP]">
-                        キーワードで絞り込む
+                        {t({
+                          ja: "キーワードで絞り込む",
+                          en: "Filter by keyword",
+                          fr: "Filtrer par mot-clé",
+                        })}
                       </p>
                     </TooltipContent>
                   </Tooltip>
