@@ -61,7 +61,7 @@ export default function ClientFilterComponent({
   const t = useTranslations(lang);
   const router = useRouter();
   // 現在は使用していないが、将来的にモバイル表示の調整に使用する可能性があるため残しておく
-  const [, setIsSmallScreen] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -146,7 +146,7 @@ export default function ClientFilterComponent({
 
   return (
     <>
-      <div className="fixed bottom-8 left-1/2 z-20 flex w-auto -translate-x-1/2 items-center gap-1 overflow-hidden rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg backdrop-blur [&>*]:font-[Noto_Sans_JP]">
+      <div className="sticky bottom-8 mx-auto flex w-fit flex-row items-center justify-center gap-1 rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg [&>*]:font-[Noto_Sans_JP]">
         {isExpanded ? (
           <Button
             size="icon"
@@ -165,13 +165,13 @@ export default function ClientFilterComponent({
           </Button>
         )}
 
-        <span className="block flex-none px-2 text-xs">
-          ツアー :{" "}
+        <div className="block flex-none px-2 text-xs">
+          ツアー :
           <span className="text-sm font-bold">
             {filteredActivitiesCount}
           </span>
           件
-        </span>
+        </div>
 
         <AnimatePresence>
           {isExpanded && (
@@ -329,6 +329,7 @@ export default function ClientFilterComponent({
                   });
                 }}
               >
+                {/* {isSmallScreen ? <Search /> : <Search />} */}
                 <span className="text-xs">
                   {t({
                     ja: "クリア",

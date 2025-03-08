@@ -39,15 +39,6 @@ export default async function TourList({
   const filteredActivitiesCount = filteredActivities.length;
   return (
     <>
-      {/* <div className="absolute -top-44"> */}
-      <ClientFilterComponent
-        lang={lang}
-        guides={guides}
-        regions={regions}
-        currentFilters={filters}
-        filteredActivitiesCount={filteredActivitiesCount}
-      />
-      {/* </div> */}
       <div className="c-tours">
         {filteredActivities.length > 0 ? (
           filteredActivities.map((activity) => (
@@ -67,6 +58,13 @@ export default async function TourList({
           </p>
         )}
       </div>
+			<ClientFilterComponent
+        lang={lang}
+        guides={guides}
+        regions={regions}
+        currentFilters={filters}
+        filteredActivitiesCount={filteredActivitiesCount}
+      />
     </>
   );
 }
