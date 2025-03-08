@@ -146,7 +146,7 @@ export default function ClientFilterComponent({
 
   return (
     <>
-      <div className="sticky bottom-8 mx-auto flex w-fit flex-row items-center justify-center gap-1 rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg [&>*]:font-[Noto_Sans_JP]">
+      <div className="sticky bottom-8 mx-auto mt-10 flex w-fit flex-row items-center justify-center gap-1 rounded-full border border-border/20 bg-muted/30 p-2 shadow-lg [&>*]:font-[Noto_Sans_JP]">
         {isExpanded ? (
           <Button
             size="icon"
@@ -176,19 +176,6 @@ export default function ClientFilterComponent({
             {filteredActivitiesCount}
           </span>
 					<span>tours</span>
-          {/* {t({
-            ja: "ツアー : ",
-            en: "Tours : ",
-            fr: "Circuits : "
-          })}
-          <span className="text-sm font-bold">
-            {filteredActivitiesCount}
-          </span> */}
-          {/* {t({
-            ja: "件",
-            en: ".",
-            fr: "."
-          })} */}
         </div>
 
         <AnimatePresence>
