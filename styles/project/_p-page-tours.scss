@@ -8,7 +8,7 @@
 
 	&__filter {
 		& > * {
-			font-family: g.$font-noto-sans;
+			font-family: g.$font-noto-sans !important;
 		}
 	}
 
