@@ -61,7 +61,7 @@ export default function ClientFilterComponent({
   const t = useTranslations(lang);
   const router = useRouter();
   // 現在は使用していないが、将来的にモバイル表示の調整に使用する可能性があるため残しておく
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [, setIsSmallScreen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
