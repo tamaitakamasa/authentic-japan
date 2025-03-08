@@ -11,6 +11,38 @@ import { TourItem } from "@/components/Tour/TourItem";
 import Link from "next/link";
 import NewsItem from "@/components/News/NewsItem";
 import { useTranslations } from "@/lib/i18n";
+import { Metadata } from "next";
+
+type Props = {
+  params: { lang: Locale; id: string };
+};
+
+export async function generateMetadata({
+  params: { lang, id },
+}: Props): Promise<Metadata> {
+  const guides = await getFormattedGuideData(lang);
+  const guide = guides.find((g) => g.id === parseInt(id));
+
+  if (!guide) {
+    return {
+      title: "Navigator Not Found",
+    };
+  }
+
+  return {
+    // ナビゲーターの名前をメタデータのタイトルとして設定
+    title: guide.name,
+    // 特定のページ用の説明文をオーバーライド
+    description: guide.description ?
+      // HTMLタグを除去してプレーンテキストとして使用
+      guide.description.replace(/<[^>]*>/g, '') :
+      {
+        ja: "地域の文化や歴史・暮らしに精通するナビゲーターが、訪れる人と地域をつなぎます。",
+        en: "A navigator well-versed in the culture, history, and lifestyle of the region connects visitors with the local area.",
+        fr: "Un navigateur expert en culture, histoire et mode de vie local relie les visiteurs à la région.",
+      }[lang],
+  };
+}
 
 export default async function Page({
   params: { lang, id },

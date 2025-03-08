@@ -5,6 +5,31 @@ import { Suspense } from "react";
 import TourList from "@/components/Tour/TourList";
 import { ActivityFilters } from "@/types/activity";
 import { PageHeader } from "@/components/Layout/PageHeader";
+import { Metadata } from "next";
+
+type Props = {
+  params: { lang: Locale };
+};
+
+export async function generateMetadata({
+  params: { lang },
+}: Props): Promise<Metadata> {
+  return {
+    // タイトルだけをオーバーライド
+    // layout.tsxで設定したテンプレートが適用される
+    title: {
+      ja: "TOURS",
+      en: "TOURS",
+      fr: "TOURS",
+    }[lang],
+    // 特定のページ用の説明文をオーバーライド
+    description: {
+      ja: "それぞれの地域でしか味わえない、唯一無二の旅をお届けします。",
+      en: "We offer one-of-a-kind travel experiences that can only be enjoyed in each unique region.",
+      fr: "Nous offrons des expériences de voyage uniques, qui ne peuvent être vécues que dans chaque région spécifique.",
+    }[lang],
+  };
+}
 
 function parseQueryParam(
   value: string | string[] | undefined

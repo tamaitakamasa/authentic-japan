@@ -18,15 +18,15 @@ export async function generateMetadata({
     // タイトルだけをオーバーライド
     // layout.tsxで設定したテンプレートが適用される
     title: {
-      ja: "Authentic Japanについて",
-      en: "About Authentic Japan",
-      fr: "À propos d'Authentic Japan",
+      ja: "ABOUT US",
+      en: "ABOUT US",
+      fr: "ABOUT US",
     }[lang],
     // 特定のページ用の説明文をオーバーライド
     description: {
-      ja: "ページ固有の説明",
-      en: "Page specific description",
-      fr: "Description spécifique à la page",
+      ja: "地域を愛し、地域同士で尊重し合い、その想いが波紋のように響き合う。私たちは、日本の精神である“調和”を大切にしながら世界と日本を繋ぐ架け橋になることを願っています。",
+      en: "By cherishing the harmony that is the essence of Japan, we aim to be a bridge connecting Japan and the world. We believe in respecting each region, and that this respect will ripple out, bringing people closer together.",
+      fr: "En chérissant l'harmonie, qui est l'essence du Japon, nous aspirons à être un pont entre le Japon et le monde. Nous croyons au respect de chaque région et à la manière dont ce respect se propage, rapprochant les gens.",
     }[lang],
   };
 }

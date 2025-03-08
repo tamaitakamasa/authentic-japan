@@ -4,8 +4,39 @@ import { notFound } from "next/navigation";
 import { ContentHeader } from "@/components/Layout/ContentHeader";
 import { getFormattedNewsData } from "@/lib/utils";
 import NavigatorInfo from "@/components/Navigator/NavigatorInfo";
+import { Metadata } from "next";
 // import '@wordpress/block-library/build-style/style.css';
 // import "@wordpress/block-library/build-style/theme.css"
+
+type Props = {
+  params: { lang: Locale; id: string };
+};
+
+export async function generateMetadata({
+  params: { lang, id },
+}: Props): Promise<Metadata> {
+  const newsArticles = await getFormattedNewsData(lang);
+  const article = newsArticles.find(
+    (article) => article.id === parseInt(id)
+  );
+
+  if (!article) {
+    return {
+      title: "News Not Found",
+    };
+  }
+
+  return {
+    // 記事のタイトルをメタデータのタイトルとして設定
+    title: article.title,
+    // 特定のページ用の説明文をオーバーライド
+    description: {
+      ja: "Authentic Japan のお知らせや、出合いからうまれた物語を発信していきます。",
+      en: "We will share updates from Authentic Japan, as well as the stories born from our encounters.",
+      fr: "Nous partagerons les nouvelles d'Authentic Japan ainsi que les histoires nées de nos rencontres.",
+    }[lang],
+  };
+}
 
 export default async function Page({
   params: { lang, id },
@@ -28,7 +59,7 @@ export default async function Page({
         "1536x1536"
       ].source_url
     : article.featured_media?.source_url;
-  console.log("featuredMediaPath:", featuredMediaPath);
+  // console.log("featuredMediaPath:", featuredMediaPath);
 
   return (
     <>

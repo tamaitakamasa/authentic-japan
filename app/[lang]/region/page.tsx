@@ -12,6 +12,31 @@ import { Button } from "@/components/Button";
 import { RegionSlider } from "@/components/Region/RegionSlider";
 import NavigatorInfo from "@/components/Navigator/NavigatorInfo";
 import { PageHeader } from "@/components/Layout/PageHeader";
+import { Metadata } from "next";
+
+type Props = {
+  params: { lang: Locale };
+};
+
+export async function generateMetadata({
+  params: { lang },
+}: Props): Promise<Metadata> {
+  return {
+    // タイトルだけをオーバーライド
+    // layout.tsxで設定したテンプレートが適用される
+    title: {
+      ja: "REGIONS",
+      en: "REGIONS",
+      fr: "REGIONS",
+    }[lang],
+    // 特定のページ用の説明文をオーバーライド
+    description: {
+      ja: "地域を愛し、地域同士で尊重し合い、その想いが波紋のように響き合う。その繋がりは、淡路島から日本の各地域にひろがっています。",
+      en: "Love for the region, mutual respect between regions, and the resonance of this passion spreading like ripples. This connection extends from Awaji Island to various regions across Japan.",
+      fr: "L’amour de la région, le respect mutuel entre les régions et la résonance de cette passion se propagent comme des ondulations. Cette connexion s’étend de l'île d'Awaji à diverses régions du Japon.",
+    }[lang],
+  };
+}
 
 export default async function Page({
   params: { lang },
