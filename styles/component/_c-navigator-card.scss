@@ -70,7 +70,7 @@
     @include g.clamp(margin-bottom, 32, 10);
     @include g.font-clamp("4xl", "xl");
     font-weight: 500;
-		line-height: 1.6;
+		line-height: 1.4;
   }
 
   &__cols {

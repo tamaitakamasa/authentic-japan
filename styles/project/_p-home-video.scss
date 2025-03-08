@@ -13,7 +13,7 @@
 	@include g.clamp(padding-bottom, 150, 100);
 
 	@include g.mq(md) {
-		display: none;
+		// display: none;
 	}
 
 	&__inner {
@@ -21,6 +21,10 @@
 		aspect-ratio: 16 / 9;
 		width: 100%;
 		// max-height: 100dvh;
+
+		@include g.mq(md) {
+			aspect-ratio: 1 / 1;
+		}
 	}
 
 	&__bg {
@@ -69,11 +73,13 @@
 		text-align: center;
 		text-wrap: balance;
 		text-shadow: g.$text-shadow;
+
+		@include g.mq(md) {
+			line-height: 2.4;
+		}
 	}
 
-	&__footer {
-		// background-color: g.$color-main;
-	}
+
 
 	&__button2 {
 		@include g.clamp(margin-top, 48, 32);

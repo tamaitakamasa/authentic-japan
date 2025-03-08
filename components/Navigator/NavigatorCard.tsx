@@ -33,7 +33,7 @@ export function NavigatorCard({
       </figure>
       <div className="c-navigator-card__inner">
         <h3 className="c-navigator-card__copy">
-          <p>{guide.copy}</p>
+          <p className="line-clamp-4">{guide.copy}</p>
         </h3>
         {guide.regions && guide.regions.length > 0 && (
           <div className="c-navigator-card__region">
