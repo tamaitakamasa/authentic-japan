@@ -1,6 +1,6 @@
 "use client";
 
-import useDeviceSize from "@/hooks/useDeviceSize";
+// import useDeviceSize from "@/hooks/useDeviceSize";
 import { motion, useScroll, useTransform } from "motion/react";
 import Image from "next/image";
 import { useRef } from "react";
@@ -12,7 +12,7 @@ interface HomeVideoImageProps {
 export default function HomeVideoImage({
   imagePath,
 }: HomeVideoImageProps) {
-  const { isDesktop } = useDeviceSize();
+  // const { isDesktop } = useDeviceSize();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
