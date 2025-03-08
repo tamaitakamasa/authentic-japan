@@ -81,10 +81,12 @@
 
         @include g.mq(md) {
           gap: 12px;
+					margin-bottom: 8px;
         }
       }
 
       &-item {
+				cursor: pointer;
         display: flex;
         align-items: center;
         background: none;

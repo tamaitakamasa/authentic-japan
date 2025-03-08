@@ -193,6 +193,11 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 32px;
+
+      @include g.mq(md) {
+        row-gap: 16px;
+				column-gap: 24px;
+      }
     }
   }
 }
