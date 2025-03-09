@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+// import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LOCALES, Locale } from '@/constants/site';
 
@@ -16,26 +16,26 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
 
         if (isActive) {
           return (
-            <Link
+            <a
               key={locale}
 							href={newPathname}
               className="c-lang-switcher__item is-active"
               aria-current="true"
             >
               {locale.toUpperCase()}
-            </Link>
+            </a>
           );
         }
 
         return (
-          <Link
+          <a
             key={locale}
             href={newPathname}
             className="c-lang-switcher__item"
             lang={locale}
           >
             {locale.toUpperCase()}
-          </Link>
+          </a>
         );
       })}
     </div>
