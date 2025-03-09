@@ -243,7 +243,10 @@ export interface WPSiteContent {
 	// locations?: LocationGroup[];
 	about_description?: string;
 	about_video?: string;
+	about_story?: string;
+	about_mission?: string;
 	about_mv: WPGalleryItem;
+	about_concept?: string;
 	about_section0_description?: string;
 	about_section1_title?: string;
 	about_section1_description?: string;

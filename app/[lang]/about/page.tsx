@@ -1,7 +1,7 @@
 // import Image from 'next/image';
 import { ContentHeader } from "@/components/Layout/ContentHeader";
 import { PageHeader } from "@/components/Layout/PageHeader";
-import { VideoPlayer } from "@/components/VideoPlayer";
+// import { VideoPlayer } from "@/components/VideoPlayer";
 import { Locale } from "@/constants/site";
 import { getWPSiteOptions } from "@/lib/fetchData";
 import { Metadata } from "next";
@@ -53,11 +53,27 @@ export default async function AboutPage({
           description={siteOptions.about_description}
           mv={siteOptions.about_mv}
         />
-        {siteOptions.about_video && (
-          <div className="p-page-about__video">
-            <VideoPlayer videoUrl={siteOptions.about_video} />
-          </div>
-        )}
+        <div className="max-w-3xl mx-auto px-4">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: siteOptions.about_concept || "",
+            }}
+          />
+          <h2 className="mt-12 text-5xl">OUR STORY</h2>
+          <div
+            className="mt-4"
+            dangerouslySetInnerHTML={{
+              __html: siteOptions.about_story || "",
+            }}
+          />
+          <h2 className="mt-12 text-5xl">OUR MISSION</h2>
+          <div
+            className="mt-4"
+            dangerouslySetInnerHTML={{
+              __html: siteOptions.about_mission || "",
+            }}
+          />
+        </div>
         <AboutSection siteOptions={siteOptions} />
       </div>
     </>

@@ -1,8 +1,8 @@
 // import Image from 'next/image';
-import ContactForm from '@/components/Contact/ContactForm';
-import { ContentHeader } from '@/components/Layout/ContentHeader';
-import { Locale } from '@/constants/site';
-import { Metadata } from 'next';
+import ContactForm from "@/components/Contact/ContactForm";
+import { ContentHeader } from "@/components/Layout/ContentHeader";
+import { Locale } from "@/constants/site";
+import { Metadata } from "next";
 
 type Props = {
   params: { lang: Locale };
@@ -28,13 +28,26 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home({ params: { lang } }: { params: { lang: Locale } }) {
-	return (
-		<>
-			<ContentHeader title="CONTACT" breadcrumbs={[{ label: 'HOME', href: '/' }, { label: 'CONTACT' }]} lang={lang} />
-			<div className="l-contents__body p-page-contact">
-				<ContactForm lang={lang} />
-			</div>
-		</>
-	);
+export default async function Home({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
+  return (
+    <>
+      <ContentHeader
+        title="CONTACT"
+        breadcrumbs={[
+          { label: "HOME", href: "/" },
+          { label: "CONTACT" },
+        ]}
+        lang={lang}
+      />
+      <div className="l-contents__body p-page-contact">
+        <div className="mx-auto max-w-3xl px-4">
+          <ContactForm lang={lang} />
+        </div>
+      </div>
+    </>
+  );
 }
