@@ -242,6 +242,7 @@ export default async function Page({
                 {t({
                   ja: "私の提供する旅で大切にしたいこと",
                   en: "What I value in the journey I offer",
+									fr: "Ce que je valorise dans le voyage que je propose",
                 })}
               </h2>
               <ul className="p-single-navigator__values">
@@ -262,50 +263,6 @@ export default async function Page({
             </>
           )}
         </div>
-
-        {/* <div className="p-page-navigator__profile">
-					<figure className="p-page-navigator__mv">{guide.mv && <Image src={guide.mv.link} alt={guide.name} fill sizes="50vw" style={{ objectFit: 'cover' }} />}</figure>
-					<div className="p-page-navigator__detail">
-						<h2 className="p-page-navigator__copy" dangerouslySetInnerHTML={{ __html: guide.copy || '' }} />
-						{guide.regions && guide.regions.length > 0 && (
-							<div className="p-page-navigator__region">
-								<i className="c-pin"></i>
-								<span>{guide.regions.join(', ')}</span>
-							</div>
-						)}
-						<NavigatorInfo className="p-page-navigator__info" guide={guide} lang={lang} />
-						<div className="p-page-navigator__tags">
-							{guide.tags.map((tag) => (
-								<span key={tag.id} className="p-page-navigator__tag c-taxonomy">
-									#{tag.name}
-								</span>
-							))}
-						</div>
-						<ul className="p-page-navigator__sns">
-							<li>
-								<a href="#">
-									<Image src={'/icon_instagram.svg'} width={15} height={15} alt="" />
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<Image src={'/icon_fb.svg'} width={15} height={15} alt="" />
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<Image src={'/icon_x.svg'} width={15} height={15} alt="" />
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<Image src={'/icon_note.svg'} width={40} height={8.7} alt="" />
-								</a>
-							</li>
-						</ul>
-					</div>
-					<div className="p-page-navigator__description" dangerouslySetInnerHTML={{ __html: guide.description || '' }} />
-				</div> */}
 
         {filteredActivities.length > 0 && (
           <div className="p-page-navigator-tours">
