@@ -36,7 +36,7 @@
     position: relative;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-		// overflow: hidden;
+    // overflow: hidden;
 
     @include g.mq(md) {
       grid-template-columns: 1fr;
@@ -46,23 +46,69 @@
   &__description {
     padding-left: 2vi;
 
-		@include g.mq(md) {
-			order: 2;
-			z-index: 2;
-		}
+    @include g.mq(md) {
+      order: 2;
+      z-index: 2;
+    }
+  }
 
+  &__concept {
+    position: relative;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 4vi;
+
+    @include g.mq(md) {
+      grid-template-columns: 1fr;
+    }
+
+    &-logo {
+      position: sticky;
+      top: 0;
+      display: grid;
+      place-items: center;
+      // max-width: 400px;
+      height: 100dvh;
+
+      @include g.mq(md) {
+        display: none;
+      }
+    }
+
+    &-text {
+      & h2 {
+        @include g.clamp(margin-top, 80, 60);
+        font-family: g.$font-garamond;
+        @include g.font-clamp("4xl", "3xl");
+      }
+
+      & p {
+        margin-top: 1.5rem;
+        @include g.font-clamp("md", "sm");
+
+				@include g.mq(md) {
+					& > br {
+						display: none;
+					}
+				}
+
+        &:first-of-type {
+          margin-top: 0;
+        }
+      }
+    }
   }
 
   &__section {
     height: 150dvh;
-		// background-color: rgba($color: #F3F3F3, $alpha: 0.6);
-		background: linear-gradient(
-			to bottom,
-			rgba($color: #F3F3F3, $alpha: 0) 0%,
-			rgba($color: #F3F3F3, $alpha: 0.7) 30%,
-			rgba($color: #F3F3F3, $alpha: 0.7) 70%,
-			rgba($color: #F3F3F3, $alpha: 0) 100%
-		);
+    // background-color: rgba($color: #F3F3F3, $alpha: 0.6);
+    background: linear-gradient(
+      to bottom,
+      rgba($color: #f3f3f3, $alpha: 0) 0%,
+      rgba($color: #f3f3f3, $alpha: 0.7) 30%,
+      rgba($color: #f3f3f3, $alpha: 0.7) 70%,
+      rgba($color: #f3f3f3, $alpha: 0) 100%
+    );
 
     & > div {
       position: sticky;
@@ -116,9 +162,9 @@
     height: 100dvh;
 
     @include g.mq(md) {
-			order: 1;
-			z-index: 1;
-			// opacity: 0.3;
+      order: 1;
+      z-index: 1;
+      // opacity: 0.3;
     }
 
     & figure {
@@ -134,12 +180,12 @@
 
       @include g.mq(md) {
         // position: relative;
-				// inset: 0;
-				// top: unset;
-				// left: unset;
-				// transform: unset;
-				transform: translate(-50%, -50%);
-				width: 70vi;
+        // inset: 0;
+        // top: unset;
+        // left: unset;
+        // transform: unset;
+        transform: translate(-50%, -50%);
+        width: 70vi;
       }
     }
   }

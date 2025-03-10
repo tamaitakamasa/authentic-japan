@@ -1,11 +1,12 @@
-// import Image from 'next/image';
+import Image from 'next/image';
 import { ContentHeader } from "@/components/Layout/ContentHeader";
 import { PageHeader } from "@/components/Layout/PageHeader";
 // import { VideoPlayer } from "@/components/VideoPlayer";
-import { Locale } from "@/constants/site";
+import { Locale, SITE_TITLE } from "@/constants/site";
 import { getWPSiteOptions } from "@/lib/fetchData";
 import { Metadata } from "next";
 import AboutSection from "@/components/About/AboutSection";
+import logo from '@/public/logo.svg';
 
 type Props = {
   params: { lang: Locale };
@@ -53,26 +54,33 @@ export default async function AboutPage({
           description={siteOptions.about_description}
           mv={siteOptions.about_mv}
         />
-        <div className="max-w-3xl mx-auto px-4">
-          <div
-            dangerouslySetInnerHTML={{
-              __html: siteOptions.about_concept || "",
-            }}
-          />
-          <h2 className="mt-12 text-5xl">OUR STORY</h2>
-          <div
-            className="mt-4"
-            dangerouslySetInnerHTML={{
-              __html: siteOptions.about_story || "",
-            }}
-          />
-          <h2 className="mt-12 text-5xl">OUR MISSION</h2>
-          <div
-            className="mt-4"
-            dangerouslySetInnerHTML={{
-              __html: siteOptions.about_mission || "",
-            }}
-          />
+        <div className="p-page-about__concept">
+          <div className="p-page-about__concept-logo">
+            <figure>
+						<Image src={logo} alt={SITE_TITLE} unoptimized />
+						</figure>
+          </div>
+          <div className="p-page-about__concept-text px-4">
+            <div
+              dangerouslySetInnerHTML={{
+                __html: siteOptions.about_concept || "",
+              }}
+            />
+            <h2>OUR STORY</h2>
+            <div
+              className="mt-8"
+              dangerouslySetInnerHTML={{
+                __html: siteOptions.about_story || "",
+              }}
+            />
+            <h2>OUR MISSION</h2>
+            <div
+              className="mt-8"
+              dangerouslySetInnerHTML={{
+                __html: siteOptions.about_mission || "",
+              }}
+            />
+          </div>
         </div>
         <AboutSection siteOptions={siteOptions} />
       </div>
