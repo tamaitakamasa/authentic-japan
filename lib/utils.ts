@@ -133,6 +133,7 @@ export async function getFormattedRegionData(
     name: region.acf.name,
     description: region.acf.description,
     mv: region.acf?.mv?.sizes?.large,
+		area: region.acf.area,
     gallery: region.acf.gallery,
     access: region.acf.access,
   }));

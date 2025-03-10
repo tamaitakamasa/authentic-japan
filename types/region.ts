@@ -5,6 +5,10 @@ export interface Region {
 	name: string;
 	description: string;
 	mv: string;
+	area: {
+		value: string;
+		label: string;
+	};
 	gallery: WPGalleryItem[];
 	access: string;
 }

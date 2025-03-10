@@ -43,7 +43,6 @@ export default async function Page({
 }: {
   params: { lang: Locale };
 }) {
-  // const t = useTranslations(lang);
   const regions = await getFormattedRegionData(lang);
   const siteOptions = await getWPSiteOptions(lang);
   const guides = await getFormattedGuideData(lang);
@@ -87,6 +86,7 @@ export default async function Page({
                 guides,
                 region.id
               );
+
               return (
                 <div
                   key={index}
@@ -114,18 +114,27 @@ export default async function Page({
                       </div>
                       <div className="c-region__locale">
                         <figure className="c-region__map">
-                          <Image
+													{region.area && (
+														<Image
+															src={`/region/map_${region.area.value}.svg`}
+															alt={region.area.label}
+															fill
+															unoptimized
+														/>
+													)}
+                          {/* <Image
                             src="/region/map_sample.svg"
                             alt=""
                             fill
                             unoptimized
-                          />
+                          /> */}
                         </figure>
                         {region.access && (
                           <div className="c-region__access">
                             <Button
-                              href={`/${lang}/tour`}
+                              href={region.access}
                               label="ACCESS"
+															target="_blank"
                             />
                           </div>
                         )}
@@ -157,9 +166,6 @@ export default async function Page({
               );
             })}
         </div>
-        {/* <figure className="p-page-region__mv u-full-bleed">
-					<Image src={regionsPage.mv.sizes['1536x1536']} alt="" fill />
-				</figure> */}
       </div>
     </>
   );

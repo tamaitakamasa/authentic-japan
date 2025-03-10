@@ -213,6 +213,10 @@ export interface WPRegion extends WPArticle {
 		name: string;
 		description: string;
 		mv: WPGalleryItem;
+		area: {
+			value: string;
+			label: string;
+		};
 		gallery: WPGalleryItem[];
 		access: string;
 	};
