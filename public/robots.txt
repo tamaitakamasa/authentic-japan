@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://authentic-japan.com/sitemap.xml

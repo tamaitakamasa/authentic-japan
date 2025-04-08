@@ -1,12 +1,12 @@
-// app/sitemap-static.ts
+// app/sitemap.ts
 import { MetadataRoute } from 'next';
-import { LOCALES } from '@/constants/site';
+import { LOCALES, SITE_URL } from '@/constants/site';
 
 // 変更頻度の型を正しく定義
 type ChangeFrequency = 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
 
 export default function sitemapStatic(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://authenticjapan.travel';
+  const baseUrl = SITE_URL;
 
   const routes = [
     '',
