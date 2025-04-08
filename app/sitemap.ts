@@ -4,25 +4,19 @@ import { MetadataRoute } from 'next';
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://authentic-japan.com',
+      url: 'https://authentic-japan.travel/ja',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
     },
     {
-      url: 'https://authentic-japan.com/ja',
+      url: 'https://authentic-japan.travel/en',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
     },
     {
-      url: 'https://authentic-japan.com/en',
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: 'https://authentic-japan.com/fr',
+      url: 'https://authentic-japan.travel/fr',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
