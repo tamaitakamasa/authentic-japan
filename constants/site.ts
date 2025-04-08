@@ -1,9 +1,9 @@
 // Place any global data in this file.
 // You can import this data from anywhere in your site by using the `import` keyword.
 
-export const SITE_URL = 'https://transformativetour.pages.dev/';
-export const SITE_TITLE = 'AUTHENTIC JAPAN';
-export const SITE_DESCRIPTION = 'A Gathering of Passionate Navigators Providing Transformative Travel in Japan';
+export const SITE_URL = 'https://authenticjapan.travel/';
+// export const SITE_TITLE = 'AUTHENTIC JAPAN';
+// export const SITE_DESCRIPTION = 'A Gathering of Passionate Navigators Providing Transformative Travel in Japan';
 export const INSTAGRAM_URL = 'https://www.instagram.com/authentic_japan_official/';
 
 export const LOCALES = ['en', 'ja', 'fr'] as const;
