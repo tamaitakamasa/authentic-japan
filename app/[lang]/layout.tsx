@@ -2,7 +2,7 @@ import { Noto_Sans_JP, Noto_Serif_JP, EB_Garamond, Montserrat } from 'next/font/
 import type { Metadata } from 'next';
 import '@/styles/style.scss';
 import './global.css';
-import { Locale } from '@/constants/site';
+import { Locale, SITE_URL } from '@/constants/site';
 import Script from 'next/script';
 import { ScrollBarWidthManager } from '@/components/ScrollBarWidthManager';
 import Header from '@/components/Layout/Header';
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: metadata.description,
     },
     alternates: {
-      canonical: `https://authentic-japan.com/${params.lang}`,
+      canonical: `${SITE_URL}/${params.lang}`,
       languages: {
         'en': '/en',
         'ja': '/ja',
