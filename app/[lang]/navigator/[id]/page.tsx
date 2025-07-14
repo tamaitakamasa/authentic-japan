@@ -2,16 +2,17 @@ import Image from "next/image";
 import { Locale } from "@/constants/site";
 import { notFound } from "next/navigation";
 import {
-  getFormattedActivities,
+  // getFormattedActivities,
   getFormattedGuideData,
   getFormattedNewsData,
 } from "@/lib/utils";
 import { ContentHeader } from "@/components/Layout/ContentHeader";
-import { TourItem } from "@/components/Tour/TourItem";
+// import { TourItem } from "@/components/Tour/TourItem";
 import Link from "next/link";
 import NewsItem from "@/components/News/NewsItem";
 import { useTranslations } from "@/lib/i18n";
 import { Metadata } from "next";
+import { Button } from "@/components/Button";
 
 type Props = {
   params: { lang: Locale; id: string };
@@ -22,6 +23,7 @@ export async function generateMetadata({
 }: Props): Promise<Metadata> {
   const guides = await getFormattedGuideData(lang);
   const guide = guides.find((g) => g.id === parseInt(id));
+	// console.log(guides);
 
   if (!guide) {
     return {
@@ -53,16 +55,16 @@ export default async function Page({
   const guides = await getFormattedGuideData(lang);
   const otherGuides = guides.filter((g) => g.id !== parseInt(id));
   const guide = guides.find((g) => g.id === parseInt(id));
-  const activities = await getFormattedActivities(
-    { page: 1, pageSize: 10 },
-    lang
-  );
+  // const activities = await getFormattedActivities(
+  //   { page: 1, pageSize: 10 },
+  //   lang
+  // );
   const newsArticles = await getFormattedNewsData(lang);
-  const filteredActivities = guide
-    ? activities.filter((activity) =>
-        activity.guideIds?.includes(guide.id)
-      )
-    : [];
+  // const filteredActivities = guide
+  //   ? activities.filter((activity) =>
+  //       activity.guideIds?.includes(guide.id)
+  //     )
+  //   : [];
   const relatedNews = guide
     ? newsArticles.filter((news) =>
         news.guides?.some((g) => g.id === guide.id)
@@ -264,7 +266,15 @@ export default async function Page({
           )}
         </div>
 
-        {filteredActivities.length > 0 && (
+				<div className="p-single-navigator__inquiry">
+					<Button href={`https://forms.gle/xEYS3P3eFDMJGqPh9`} target="_blank" label={t({
+						ja: "ナビゲーターへのお問い合わせ",
+						en: "Inquiry to the navigator",
+						fr: "Inquiry to the navigator",
+					})} />
+				</div>
+
+        {/* {filteredActivities.length > 0 && (
           <div className="p-page-navigator-tours">
             <div className="p-page-navigator-tours__title">
               <h2 className="c-heading c-heading--2">TOURS</h2>
@@ -279,7 +289,7 @@ export default async function Page({
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {relatedNews.length > 0 && (
           <div className="p-page-navigator-news">

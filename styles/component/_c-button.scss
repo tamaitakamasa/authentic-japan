@@ -27,6 +27,7 @@
     @include g.font-clamp("sm", "3xs");
     font-weight: 700;
     color: g.$color-text;
+    text-transform: uppercase;
     line-height: 1;
 
     @include g.mq(md) {

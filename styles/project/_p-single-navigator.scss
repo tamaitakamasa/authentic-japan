@@ -250,6 +250,16 @@
     }
   }
 
+	&__inquiry {
+		display: flex;
+		justify-content: center;
+		@include g.clamp(margin-top, 60, 40);
+		// text-align: center;
+		// @include g.mq(md) {
+		// 	margin-top: 40px;
+		// }
+	}
+
   // 	&__inner {
   // 		position: relative;
   // 		z-index: 1;
