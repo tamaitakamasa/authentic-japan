@@ -102,13 +102,15 @@ export async function getFormattedGuideData(
         photo: guide.acf.photo,
         copy: guide.acf.copy,
         description: guide.acf.description,
-        regionIds: guide.acf.region ?? [], // nullish coalescing operator を使用
+        regionIds: Array.isArray(guide.acf.region) ? guide.acf.region : [],
         regions:
-          guide.acf.region
-            ?.map((id) => regionMap.get(id) || "")
-            .filter(
-              (name): name is string => name !== ""
-            ) ?? [],
+          Array.isArray(guide.acf.region)
+            ? guide.acf.region
+                .map((id) => regionMap.get(id) || "")
+                .filter(
+                  (name): name is string => name !== ""
+                )
+            : [],
         tags: tags.map((tag) => ({
           id: tag.id,
           name: tag.name,
