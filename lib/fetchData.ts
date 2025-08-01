@@ -30,7 +30,12 @@ interface BokunSearchParams {
 
 // カスタムエラークラス
 class FetchError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number, 
+    message: string,
+    public url: string,
+    public responseText?: string
+  ) {
     super(message);
     this.name = "FetchError";
   }
@@ -41,14 +46,45 @@ async function fetchWithErrorHandling<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
-  const response = await fetch(url, options);
-  if (!response.ok) {
+  try {
+    const response = await fetch(url, options);
+    
+    if (!response.ok) {
+      let responseText = "";
+      try {
+        responseText = await response.text();
+      } catch (e) {
+        responseText = "Failed to read response body";
+      }
+      
+      const errorMessage = `HTTP error! status: ${response.status} for URL: ${url}`;
+      console.error(errorMessage);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Response body:", responseText);
+      }
+      
+      throw new FetchError(
+        response.status,
+        errorMessage,
+        url,
+        responseText
+      );
+    }
+    
+    return await response.json();
+  } catch (error) {
+    if (error instanceof FetchError) {
+      throw error;
+    }
+    // ネットワークエラーや他のエラーの場合
+    console.error(`Fetch failed for URL: ${url}`, error);
     throw new FetchError(
-      response.status,
-      `HTTP error! status: ${response.status}`
+      0,
+      `Network error or invalid response for URL: ${url}`,
+      url,
+      error instanceof Error ? error.message : String(error)
     );
   }
-  return await response.json();
 }
 
 // キャッシュオブジェクト
@@ -116,10 +152,32 @@ export async function getWPSiteOptions(
   const url = `${BASE_URL}/acf/v1/options?lang=${encodeURIComponent(
     lang
   )}&acf_format=standard`;
-  // const url = `${WP_API_BASE_URL}/guide?lang=${encodeURIComponent(lang)}&acf_format=standard`;
-  return cachedFetch(`options-${lang}`, () =>
-    fetchWithErrorHandling<WPSiteContent>(url)
-  );
+  
+  if (process.env.NODE_ENV === "development") {
+    console.log("Fetching WP Site Options from:", url);
+  }
+  
+  try {
+    return await cachedFetch(`options-${lang}`, () =>
+      fetchWithErrorHandling<WPSiteContent>(url)
+    );
+  } catch (error) {
+    if (error instanceof FetchError) {
+      console.error("Failed to fetch WP Site Options:", {
+        status: error.status,
+        url: error.url,
+        message: error.message
+      });
+      
+      // 404エラーの場合、ACF REST APIが有効でない可能性がある
+      if (error.status === 404) {
+        console.error(
+          "ACF REST API endpoint not found. Please ensure ACF to REST API plugin is installed and activated on WordPress."
+        );
+      }
+    }
+    throw error;
+  }
 }
 
 export function fetchWPMediaItem(
@@ -201,9 +259,25 @@ export async function fetchNewsArticles(
   const url = `${WP_API_BASE_URL}/posts?lang=${encodeURIComponent(
     lang
   )}&acf_format=standard&_embed=1`;
-  return cachedFetch(`news-${lang}`, () =>
-    fetchWithErrorHandling<WPNewsArticle[]>(url)
-  );
+  
+  if (process.env.NODE_ENV === "development") {
+    console.log("Fetching News Articles from:", url);
+  }
+  
+  try {
+    return await cachedFetch(`news-${lang}`, () =>
+      fetchWithErrorHandling<WPNewsArticle[]>(url)
+    );
+  } catch (error) {
+    if (error instanceof FetchError) {
+      console.error("Failed to fetch News Articles:", {
+        status: error.status,
+        url: error.url,
+        message: error.message
+      });
+    }
+    throw error;
+  }
 }
 
 // export async function fetchPostsWithDetails<T extends WPArticle>(

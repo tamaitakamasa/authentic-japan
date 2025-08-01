@@ -15,6 +15,7 @@ import HomeRegionSection from "@/components/Home/HomeRegionSection";
 // import HomeVideo from '@/components/Home/HomeVideo';
 // import Image from 'next/image';
 import HomeVideoImage from "@/components/Home/HomeVideoImage";
+import { News } from "@/types";
 
 export default async function Page({
   params: { lang },
@@ -22,9 +23,29 @@ export default async function Page({
   params: { lang: Locale };
 }) {
   // const t = useTranslations(lang);
-  const siteOptions = await getWPSiteOptions(lang);
-  const newsArticles = await getFormattedNewsData(lang);
-  // console.log('newsArticles:', newsArticles);
+  let siteOptions;
+  let newsArticles: News[] = [];
+
+  try {
+    siteOptions = await getWPSiteOptions(lang);
+  } catch (error) {
+    console.error("Failed to load site options:", error);
+    // デフォルト値を設定
+    siteOptions = {
+      home_slider: [],
+      home_about_mv: null,
+      home_about_description: "",
+      home_about_video: ""
+    } as any;
+  }
+
+  try {
+    newsArticles = await getFormattedNewsData(lang);
+  } catch (error) {
+    console.error("Failed to load news articles:", error);
+    // エラーが発生してもページは表示される
+    newsArticles = [];
+  }
 
   return (
     <>
@@ -81,7 +102,7 @@ export default async function Page({
           </div>
         </div>
 
-        <div className="p-home-tours">
+        {/* <div className="p-home-tours">
           <div className="p-home-tours__title">
             <h2 className="c-heading">TOURS</h2>
           </div>
@@ -91,7 +112,7 @@ export default async function Page({
           <div className="p-home-tours__button">
             <Button href={`/${lang}/tours`} label="VIEW ALL TOURS" />
           </div>
-        </div>
+        </div> */}
 
         <div className="p-home-news">
           <div className="p-home-news__inner">
