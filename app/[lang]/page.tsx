@@ -9,7 +9,7 @@ import NewsItem from "@/components/News/NewsItem";
 import InstagramFeed from "@/components/InstagramFeed";
 import Link from "next/link";
 import { Suspense } from "react";
-import HomeTourSection from "@/components/Home/HomeTourSection";
+// import HomeTourSection from "@/components/Home/HomeTourSection";
 import HomeNavigatorSection from "@/components/Home/HomeNavigatorSection";
 import HomeRegionSection from "@/components/Home/HomeRegionSection";
 // import HomeVideo from '@/components/Home/HomeVideo';
@@ -23,21 +23,9 @@ export default async function Page({
   params: { lang: Locale };
 }) {
   // const t = useTranslations(lang);
-  let siteOptions;
   let newsArticles: News[] = [];
 
-  try {
-    siteOptions = await getWPSiteOptions(lang);
-  } catch (error) {
-    console.error("Failed to load site options:", error);
-    // デフォルト値を設定
-    siteOptions = {
-      home_slider: [],
-      home_about_mv: null,
-      home_about_description: "",
-      home_about_video: ""
-    } as any;
-  }
+  const siteOptions = await getWPSiteOptions(lang);
 
   try {
     newsArticles = await getFormattedNewsData(lang);
