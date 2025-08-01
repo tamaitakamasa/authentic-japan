@@ -53,7 +53,7 @@ async function fetchWithErrorHandling<T>(
       let responseText = "";
       try {
         responseText = await response.text();
-      } catch (e) {
+      } catch {
         responseText = "Failed to read response body";
       }
       
